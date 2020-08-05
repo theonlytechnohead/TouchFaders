@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Button x:Name="sendMIDI" Content="Send MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="sendMIDI_Click"/>
+
     </Grid>
 </Window>

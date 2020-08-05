@@ -13,7 +13,6 @@ C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.Gener
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CoreCompileInputs.cache
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.exe
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.pdb
-C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Sanford.Multimedia.Midi.dll
-C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Sanford.Multimedia.Midi.pdb
-C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Sanford.Multimedia.Midi.xml
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyComplete
+C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.dll
+C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.xml
