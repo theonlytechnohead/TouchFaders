@@ -16,3 +16,4 @@ C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.pdb
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyComplete
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.dll
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.xml
+C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\SharpOSC.dll
