@@ -38,6 +38,9 @@
     <Reference Include="Melanchall.DryWetMidi, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Melanchall.DryWetMidi.5.1.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
+    <Reference Include="SharpOSC">
+      <HintPath>..\SharpOSC.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows" />

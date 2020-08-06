@@ -7,7 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="sendMIDI" Content="Send MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="sendMIDI_Click"/>
+
+        <Button x:Name="sendMIDI" Content="Send MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="sendMIDI_Click" Margin="0,0,150,0"/>
+        <ProgressBar x:Name="testBar" HorizontalAlignment="Center" Height="20" VerticalAlignment="Center" Width="400" Margin="0,0,0,50" Maximum="127"/>
+        <Slider x:Name="testSlider" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,50" ValueChanged="Slider_ValueChanged" Maximum="127" MinWidth="400" SmallChange="1" Panel.ZIndex="1"/>
+        <Button x:Name="sendSysEx" Content="Send SysEx" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Margin="150,0,0,0" Click="sendSysEx_Click"/>
+
 
     </Grid>
 </Window>
