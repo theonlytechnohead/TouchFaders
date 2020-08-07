@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
@@ -17,30 +19,17 @@ namespace YAMAHA_MIDI {
 		OutputDevice LS9_in = OutputDevice.GetByName("LS9");
 		InputDevice LS9_out = InputDevice.GetByName("LS9");
 
-		//OutputDevice DAW_in = OutputDevice.GetByName("DAW_in");
-		//InputDevice DAW_out = InputDevice.GetByName("DAW_out");
+		Timer activeSensingTimer;
 
 		public MainWindow () {
 			InitializeComponent();
-			oscOut = new UDPListener(55554, handleOscMessage);
+			InitializeIO();
+			oscOut = new UDPListener(55554, parseOSCMessage);
 		}
-
-		private void handleOscMessage (OscPacket packet) {
-			if (packet is OscBundle) {
-				OscBundle messageBundle = (OscBundle)packet;
-				Console.WriteLine($"Received a message bundle: '{messageBundle.Messages.First<OscMessage>().Address}'");
-				this.Dispatcher.Invoke(() => {
-					testBar.Value = (float)messageBundle.Messages.Last<OscMessage>().Arguments[0] * 100f;
-				});
-			} else if (packet is OscMessage) {
-				OscMessage message = (OscMessage)packet;
-				Console.WriteLine($"Received a message: '{message.Address}");
-			}
-		}
-
 
 		protected override void OnClosed (EventArgs e) {
-			LS9_in.Dispose();
+			(activeSensingTimer as IDisposable)?.Dispose();
+			(LS9_in as IDisposable)?.Dispose();
 			(LS9_out as IDisposable)?.Dispose();
 			base.OnClosed(e);
 		}
@@ -48,7 +37,38 @@ namespace YAMAHA_MIDI {
 		public void InitializeIO () {
 			LS9_in.EventSent += LS9_in_EventSent;
 			LS9_out.EventReceived += LS9_out_EventReceived;
-			LS9_out.StartEventsListening();
+			try {
+				LS9_out.StartEventsListening();
+			} catch (MidiDeviceException e) {
+				Console.WriteLine("Couldn't start listening to LS9");
+			}
+			if (LS9_out.IsListeningForEvents) {
+				ResetEvent systemReset = new ResetEvent();
+				try {
+					LS9_in.SendEvent(systemReset);
+				} catch (MidiDeviceException e) {
+					Console.WriteLine("Couldn't send system reset MIDI event to LS9");
+				}
+				activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
+			}
+		}
+
+		private void initializeIOButton_Click (object sender, RoutedEventArgs e) {
+			InitializeIO();
+		}
+
+		void sendActiveSense (object state) {
+			ActiveSensingEvent activeSense = new ActiveSensingEvent();
+			try {
+				LS9_in.SendEvent(activeSense); // MIDI should now be initialized with the desk
+			} catch (MidiDeviceException e) {
+				Console.WriteLine("Couldn't send active sensing MIDI event to LS9");
+			}
+		}
+
+		private void disposeSensingTimerButton_Click (object sender, RoutedEventArgs e) {
+			(activeSensingTimer as IDisposable)?.Dispose();
+			Console.WriteLine("Disposed active sensing timer");
 		}
 
 		bool CheckSysEx (byte[] bytes) {
@@ -109,31 +129,16 @@ namespace YAMAHA_MIDI {
 			return (mix, channel, value);
 		}
 
-		private void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
+		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
 			var LS9_in = (MidiDevice)sender;
 			Console.WriteLine($"Event sent to '{LS9_in.Name}' as: {e.Event}");
 		}
 
-		private void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
-			var DAW_out = (MidiDevice)sender;
-			SysExEvent midiEvent = (SysExEvent)e.Event;
-			Console.WriteLine($"Event received from '{DAW_out.Name}' as: {e.Event}");
-			if (CheckSysEx(midiEvent.Data)) {
-				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-				this.Dispatcher.Invoke(() => {
-					testBar.Value = value;
-					testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
-					testSlider.Value = value; // Actually change the value
-					testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
-				});
-			}
-		}
-
-		private void sendSysEx_Click (object sender, RoutedEventArgs e) {
+		void sendSysEx_Click (object sender, RoutedEventArgs e) {
 			TestMixerOutput();
 		}
 
-		private void TestMixerOutput () {
+		void TestMixerOutput () {
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //			  Mix5		  Ch 1					  0 db  0 dB
 			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x37, 0xF7 };
 			sysExEvent.Data = data;
@@ -145,13 +150,102 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		private void sendOSC_Click (object sender, RoutedEventArgs e) {
-			OscMessage message = new OscMessage("/iem/fader1", 0.76f);
+		void SendSysEx (int mix, int channel, float value) {
+			byte mixLSB = (byte)(mix);
+			byte mixMSB = (byte)(mix >> 8);
+
+			byte channelLSB = (byte)(channel);
+			byte channelMSB = (byte)(channel >> 8);
+
+			int value_int = Convert.ToInt32(value * 16383);
+			byte valueMSB = (byte)(value_int);
+			byte valueLSB = (byte)(value_int >> 8);
+
+			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //				Mix5				Ch 1						  0 db		0 dB
+			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, mixMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
+			sysExEvent.Data = data;
+
+			try {
+				LS9_in.SendEvent(sysExEvent);
+			} catch (MidiDeviceException ex) {
+				Console.WriteLine("Well shucks, LS9_in don't work no more...");
+				Console.WriteLine(ex.Message);
+			}
+		}
+
+		void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
+			var LS9_out = (MidiDevice)sender;
+			SysExEvent midiEvent = (SysExEvent)e.Event;
+			Console.WriteLine($"Event received from '{LS9_out.Name}' as: {e.Event}");
+			if (CheckSysEx(midiEvent.Data)) {
+				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
+				sendOSCMessage(16 * mix + channel, value);
+				/*this.Dispatcher.Invoke(() => {
+					testBar.Value = value;
+					testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
+					testSlider.Value = value; // Actually change the value
+					testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
+				});*/
+			}
+		}
+
+		void sendOSCMessage (int channel, int value) {
+			float faderPos = value / 16383; // convert from 14-bt to 0-1 float
+			OscMessage message = new OscMessage($"/iem/fader{channel}", faderPos);
 			oscIn.Send(message);
 		}
 
-		private void testSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
-			OscMessage message = new OscMessage("/iem/fader1", testSlider.Value / 100f);
+		void parseOSCMessage (OscPacket packet) {
+			if (packet is OscBundle) {
+				OscBundle messageBundle = (OscBundle)packet;
+				foreach (OscMessage message in messageBundle.Messages) {
+					handleOSCMessage(message);
+				}
+				/*
+				this.Dispatcher.Invoke(() => {
+					testBar.Value = (float)messageBundle.Messages.Last<OscMessage>().Arguments[0] * 100f;
+				});
+				*/
+			} else {
+				OscMessage message = (OscMessage)packet;
+				handleOSCMessage(message);
+			}
+		}
+
+		void handleOSCMessage (OscMessage message) {
+			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
+			if (message.Address.Contains("/iem/fader")) {
+				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
+				int channel = fader % 16;
+				int mix = (fader - channel) / 16;
+				float value = (float)message.Arguments[0];
+				SendSysEx(mix, channel, value);
+				if (fader == 1) {
+					this.Dispatcher.Invoke(() => {
+						testBar.Value = value * 100f;
+						testSlider.ValueChanged -= testSlider_ValueChanged;
+						testSlider.Value = value * 100f;
+						testSlider.ValueChanged += testSlider_ValueChanged;
+					});
+				}
+			} else if (message.Address.Contains("/iem/db")) {
+				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
+				int channel = fader % 16;
+				int mix = (fader - channel) / 16;
+				string value = (string)message.Arguments[0];
+				this.Dispatcher.Invoke(() => {
+					dbLabel.Content = value;
+				});
+			}
+		}
+
+		void sendOSC_Click (object sender, RoutedEventArgs e) {
+			OscMessage message = new OscMessage("/iem/fader1", 0.76f); // 0dB is approx. 0.76f in range 0-100f for REAPER as configured
+			oscIn.Send(message);
+		}
+
+		void testSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
+			OscMessage message = new OscMessage("/iem/fader1", (float)(testSlider.Value / 100f));
 			oscIn.Send(message);
 		}
 	}

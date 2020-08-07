@@ -5,13 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YAMAHA_MIDI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="YAMAHA MIDI" Height="450" Width="800" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="200">
     <Grid>
 
-        <Button x:Name="sendOSC" Content="Send OSC" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="sendOSC_Click"  Margin="0,0,150,0"/>
-        <ProgressBar x:Name="testBar" HorizontalAlignment="Center" Height="20" VerticalAlignment="Center" Width="400" Margin="0,0,0,50"/>
-        <Slider x:Name="testSlider" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,50" ValueChanged="testSlider_ValueChanged"  Maximum="100" MinWidth="400" Panel.ZIndex="1"/>
-        <Button x:Name="sendSysEx" Content="Send SysEx" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Margin="150,0,0,0" Click="sendSysEx_Click"/>
+        <Button x:Name="sendOSC" Content="Send OSC" HorizontalAlignment="Center" VerticalAlignment="Center" Click="sendOSC_Click"  Margin="0,100,200,0" Padding="5,1"/>
+        <ProgressBar x:Name="testBar" HorizontalAlignment="Center" Height="20" VerticalAlignment="Center" Width="400" Margin="0"/>
+        <Slider x:Name="testSlider" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" ValueChanged="testSlider_ValueChanged"  Maximum="100" MinWidth="400" Panel.ZIndex="1"/>
+        <Button x:Name="sendSysEx" Content="Send SysEx" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="200,100,0,0" Click="sendSysEx_Click" Padding="5,1"/>
+        <Label x:Name="dbLabel" Content="0.00dB" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0"/>
+        <Button x:Name="initializeIOButton" Content="Initialize IO" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,200,100" Click="initializeIOButton_Click" Padding="5,1"/>
+        <Button x:Name="disposeSensingTimerButton" Content="Stop listening" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="200,0,0,100" Click="disposeSensingTimerButton_Click" Padding="5,1"/>
 
 
     </Grid>
