@@ -27,13 +27,7 @@ namespace YAMAHA_MIDI {
 			oscOut = new UDPListener(55554, parseOSCMessage);
 		}
 
-		protected override void OnClosed (EventArgs e) {
-			(activeSensingTimer as IDisposable)?.Dispose();
-			(LS9_in as IDisposable)?.Dispose();
-			(LS9_out as IDisposable)?.Dispose();
-			base.OnClosed(e);
-		}
-
+		#region setupMIDI
 		public void InitializeIO () {
 			LS9_in.EventSent += LS9_in_EventSent;
 			LS9_out.EventReceived += LS9_out_EventReceived;
@@ -53,10 +47,6 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		private void initializeIOButton_Click (object sender, RoutedEventArgs e) {
-			InitializeIO();
-		}
-
 		void sendActiveSense (object state) {
 			ActiveSensingEvent activeSense = new ActiveSensingEvent();
 			try {
@@ -65,12 +55,9 @@ namespace YAMAHA_MIDI {
 				Console.WriteLine("Couldn't send active sensing MIDI event to LS9");
 			}
 		}
+		#endregion
 
-		private void disposeSensingTimerButton_Click (object sender, RoutedEventArgs e) {
-			(activeSensingTimer as IDisposable)?.Dispose();
-			Console.WriteLine("Disposed active sensing timer");
-		}
-
+		#region SysExMIDIHelpers
 		bool CheckSysEx (byte[] bytes) {
 			if (bytes.Length == 18) {
 				return false;
@@ -128,18 +115,27 @@ namespace YAMAHA_MIDI {
 
 			return (mix, channel, value);
 		}
+		#endregion
 
-		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
-			var LS9_in = (MidiDevice)sender;
-			Console.WriteLine($"Event sent to '{LS9_in.Name}' as: {e.Event}");
-		}
-
-		void sendSysEx_Click (object sender, RoutedEventArgs e) {
-			TestMixerOutput();
+		#region MIDI
+		void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
+			var LS9_out = (MidiDevice)sender;
+			SysExEvent midiEvent = (SysExEvent)e.Event;
+			Console.WriteLine($"Event received from '{LS9_out.Name}' as: {e.Event}");
+			if (CheckSysEx(midiEvent.Data)) {
+				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
+				sendOSCMessage(16 * mix + channel, value);
+				/*this.Dispatcher.Invoke(() => {
+					testBar.Value = value;
+					testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
+					testSlider.Value = value; // Actually change the value
+					testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
+				});*/
+			}
 		}
 
 		void TestMixerOutput () {
-			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //			  Mix5		  Ch 1					  0 db  0 dB
+			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //			  Mix1		  Ch 1					  0 db  0 dB
 			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x37, 0xF7 };
 			sysExEvent.Data = data;
 			try {
@@ -161,7 +157,7 @@ namespace YAMAHA_MIDI {
 			byte valueMSB = (byte)(value_int);
 			byte valueLSB = (byte)(value_int >> 8);
 
-			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //				Mix5				Ch 1						  0 db		0 dB
+			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //				Mix					Ch							  0 db		0 dB
 			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, mixMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 
@@ -173,39 +169,19 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
-			var LS9_out = (MidiDevice)sender;
-			SysExEvent midiEvent = (SysExEvent)e.Event;
-			Console.WriteLine($"Event received from '{LS9_out.Name}' as: {e.Event}");
-			if (CheckSysEx(midiEvent.Data)) {
-				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-				sendOSCMessage(16 * mix + channel, value);
-				/*this.Dispatcher.Invoke(() => {
-					testBar.Value = value;
-					testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
-					testSlider.Value = value; // Actually change the value
-					testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
-				});*/
-			}
+		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
+			var LS9_in = (MidiDevice)sender;
+			Console.WriteLine($"Event sent to '{LS9_in.Name}' as: {e.Event}");
 		}
+		#endregion
 
-		void sendOSCMessage (int channel, int value) {
-			float faderPos = value / 16383; // convert from 14-bt to 0-1 float
-			OscMessage message = new OscMessage($"/iem/fader{channel}", faderPos);
-			oscIn.Send(message);
-		}
-
+		#region OSC
 		void parseOSCMessage (OscPacket packet) {
 			if (packet is OscBundle) {
 				OscBundle messageBundle = (OscBundle)packet;
 				foreach (OscMessage message in messageBundle.Messages) {
 					handleOSCMessage(message);
 				}
-				/*
-				this.Dispatcher.Invoke(() => {
-					testBar.Value = (float)messageBundle.Messages.Last<OscMessage>().Arguments[0] * 100f;
-				});
-				*/
 			} else {
 				OscMessage message = (OscMessage)packet;
 				handleOSCMessage(message);
@@ -239,14 +215,43 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		void sendOSC_Click (object sender, RoutedEventArgs e) {
-			OscMessage message = new OscMessage("/iem/fader1", 0.76f); // 0dB is approx. 0.76f in range 0-100f for REAPER as configured
+		void sendOSCMessage (int channel, int value) {
+			float faderPos = value / 16383; // convert from 14-bt to 0-1 float
+			OscMessage message = new OscMessage($"/iem/fader{channel}", faderPos);
 			oscIn.Send(message);
+		}
+		#endregion
+
+		#region UIEvents
+		private void initializeIOButton_Click (object sender, RoutedEventArgs e) {
+			InitializeIO();
+		}
+
+		private void disposeSensingTimerButton_Click (object sender, RoutedEventArgs e) {
+			(activeSensingTimer as IDisposable)?.Dispose();
+			Console.WriteLine("Disposed active sensing timer");
 		}
 
 		void testSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			OscMessage message = new OscMessage("/iem/fader1", (float)(testSlider.Value / 100f));
 			oscIn.Send(message);
+		}
+
+		void sendOSC_Click (object sender, RoutedEventArgs e) {
+			OscMessage message = new OscMessage("/iem/fader1", 0.76f); // 0dB is approx. 0.76f in range 0-100f for REAPER as configured
+			oscIn.Send(message);
+		}
+
+		void sendSysEx_Click (object sender, RoutedEventArgs e) {
+			TestMixerOutput();
+		}
+		#endregion
+
+		protected override void OnClosed (EventArgs e) {
+			(activeSensingTimer as IDisposable)?.Dispose();
+			(LS9_in as IDisposable)?.Dispose();
+			(LS9_out as IDisposable)?.Dispose();
+			base.OnClosed(e);
 		}
 	}
 }

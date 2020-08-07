@@ -17,3 +17,22 @@ C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyC
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.dll
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.xml
 C:\Users\HP\Documents\YAMAHA MIDI\YAMAHA MIDI\bin\Debug\SharpOSC.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\YAMAHA MIDI.exe.config
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\YAMAHA MIDI.exe
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\YAMAHA MIDI.pdb
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\SharpOSC.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csprojAssemblyReference.cache
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\MainWindow.g.cs
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\App.g.cs
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI_MarkupCompile.cache
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI_MarkupCompile.lref
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\MainWindow.baml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.g.resources
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA_MIDI.Properties.Resources.resources
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.GenerateResource.cache
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CoreCompileInputs.cache
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyComplete
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.exe
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.pdb
