@@ -16,32 +16,47 @@ namespace YAMAHA_MIDI {
 		UDPSender oscIn = new UDPSender("127.0.0.1", 55555);
 		UDPListener oscOut;
 
-		OutputDevice LS9_in = OutputDevice.GetByName("LS9");
-		InputDevice LS9_out = InputDevice.GetByName("LS9");
+		OutputDevice LS9_in;
+		InputDevice LS9_out;
 
 		Timer activeSensingTimer;
 
 		public MainWindow () {
 			InitializeComponent();
-			InitializeIO();
 			oscOut = new UDPListener(55554, parseOSCMessage);
+		}
+
+		private void Window_Loaded (object sender, RoutedEventArgs e) {
+			InitializeIO();
 		}
 
 		#region setupMIDI
 		public void InitializeIO () {
+			try {
+				LS9_in = OutputDevice.GetByName("LS9");
+				LS9_out = InputDevice.GetByName("LS9");
+			} catch (ArgumentException ex) {
+				MessageBox.Show($"Can't initialize LS9 MIDI ports!\n{ex.Message}");
+				Console.WriteLine(ex.Message);
+				return;
+			}
 			LS9_in.EventSent += LS9_in_EventSent;
 			LS9_out.EventReceived += LS9_out_EventReceived;
 			try {
 				LS9_out.StartEventsListening();
-			} catch (MidiDeviceException e) {
+			} catch (MidiDeviceException ex) {
 				Console.WriteLine("Couldn't start listening to LS9");
+				Console.WriteLine(ex.Message);
+				return;
 			}
 			if (LS9_out.IsListeningForEvents) {
 				ResetEvent systemReset = new ResetEvent();
 				try {
 					LS9_in.SendEvent(systemReset);
-				} catch (MidiDeviceException e) {
+				} catch (MidiDeviceException ex) {
 					Console.WriteLine("Couldn't send system reset MIDI event to LS9");
+					Console.WriteLine(ex.Message);
+					return;
 				}
 				activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
 			}
@@ -53,6 +68,7 @@ namespace YAMAHA_MIDI {
 				LS9_in.SendEvent(activeSense); // MIDI should now be initialized with the desk
 			} catch (MidiDeviceException e) {
 				Console.WriteLine("Couldn't send active sensing MIDI event to LS9");
+				Console.WriteLine(e.Message);
 			}
 		}
 		#endregion
@@ -81,16 +97,16 @@ namespace YAMAHA_MIDI {
 			byte data1 = bytes[16];         // ''
 			byte sysExEnd = bytes[17];      // End of SysEx message, 0xF7
 
-			if (manufacturerID == 0x43 &&
-				deviceNumber == 0x10 &&
-				groupID == 0x3E &&
-				modelID == 0x12 &&
-				dataCategory == 0x01 &&
-				elementMSB == 0x00 &&
-				elementLSB == 0x43) {
+			if (manufacturerID == 0x43 &&   // YAMAHA
+				deviceNumber == 0x10 &&     // Device 0
+				groupID == 0x3E &&          // Digital mixer
+				modelID == 0x12 &&          // LS9
+				dataCategory == 0x01 &&     // kInput
+				elementMSB == 0x00 &&       // kInputToMix
+				elementLSB == 0x43) {       // kInputToMix
 				int index = indexMSB << 7;
 				index += indexLSB;
-				if (0x05 <= index && index <= 0x14) {
+				if (index == 0x05 || index == 0x08 || index == 0x0E || index == 0x11 || index == 0x14) { // the index number must be for Mix1-6 send level
 					return true;
 				}
 			}
@@ -98,20 +114,21 @@ namespace YAMAHA_MIDI {
 		}
 
 		(int, int, int) ConvertByteArray (byte[] bytes) {
-			byte mixMSB = bytes[8];
-			byte mixLSB = bytes[9];
-			int mix = mixMSB << 7;
-			mix += mixLSB;
+			byte mixMSB = bytes[8];         // mix number MSB
+			byte mixLSB = bytes[9];         // mix number LSB
+			int mix = mixMSB << 7;          // Convert MSB to int in the right place
+			mix += mixLSB;                  // Add LSB
 
-			byte channelMSB = bytes[10];
-			byte channelLSB = bytes[11];
-			int channel = channelMSB << 7;
-			channel += channelLSB;
+			byte channelMSB = bytes[10];    // channel number MSB
+			byte channelLSB = bytes[11];    // channel number LSB
+			int channel = channelMSB << 7;  // Convert MSB to int in the right place
+			channel += channelLSB;          // Add LSB
+			channel++;                      // LS9 has 0-indexed channel numbers over MIDI
 
-			byte valueMSB = bytes[15];
-			byte valueLSB = bytes[16];
-			int value = valueMSB << 7;
-			value += valueLSB;
+			byte valueMSB = bytes[15];      // value MSB (for up to 14-bit value)
+			byte valueLSB = bytes[16];      // value LSB
+			int value = valueMSB << 7;      // Convert MSB to int in the right place
+			value += valueLSB;              // Add LSB
 
 			return (mix, channel, value);
 		}
@@ -119,18 +136,21 @@ namespace YAMAHA_MIDI {
 
 		#region MIDI
 		void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
-			var LS9_out = (MidiDevice)sender;
+			var LS9_device = (MidiDevice)sender;
+			if (e.Event.EventType != MidiEventType.NormalSysEx)
+				return;
 			SysExEvent midiEvent = (SysExEvent)e.Event;
-			Console.WriteLine($"Event received from '{LS9_out.Name}' as: {e.Event}");
+			Console.WriteLine($"Event received from '{LS9_device.Name}' as: {e.Event}");
 			if (CheckSysEx(midiEvent.Data)) {
 				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
 				sendOSCMessage(16 * mix + channel, value);
-				/*this.Dispatcher.Invoke(() => {
-					testBar.Value = value;
-					testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
-					testSlider.Value = value; // Actually change the value
-					testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
-				});*/
+				if (16 * mix + channel == 1)
+					Dispatcher.Invoke(() => {
+						testBar.Value = value;
+						testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
+						testSlider.Value = value;                           // Actually change the value
+						testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
+					});
 			}
 		}
 
@@ -143,6 +163,9 @@ namespace YAMAHA_MIDI {
 			} catch (MidiDeviceException ex) {
 				Console.WriteLine("Well shucks, LS9_in don't work no more...");
 				Console.WriteLine(ex.Message);
+			} catch (NullReferenceException ex) {
+				Console.WriteLine("LS9_in isn't available right now");
+				Console.WriteLine(ex.Message);
 			}
 		}
 
@@ -150,6 +173,7 @@ namespace YAMAHA_MIDI {
 			byte mixLSB = (byte)(mix);
 			byte mixMSB = (byte)(mix >> 8);
 
+			channel--; // LS9 channels are 0-indexed, OSC/REAPER is 1-indexed
 			byte channelLSB = (byte)(channel);
 			byte channelMSB = (byte)(channel >> 8);
 
@@ -170,8 +194,8 @@ namespace YAMAHA_MIDI {
 		}
 
 		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
-			var LS9_in = (MidiDevice)sender;
-			Console.WriteLine($"Event sent to '{LS9_in.Name}' as: {e.Event}");
+			var LS9_device = (MidiDevice)sender;
+			Console.WriteLine($"Event sent to '{LS9_device.Name}' as: {e.Event}");
 		}
 		#endregion
 
@@ -190,14 +214,14 @@ namespace YAMAHA_MIDI {
 
 		void handleOSCMessage (OscMessage message) {
 			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
+			int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
+			int channel = fader % 16;
+			int mix = (fader - channel) / 16;
 			if (message.Address.Contains("/iem/fader")) {
-				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
-				int channel = fader % 16;
-				int mix = (fader - channel) / 16;
 				float value = (float)message.Arguments[0];
 				SendSysEx(mix, channel, value);
 				if (fader == 1) {
-					this.Dispatcher.Invoke(() => {
+					Dispatcher.Invoke(() => {
 						testBar.Value = value * 100f;
 						testSlider.ValueChanged -= testSlider_ValueChanged;
 						testSlider.Value = value * 100f;
@@ -205,18 +229,17 @@ namespace YAMAHA_MIDI {
 					});
 				}
 			} else if (message.Address.Contains("/iem/db")) {
-				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
-				int channel = fader % 16;
-				int mix = (fader - channel) / 16;
 				string value = (string)message.Arguments[0];
-				this.Dispatcher.Invoke(() => {
-					dbLabel.Content = value;
-				});
+				if (fader == 1) {
+					Dispatcher.Invoke(() => {
+						dbLabel.Content = value;
+					});
+				}
 			}
 		}
 
 		void sendOSCMessage (int channel, int value) {
-			float faderPos = value / 16383; // convert from 14-bt to 0-1 float
+			float faderPos = value / 16383; // convert from 14-bit to 0-1 float
 			OscMessage message = new OscMessage($"/iem/fader{channel}", faderPos);
 			oscIn.Send(message);
 		}
@@ -229,7 +252,8 @@ namespace YAMAHA_MIDI {
 
 		private void disposeSensingTimerButton_Click (object sender, RoutedEventArgs e) {
 			(activeSensingTimer as IDisposable)?.Dispose();
-			Console.WriteLine("Disposed active sensing timer");
+			if (activeSensingTimer != null)
+				Console.WriteLine("Disposed active sensing timer");
 		}
 
 		void testSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
@@ -253,5 +277,7 @@ namespace YAMAHA_MIDI {
 			(LS9_out as IDisposable)?.Dispose();
 			base.OnClosed(e);
 		}
+
+
 	}
 }
