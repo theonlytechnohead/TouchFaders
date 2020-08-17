@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
@@ -11,18 +13,27 @@ using SharpOSC;
 
 namespace YAMAHA_MIDI {
 
-	public class oscDevice {
-		public string name;
+	public class oscDevice : INotifyPropertyChanged {
+		public string name { get; set; }
 		public UDPListener input = null;
 		public UDPSender output = null;
 		public List<float> faders;
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public oscDevice () {
 			name = "Unnamed device";
 			faders = (from number in Enumerable.Range(1, 96) select 0f).ToList();
 		}
 
+		public void setName (string value) {
+			name = value;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
+		}
+
 		public void InitializeIO (string address, int port, int localPort) {
+			(input as IDisposable)?.Dispose();
+			(output as IDisposable)?.Dispose();
 			input = new UDPListener(localPort, parseOSCMessage);
 			output = new UDPSender(address, port);
 		}
@@ -66,6 +77,7 @@ namespace YAMAHA_MIDI {
 	public partial class MainWindow : Window {
 
 		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
+		//BindingList<oscDevice> oscDevices = new BindingList<oscDevice>();
 
 		UDPSender oscIn = new UDPSender("127.0.0.1", 55555);
 		UDPListener oscOut;
@@ -78,7 +90,6 @@ namespace YAMAHA_MIDI {
 		public MainWindow () {
 			InitializeComponent();
 			deviceListBox.ItemsSource = oscDevices;
-			oscDevices.Add(new oscDevice());
 			oscOut = new UDPListener(55554, parseOSCMessage);
 		}
 
@@ -326,6 +337,31 @@ namespace YAMAHA_MIDI {
 			TestMixerOutput();
 		}
 
+		private void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			if (deviceListBox.SelectedItem != null) {
+				int index = deviceListBox.SelectedIndex;
+				oscDevice device = deviceListBox.SelectedItem as oscDevice;
+				CreateOSCDevice editOSCdevice = new CreateOSCDevice();
+				editOSCdevice.Owner = this;
+				editOSCdevice.DataContext = this.DataContext;
+				editOSCdevice.name.Text = device.name;
+				editOSCdevice.listenPort.Text = device.input.Port.ToString();
+				editOSCdevice.addressIPTextBox.Address = device.output.Address.ToString();
+				editOSCdevice.sendPort.Text = device.output.Port.ToString();
+				editOSCdevice.addButton.Content = "Save OSC device";
+				editOSCdevice.Title = "Edit OSC device";
+				editOSCdevice.ShowDialog();
+				if (editOSCdevice.DialogResult.Value) {
+					string address = editOSCdevice.addressIPTextBox.Address;
+					int sendPort = int.Parse(editOSCdevice.sendPort.Text);
+					int listenPort = int.Parse(editOSCdevice.listenPort.Text);
+					oscDevices[index].setName(editOSCdevice.name.Text);
+					oscDevices[index].InitializeIO(address, sendPort, listenPort);
+					CollectionViewSource.GetDefaultView(oscDevices).Refresh(); // should use INotifyPropertyChanged SOMEHOW!?!
+				}
+			}
+		}
+
 		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
@@ -336,6 +372,7 @@ namespace YAMAHA_MIDI {
 				int sendPort = int.Parse(createOSCDevice.sendPort.Text);
 				int listenPort = int.Parse(createOSCDevice.listenPort.Text);
 				oscDevice device = new oscDevice();
+				device.name = createOSCDevice.name.Text;
 				device.InitializeIO(address, sendPort, listenPort);
 				oscDevices.Add(device);
 			}
@@ -348,6 +385,5 @@ namespace YAMAHA_MIDI {
 			(LS9_out as IDisposable)?.Dispose();
 			base.OnClosed(e);
 		}
-
 	}
 }

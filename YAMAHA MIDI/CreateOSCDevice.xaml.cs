@@ -13,7 +13,8 @@ namespace YAMAHA_MIDI {
 		}
 
 		private void Window_Loaded (object sender, RoutedEventArgs e) {
-			addressIPTextBox.FirstSegment.Focus();
+			name.Focus();
+			//addressIPTextBox.FirstSegment.Focus();
 			addressIPTextBox.AddressChangedEvent = textChanged;
 		}
 
@@ -44,6 +45,10 @@ namespace YAMAHA_MIDI {
 		public static bool IsValidPort (string str) {
 			int i;
 			return int.TryParse(str, out i) && 0 < i && i <= 65535; // Make sure that the int entered is a valid UDP port
+		}
+
+		private void cancelButton_Click (object sender, RoutedEventArgs e) {
+			Close();
 		}
 	}
 }
