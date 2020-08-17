@@ -36,3 +36,4 @@ D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CoreCo
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyComplete
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.exe
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.pdb
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\GeneratedInternalTypeHelper.g.cs

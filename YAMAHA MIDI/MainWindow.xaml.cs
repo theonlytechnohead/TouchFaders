@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -8,10 +10,58 @@ using Melanchall.DryWetMidi.Devices;
 using SharpOSC;
 
 namespace YAMAHA_MIDI {
+
+	public class oscDevice {
+		public string name { get; set; }
+		public UDPListener input { get; set; }
+		public UDPSender output { get; set; }
+		public List<float> faders { get; set; }
+
+		public oscDevice () {
+			name = "Unnamed device";
+			faders = (from number in Enumerable.Range(1, 96) select 0f).ToList();
+		}
+
+		public void InitializeIO (UDPListener input, UDPSender output) {
+			this.input = input;
+			this.output = output;
+		}
+
+		public void parseOSCMessage (OscPacket packet) {
+			if (packet is OscBundle) {
+				OscBundle messageBundle = (OscBundle)packet;
+				foreach (OscMessage message in messageBundle.Messages) {
+					handleOSCMessage(message);
+				}
+			} else {
+				OscMessage message = (OscMessage)packet;
+				handleOSCMessage(message);
+			}
+		}
+
+		private void handleOSCMessage (OscMessage message) {
+			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
+			if (message.Address.Contains("/iem/fader")) {
+				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
+				int channel = fader % 16;
+				int mix = (fader - channel) / 16;
+				float value = (float)message.Arguments[0];
+				//SendSysEx(mix, channel, value);
+				faders[fader] = value;
+			}
+		}
+
+		public override string ToString () {
+			return name + " with " + faders.Count + " faders";
+		}
+	}
+
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
+
+		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
 
 		UDPSender oscIn = new UDPSender("127.0.0.1", 55555);
 		UDPListener oscOut;
@@ -23,6 +73,7 @@ namespace YAMAHA_MIDI {
 
 		public MainWindow () {
 			InitializeComponent();
+			deviceListBox.ItemsSource = oscDevices;
 			oscOut = new UDPListener(55554, parseOSCMessage);
 		}
 
@@ -269,6 +320,10 @@ namespace YAMAHA_MIDI {
 		void sendSysEx_Click (object sender, RoutedEventArgs e) {
 			TestMixerOutput();
 		}
+
+		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
+			oscDevices.Add(new oscDevice());
+		}
 		#endregion
 
 		protected override void OnClosed (EventArgs e) {
@@ -277,7 +332,6 @@ namespace YAMAHA_MIDI {
 			(LS9_out as IDisposable)?.Dispose();
 			base.OnClosed(e);
 		}
-
 
 	}
 }
