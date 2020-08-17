@@ -1,0 +1,29 @@
+﻿<Window x:Class="YAMAHA_MIDI.CreateOSCDevice"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YAMAHA_MIDI"
+        mc:Ignorable="d"
+        Title="Create OSC Device" Height="200" Width="300" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Topmost="True" Loaded="Window_Loaded">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="addButton" Content="Add new device" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Click="addButton_Click" Padding="5,1" TabIndex="3" IsDefault="True" IsEnabled="False"/>
+            <local:IPTextBox x:Name="addressIPTextBox" Width="120" Height="23" TabIndex="0"></local:IPTextBox>
+            <TextBox x:Name="listenPort" PreviewTextInput="listenPort_PreviewTextInput" TextChanged="textChanged" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Height="23" TabIndex="2"/>
+            <TextBox x:Name="sendPort" PreviewTextInput="sendPort_PreviewTextInput" TextChanged="textChanged" Grid.Column="1" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" TabIndex="1"/>
+            <Label Content="IP address" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,46" Width="120" Height="23" Padding="0" VerticalContentAlignment="Center"/>
+            <Label Content="Send port" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" Height="23" Padding="0" VerticalContentAlignment="Center" Grid.Column="1" Margin="0,0,0,46"/>
+            <Label Content="Listen port" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" Height="23" Padding="0" VerticalContentAlignment="Center" Grid.Row="1" Margin="0,0,0,45"/>
+        </Grid>
+
+    </Grid>
+</Window>

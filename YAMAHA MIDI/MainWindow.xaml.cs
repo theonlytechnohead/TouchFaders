@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using SharpOSC;
@@ -12,19 +12,19 @@ using SharpOSC;
 namespace YAMAHA_MIDI {
 
 	public class oscDevice {
-		public string name { get; set; }
-		public UDPListener input { get; set; }
-		public UDPSender output { get; set; }
-		public List<float> faders { get; set; }
+		public string name;
+		public UDPListener input = null;
+		public UDPSender output = null;
+		public List<float> faders;
 
 		public oscDevice () {
 			name = "Unnamed device";
 			faders = (from number in Enumerable.Range(1, 96) select 0f).ToList();
 		}
 
-		public void InitializeIO (UDPListener input, UDPSender output) {
-			this.input = input;
-			this.output = output;
+		public void InitializeIO (string address, int port, int localPort) {
+			input = new UDPListener(localPort, parseOSCMessage);
+			output = new UDPSender(address, port);
 		}
 
 		public void parseOSCMessage (OscPacket packet) {
@@ -52,7 +52,11 @@ namespace YAMAHA_MIDI {
 		}
 
 		public override string ToString () {
-			return name + " with " + faders.Count + " faders";
+			if (input == null && output == null) {
+				return name + " with " + faders.Count + " faders";
+			} else {
+				return name + " at " + output.Address + ":" + output.Port + ", " + input.Port;
+			}
 		}
 	}
 
@@ -74,6 +78,7 @@ namespace YAMAHA_MIDI {
 		public MainWindow () {
 			InitializeComponent();
 			deviceListBox.ItemsSource = oscDevices;
+			oscDevices.Add(new oscDevice());
 			oscOut = new UDPListener(55554, parseOSCMessage);
 		}
 
@@ -322,7 +327,18 @@ namespace YAMAHA_MIDI {
 		}
 
 		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
-			oscDevices.Add(new oscDevice());
+			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
+			createOSCDevice.Owner = this;
+			createOSCDevice.DataContext = this.DataContext;
+			createOSCDevice.ShowDialog();
+			if (createOSCDevice.DialogResult.Value) {
+				string address = createOSCDevice.addressIPTextBox.Address;
+				int sendPort = int.Parse(createOSCDevice.sendPort.Text);
+				int listenPort = int.Parse(createOSCDevice.listenPort.Text);
+				oscDevice device = new oscDevice();
+				device.InitializeIO(address, sendPort, listenPort);
+				oscDevices.Add(device);
+			}
 		}
 		#endregion
 
