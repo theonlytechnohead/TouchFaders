@@ -14,7 +14,19 @@ using SharpOSC;
 namespace YAMAHA_MIDI {
 
 	public class oscDevice : INotifyPropertyChanged {
-		public string name { get; set; }
+		public string name;
+		public string Name {
+			get {
+				if (input == null && output == null) {
+					return name + " with " + faders.Count + " faders";
+				} else {
+					return name + " at " + output.Address + ":" + output.Port + ", " + input.Port;
+				}
+			}
+			set {
+				name = value;
+			}
+		}
 		public UDPListener input = null;
 		public UDPSender output = null;
 		public List<float> faders;
@@ -22,12 +34,12 @@ namespace YAMAHA_MIDI {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public oscDevice () {
-			name = "Unnamed device";
+			Name = "Unnamed device";
 			faders = (from number in Enumerable.Range(1, 96) select 0f).ToList();
 		}
 
 		public void setName (string value) {
-			name = value;
+			Name = value;
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
 		}
 
@@ -36,6 +48,7 @@ namespace YAMAHA_MIDI {
 			(output as IDisposable)?.Dispose();
 			input = new UDPListener(localPort, parseOSCMessage);
 			output = new UDPSender(address, port);
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
 		}
 
 		public void parseOSCMessage (OscPacket packet) {
@@ -61,14 +74,6 @@ namespace YAMAHA_MIDI {
 				faders[fader] = value;
 			}
 		}
-
-		public override string ToString () {
-			if (input == null && output == null) {
-				return name + " with " + faders.Count + " faders";
-			} else {
-				return name + " at " + output.Address + ":" + output.Port + ", " + input.Port;
-			}
-		}
 	}
 
 	/// <summary>
@@ -77,14 +82,11 @@ namespace YAMAHA_MIDI {
 	public partial class MainWindow : Window {
 
 		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
-		//BindingList<oscDevice> oscDevices = new BindingList<oscDevice>();
-
 		UDPSender oscIn = new UDPSender("127.0.0.1", 55555);
 		UDPListener oscOut;
 
 		OutputDevice LS9_in;
 		InputDevice LS9_out;
-
 		Timer activeSensingTimer;
 
 		public MainWindow () {
@@ -345,9 +347,12 @@ namespace YAMAHA_MIDI {
 				editOSCdevice.Owner = this;
 				editOSCdevice.DataContext = this.DataContext;
 				editOSCdevice.name.Text = device.name;
-				editOSCdevice.listenPort.Text = device.input.Port.ToString();
-				editOSCdevice.addressIPTextBox.Address = device.output.Address.ToString();
-				editOSCdevice.sendPort.Text = device.output.Port.ToString();
+				if (device.input != null)
+					editOSCdevice.listenPort.Text = device.input.Port.ToString();
+				if (device.output != null) {
+					editOSCdevice.addressIPTextBox.Address = device.output.Address.ToString();
+					editOSCdevice.sendPort.Text = device.output.Port.ToString();
+				}
 				editOSCdevice.addButton.Content = "Save OSC device";
 				editOSCdevice.Title = "Edit OSC device";
 				editOSCdevice.ShowDialog();
@@ -357,7 +362,6 @@ namespace YAMAHA_MIDI {
 					int listenPort = int.Parse(editOSCdevice.listenPort.Text);
 					oscDevices[index].setName(editOSCdevice.name.Text);
 					oscDevices[index].InitializeIO(address, sendPort, listenPort);
-					CollectionViewSource.GetDefaultView(oscDevices).Refresh(); // should use INotifyPropertyChanged SOMEHOW!?!
 				}
 			}
 		}
