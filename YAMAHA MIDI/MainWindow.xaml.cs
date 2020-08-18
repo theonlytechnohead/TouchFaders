@@ -1,20 +1,23 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Threading;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using SharpOSC;
+using System.IO;
 
 namespace YAMAHA_MIDI {
 
 	public class oscDevice : INotifyPropertyChanged {
 		public string name;
+		[JsonIgnore]
 		public string Name {
 			get {
 				if (input == null && output == null) {
@@ -25,8 +28,65 @@ namespace YAMAHA_MIDI {
 			}
 			set {
 				name = value;
+				DeviceName = value;
 			}
 		}
+
+		#region JsonProperties
+		public string DeviceName { get { return name; } set { name = value; } }
+
+		string address;
+		public string Address {
+			get {
+				if (output != null)
+					return output.Address;
+				else
+					return address;
+			}
+			set {
+				address = value;
+			}
+		}
+
+		int sendPort;
+		public int? SendPort {
+			get {
+				if (output != null)
+					return output.Port;
+				else
+					return sendPort;
+			}
+			set {
+				sendPort = value.Value;
+			}
+		}
+
+		int listenPort;
+		public int? ListenPort {
+			get {
+				if (input != null)
+					return input.Port;
+				else
+					return listenPort;
+			}
+			set {
+				listenPort = value.Value;
+			}
+		}
+
+		public List<float> Faders {
+			get {
+				if (faders != null)
+					return faders;
+				else
+					return null;
+			}
+			set {
+				faders = value;
+			}
+		}
+		#endregion
+
 		public UDPListener input = null;
 		public UDPSender output = null;
 		public List<float> faders;
@@ -38,12 +98,22 @@ namespace YAMAHA_MIDI {
 			faders = (from number in Enumerable.Range(1, 96) select 0f).ToList();
 		}
 
+		public void refresh () {
+			if (DeviceName != null)
+				setName(DeviceName);
+			if (Address != null && ListenPort != null && SendPort != null)
+				InitializeIO(Address, SendPort.Value, ListenPort.Value);
+		}
+
 		public void setName (string value) {
 			Name = value;
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
 		}
 
 		public void InitializeIO (string address, int port, int localPort) {
+			Address = address;
+			SendPort = port;
+			ListenPort = localPort;
 			(input as IDisposable)?.Dispose();
 			(output as IDisposable)?.Dispose();
 			input = new UDPListener(localPort, parseOSCMessage);
@@ -70,9 +140,24 @@ namespace YAMAHA_MIDI {
 				int channel = fader % 16;
 				int mix = (fader - channel) / 16;
 				float value = (float)message.Arguments[0];
-				//SendSysEx(mix, channel, value);
-				faders[fader] = value;
+				MainWindow.instance.SendSysEx(mix, channel, value);
+				faders[fader - 1] = value;
+			} else if (message.Address.Contains("/action/41743")) {
+				if (message.Arguments[0].ToString() == "1")
+					resendAllFaders();
 			}
+		}
+
+		public void resendAllFaders () {
+			for (int i = 0; i < faders.Count; i++) {
+				sendOSCMessage(i + 1, faders[i]);
+				Thread.Sleep(5);
+			}
+		}
+
+		public void sendOSCMessage (int channel, float value) {
+			OscMessage message = new OscMessage($"/iem/fader{channel}", value);
+			output.Send(message);
 		}
 	}
 
@@ -81,9 +166,9 @@ namespace YAMAHA_MIDI {
 	/// </summary>
 	public partial class MainWindow : Window {
 
+		public static MainWindow instance;
+
 		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
-		UDPSender oscIn = new UDPSender("127.0.0.1", 55555);
-		UDPListener oscOut;
 
 		OutputDevice LS9_in;
 		InputDevice LS9_out;
@@ -91,12 +176,82 @@ namespace YAMAHA_MIDI {
 
 		public MainWindow () {
 			InitializeComponent();
+			instance = this;
+			LoadAll();
 			deviceListBox.ItemsSource = oscDevices;
-			oscOut = new UDPListener(55554, parseOSCMessage);
 		}
 
+		#region Scaling
+		// This section smoothly scales everything within the mainGrid
+		public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
+			typeof(double),
+			typeof(MainWindow),
+			new UIPropertyMetadata(1.0,
+				new PropertyChangedCallback(OnScaleValueChanged),
+				new CoerceValueCallback(OnCoerceScaleValue)));
+
+		private static object OnCoerceScaleValue (DependencyObject o, object value) {
+			MainWindow mainWindow = o as MainWindow;
+			if (mainWindow != null)
+				return mainWindow.OnCoerceScaleValue((double)value);
+			else
+				return value;
+		}
+
+		private static void OnScaleValueChanged (DependencyObject o, DependencyPropertyChangedEventArgs e) {
+			MainWindow mainWindow = o as MainWindow;
+			if (mainWindow != null)
+				mainWindow.OnScaleValueChanged((double)e.OldValue, (double)e.NewValue);
+		}
+
+		protected virtual double OnCoerceScaleValue (double value) {
+			if (double.IsNaN(value))
+				return 1.0f;
+
+			value = Math.Max(1f, value);
+			return value;
+		}
+
+		protected virtual void OnScaleValueChanged (double oldValue, double newValue) {
+			// Don't need to do anything
+		}
+
+		public double ScaleValue {
+			get {
+				return (double)GetValue(ScaleValueProperty);
+			}
+			set {
+				SetValue(ScaleValueProperty, value);
+			}
+		}
+
+		private void mainGrid_SizeChanged (object sender, EventArgs e) {
+			CalculateScale();
+		}
+
+		private void CalculateScale () {
+			double xScale = ActualWidth / 600f; // must be set to initial window sizing for proper scaling!!!
+			double yScale = ActualHeight / 300f; // must be set to initial window sizing for proper scaling!!!
+			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
+			ScaleValue = (double)OnCoerceScaleValue(mainWindow, value); // Update the actual scale for the main window
+		}
+
+		#endregion
+
 		private void Window_Loaded (object sender, RoutedEventArgs e) {
-			InitializeIO();
+			//InitializeIO();
+			CalculateScale();
+		}
+
+		void LoadAll () {
+			try {
+				string file = File.ReadAllText("oscDevices.txt");
+				oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(file, new JsonSerializerOptions { IgnoreNullValues = true, });
+			} catch (FileNotFoundException) {
+				SaveAll();
+			}
+			foreach (oscDevice device in oscDevices)
+				device.refresh();
 		}
 
 		#region setupMIDI
@@ -212,14 +367,9 @@ namespace YAMAHA_MIDI {
 			Console.WriteLine($"Event received from '{LS9_device.Name}' as: {e.Event}");
 			if (CheckSysEx(midiEvent.Data)) {
 				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-				sendOSCMessage(16 * mix + channel, value);
-				if (16 * mix + channel == 1)
-					Dispatcher.Invoke(() => {
-						testBar.Value = value;
-						testSlider.ValueChanged -= testSlider_ValueChanged; // Avoid feedback loop
-						testSlider.Value = value;                           // Actually change the value
-						testSlider.ValueChanged += testSlider_ValueChanged; // Allow for value changes to update the value now
-					});
+				foreach (oscDevice device in oscDevices) {
+					device.sendOSCMessage(16 * mix + channel, value);
+				}
 			}
 		}
 
@@ -238,7 +388,7 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		void SendSysEx (int mix, int channel, float value) {
+		public void SendSysEx (int mix, int channel, float value) {
 			byte mixLSB = (byte)(mix);
 			byte mixMSB = (byte)(mix >> 8);
 
@@ -259,6 +409,8 @@ namespace YAMAHA_MIDI {
 			} catch (MidiDeviceException ex) {
 				Console.WriteLine("Well shucks, LS9_in don't work no more...");
 				Console.WriteLine(ex.Message);
+			} catch (NullReferenceException) {
+				Console.WriteLine("LS9 don't exist...");
 			}
 		}
 
@@ -268,84 +420,35 @@ namespace YAMAHA_MIDI {
 		}
 		#endregion
 
-		#region OSC
-		void parseOSCMessage (OscPacket packet) {
-			if (packet is OscBundle) {
-				OscBundle messageBundle = (OscBundle)packet;
-				foreach (OscMessage message in messageBundle.Messages) {
-					handleOSCMessage(message);
-				}
-			} else {
-				OscMessage message = (OscMessage)packet;
-				handleOSCMessage(message);
-			}
-		}
-
-		void handleOSCMessage (OscMessage message) {
-			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
-			int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
-			int channel = fader % 16;
-			int mix = (fader - channel) / 16;
-			if (message.Address.Contains("/iem/fader")) {
-				float value = (float)message.Arguments[0];
-				SendSysEx(mix, channel, value);
-				if (fader == 1) {
-					Dispatcher.Invoke(() => {
-						testBar.Value = value * 100f;
-						testSlider.ValueChanged -= testSlider_ValueChanged;
-						testSlider.Value = value * 100f;
-						testSlider.ValueChanged += testSlider_ValueChanged;
-					});
-				}
-			} else if (message.Address.Contains("/iem/db")) {
-				string value = (string)message.Arguments[0];
-				if (fader == 1) {
-					Dispatcher.Invoke(() => {
-						dbLabel.Content = value;
-					});
-				}
-			}
-		}
-
-		void sendOSCMessage (int channel, int value) {
-			float faderPos = value / 16383; // convert from 14-bit to 0-1 float
-			OscMessage message = new OscMessage($"/iem/fader{channel}", faderPos);
-			oscIn.Send(message);
-		}
-		#endregion
-
 		#region UIEvents
-		private void initializeIOButton_Click (object sender, RoutedEventArgs e) {
+		void initializeIOButton_Click (object sender, RoutedEventArgs e) {
 			InitializeIO();
 		}
 
-		private void disposeSensingTimerButton_Click (object sender, RoutedEventArgs e) {
+		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
+			foreach (oscDevice device in oscDevices)
+				device.refresh();
+		}
+
+		void disposeSensingTimerButton_Click (object sender, RoutedEventArgs e) {
 			(activeSensingTimer as IDisposable)?.Dispose();
 			if (activeSensingTimer != null)
 				Console.WriteLine("Disposed active sensing timer");
-		}
-
-		void testSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
-			OscMessage message = new OscMessage("/iem/fader1", (float)(testSlider.Value / 100f));
-			oscIn.Send(message);
-		}
-
-		void sendOSC_Click (object sender, RoutedEventArgs e) {
-			OscMessage message = new OscMessage("/iem/fader1", 0.76f); // 0dB is approx. 0.76f in range 0-100f for REAPER as configured
-			oscIn.Send(message);
+			(LS9_in as IDisposable)?.Dispose();
+			(LS9_out as IDisposable)?.Dispose();
 		}
 
 		void sendSysEx_Click (object sender, RoutedEventArgs e) {
 			TestMixerOutput();
 		}
 
-		private void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
+		void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
 			if (deviceListBox.SelectedItem != null) {
 				int index = deviceListBox.SelectedIndex;
 				oscDevice device = deviceListBox.SelectedItem as oscDevice;
 				CreateOSCDevice editOSCdevice = new CreateOSCDevice();
 				editOSCdevice.Owner = this;
-				editOSCdevice.DataContext = this.DataContext;
+				editOSCdevice.DataContext = DataContext;
 				editOSCdevice.name.Text = device.name;
 				if (device.input != null)
 					editOSCdevice.listenPort.Text = device.input.Port.ToString();
@@ -366,7 +469,7 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
+		void addDeviceButton_Click (object sender, RoutedEventArgs e) {
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
 			createOSCDevice.DataContext = this.DataContext;
@@ -383,10 +486,17 @@ namespace YAMAHA_MIDI {
 		}
 		#endregion
 
+		async void SaveAll () {
+			using (FileStream fs = File.Create("oscDevices.txt")) {
+				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+		}
+
 		protected override void OnClosed (EventArgs e) {
 			(activeSensingTimer as IDisposable)?.Dispose();
 			(LS9_in as IDisposable)?.Dispose();
 			(LS9_out as IDisposable)?.Dispose();
+			SaveAll();
 			base.OnClosed(e);
 		}
 	}

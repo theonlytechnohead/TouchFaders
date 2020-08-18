@@ -41,3 +41,21 @@ D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyCo
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.exe
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.pdb
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csprojAssemblyReference.cache
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Buffers.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Memory.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Numerics.Vectors.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Encodings.Web.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Json.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Threading.Tasks.Extensions.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.ValueTuple.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Buffers.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Memory.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Numerics.Vectors.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Encodings.Web.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Json.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Threading.Tasks.Extensions.xml
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.ValueTuple.xml
