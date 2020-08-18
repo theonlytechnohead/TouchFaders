@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using SharpOSC;
@@ -469,6 +468,17 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
+		private void MenuItem_Click (object sender, RoutedEventArgs e) {
+			if (deviceListBox.SelectedIndex == -1) {
+				return;
+			}
+			oscDevices.RemoveAt(deviceListBox.SelectedIndex);
+		}
+
+		private void deviceListBox_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			deviceListBox.UnselectAll();
+		}
+
 		void addDeviceButton_Click (object sender, RoutedEventArgs e) {
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
@@ -499,5 +509,7 @@ namespace YAMAHA_MIDI {
 			SaveAll();
 			base.OnClosed(e);
 		}
+
+
 	}
 }

@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:YAMAHA_MIDI"
         mc:Ignorable="d"
         Title="YAMAHA MIDI" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="200" Loaded="Window_Loaded" Width="600" Height="300">
     <Grid x:Name="mainGrid" SizeChanged="mainGrid_SizeChanged">
@@ -30,12 +29,21 @@
             <Button x:Name="refreshOSCButton" Click="refreshOSCButton_Click" Content="Refresh OSC" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="1" Margin="0" Width="75" Grid.Column="1"/>
             <Button x:Name="sendSysEx" Content="Send SysEx" HorizontalAlignment="Center" VerticalAlignment="Center" Click="sendSysEx_Click" Padding="1" Grid.Row="1" Width="75"/>
             <Button x:Name="addDeviceButton" Content="Add device" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Click="addDeviceButton_Click" Padding="1" Width="75"/>
-            <ListBox x:Name="deviceListBox" MouseDoubleClick="deviceListBox_MouseDoubleClick" Grid.Column="2" Margin="5" Grid.RowSpan="2">
+            <ListBox x:Name="deviceListBox" MouseDoubleClick="deviceListBox_MouseDoubleClick" Grid.Column="2" Margin="5" Grid.RowSpan="2" MouseDown="deviceListBox_MouseDown">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"></TextBlock>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.Resources>
+                    <ContextMenu x:Key="OSC_device_menu">
+                        <MenuItem Header="Delete" Click="MenuItem_Click"/>
+                    </ContextMenu>
+
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="ContextMenu" Value="{StaticResource OSC_device_menu}" />
+                    </Style>
+                </ListBox.Resources>
             </ListBox>
         </Grid>
 
