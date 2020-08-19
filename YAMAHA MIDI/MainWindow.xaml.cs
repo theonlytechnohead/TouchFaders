@@ -94,7 +94,7 @@ namespace YAMAHA_MIDI {
 
 		public oscDevice () {
 			Name = "Unnamed device";
-			faders = (from number in Enumerable.Range(1, 96) select 0f).ToList();
+			faders = (from number in Enumerable.Range(1, 96) select 823f / 1023f).ToList(); // 0dB is at 823 when value is 10-bit, therefore 823/1023
 		}
 
 		public void refresh () {

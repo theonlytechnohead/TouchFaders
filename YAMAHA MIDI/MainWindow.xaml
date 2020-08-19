@@ -37,7 +37,11 @@
                 </ListBox.ItemTemplate>
                 <ListBox.Resources>
                     <ContextMenu x:Key="OSC_device_menu">
-                        <MenuItem Header="Delete" Click="MenuItem_Click"/>
+                        <MenuItem Header="Delete" Click="MenuItem_Click">
+                            <MenuItem.Icon>
+                                <Image Source="/YAMAHA MIDI;component/Resources/delete.png"></Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </ContextMenu>
 
                     <Style TargetType="{x:Type ListBoxItem}">
