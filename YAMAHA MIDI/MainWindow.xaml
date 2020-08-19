@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="YAMAHA MIDI" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="200" Loaded="Window_Loaded" Width="600" Height="300">
+        Title="YAMAHA MIDI" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="200" Width="600" Height="300">
     <Grid x:Name="mainGrid" SizeChanged="mainGrid_SizeChanged">
         <Grid.LayoutTransform>
             <ScaleTransform x:Name="ApplicationScaleTransform"
@@ -24,8 +24,8 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button x:Name="initializeIOButton" Content="Initialize IO" HorizontalAlignment="Center" VerticalAlignment="Center" Click="initializeIOButton_Click" Padding="5,1" Margin="0,0,0,30" Width="75"/>
-            <Button x:Name="disposeSensingTimerButton" Content="Close MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="disposeSensingTimerButton_Click" Padding="1" Width="75" Margin="0,30,0,0"/>
+            <Button x:Name="startMIDIButton" Content="Start MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startMIDIButton_Click" Padding="5,1" Margin="0,0,0,30" Width="75"/>
+            <Button x:Name="stopMIDIButton" Content="Stop MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopMIDIButton_Click" Padding="1" Width="75" Margin="0,30,0,0"/>
             <Button x:Name="refreshOSCButton" Click="refreshOSCButton_Click" Content="Refresh OSC" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="1" Margin="0" Width="75" Grid.Column="1"/>
             <Button x:Name="sendSysEx" Content="Send SysEx" HorizontalAlignment="Center" VerticalAlignment="Center" Click="sendSysEx_Click" Padding="1" Grid.Row="1" Width="75"/>
             <Button x:Name="addDeviceButton" Content="Add device" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Click="addDeviceButton_Click" Padding="1" Width="75"/>
