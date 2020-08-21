@@ -178,6 +178,7 @@ namespace YAMAHA_MIDI {
 			Title = "YAMAHA MIDI - MIDI not started";
 			LoadAll();
 			deviceListBox.ItemsSource = oscDevices;
+			displayMIDIDevices();
 		}
 
 		#region Scaling
@@ -248,14 +249,32 @@ namespace YAMAHA_MIDI {
 				device.Refresh();
 		}
 
+		void displayMIDIDevices () {
+			inputMIDIComboBox.IsEnabled = false;
+			inputMIDIComboBox.Items.Clear();
+			foreach (InputDevice inputDevice in InputDevice.GetAll()) {
+				inputMIDIComboBox.Items.Add(inputDevice.Name);
+				inputMIDIComboBox.IsEnabled = true;
+			}
+			outputMIDIComboBox.IsEnabled = false;
+			outputMIDIComboBox.Items.Clear();
+			foreach (OutputDevice outputDevice in OutputDevice.GetAll()) {
+				outputMIDIComboBox.Items.Add(outputDevice.Name);
+				outputMIDIComboBox.IsEnabled = true;
+			}
+		}
+
 		#region setupMIDI
 		public void InitializeIO () {
 			try {
-				LS9_in = OutputDevice.GetByName("LS9");
-				LS9_out = InputDevice.GetByName("LS9");
+				LS9_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString());
+				LS9_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString());
 			} catch (ArgumentException ex) {
-				MessageBox.Show($"Can't initialize LS9 MIDI ports!\n{ex.Message}");
+				MessageBox.Show($"Can't initialize {inputMIDIComboBox.SelectedItem} and {outputMIDIComboBox.SelectedItem} MIDI ports!\n{ex.Message}");
 				Console.WriteLine(ex.Message);
+				return;
+			} catch (NullReferenceException) {
+				MessageBox.Show("Please select a MIDI input and output first!");
 				return;
 			}
 			LS9_in.EventSent += LS9_in_EventSent;
@@ -263,7 +282,7 @@ namespace YAMAHA_MIDI {
 			try {
 				LS9_out.StartEventsListening();
 			} catch (MidiDeviceException ex) {
-				Console.WriteLine("Couldn't start listening to LS9");
+				Console.WriteLine($"Couldn't start listening to {outputMIDIComboBox.SelectedItem}");
 				Console.WriteLine(ex.Message);
 				return;
 			}
@@ -272,10 +291,12 @@ namespace YAMAHA_MIDI {
 				try {
 					LS9_in.SendEvent(systemReset);
 				} catch (MidiDeviceException ex) {
-					Console.WriteLine("Couldn't send system reset MIDI event to LS9");
+					Console.WriteLine($"Couldn't send system reset MIDI event to {inputMIDIComboBox.SelectedItem}");
 					Console.WriteLine(ex.Message);
 					return;
 				}
+				inputMIDIComboBox.IsEnabled = false;
+				outputMIDIComboBox.IsEnabled = false;
 				activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
 				Title = "YAMAHA MIDI - MIDI running (active sensing)";
 				GetAllFaderValues();
@@ -419,13 +440,13 @@ namespace YAMAHA_MIDI {
 			try {
 				LS9_in.SendEvent(normalSysExEvent);
 			} catch (MidiDeviceException ex) {
-				Console.WriteLine("Well shucks, LS9 don't work no more...");
+				Console.WriteLine($"Well shucks, {LS9_in.Name} don't work no more...");
 				Console.WriteLine(ex.Message);
 			} catch (ObjectDisposedException) {
-				Console.WriteLine("Tried to use LS9 without initializing MIDI!");
+				Console.WriteLine($"Tried to use {LS9_in.Name} without initializing MIDI!");
 				MessageBox.Show("Initialize MIDI first!");
 			} catch (NullReferenceException) {
-				Console.WriteLine("Tried to use LS9 without initializing MIDI!");
+				Console.WriteLine($"Tried to use {inputMIDIComboBox.SelectedItem} without initializing MIDI!");
 				MessageBox.Show("Initialize MIDI first!");
 			}
 		}
@@ -453,6 +474,7 @@ namespace YAMAHA_MIDI {
 			Console.WriteLine("Disposed active sensing timer");
 			(LS9_in as IDisposable)?.Dispose();
 			(LS9_out as IDisposable)?.Dispose();
+			displayMIDIDevices();
 		}
 
 		void sendSysEx_Click (object sender, RoutedEventArgs e) {
