@@ -425,7 +425,7 @@ namespace YAMAHA_MIDI {
 			byte channelLSB = (byte)(channel);
 			byte channelMSB = (byte)(channel >> 8);
 
-			int value_int = Convert.ToInt32(value * 16383);
+			int value_int = Convert.ToInt32(value * 1023); // There are 1023 fader levels as per the LS9 manual, hence remapping 0-1f to 0-1023
 			byte valueMSB = (byte)(value_int);
 			byte valueLSB = (byte)(value_int >> 8);
 
