@@ -127,18 +127,22 @@ namespace YAMAHA_MIDI {
 				}
 			} else {
 				OscMessage message = (OscMessage)packet;
-				handleOSCMessage(message);
+				try {
+					handleOSCMessage(message);
+				} catch (NullReferenceException) {
+					return;
+				}
 			}
 		}
 
 		void handleOSCMessage (OscMessage message) {
-			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
+			//Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
 			if (message.Address.Contains("/iem/fader")) {
 				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
 				int channel = fader % 16;
 				int mix = (fader - channel) / 16;
 				float value = (float)message.Arguments[0];
-				MainWindow.instance.SendFaderValue(mix, channel, value);
+				MainWindow.instance.SendFaderValue(mix, channel, value, this);
 				faders[fader - 1] = value;
 			} else if (message.Address.Contains("/action/41743")) {
 				if (message.Arguments[0].ToString() == "1")
@@ -148,13 +152,13 @@ namespace YAMAHA_MIDI {
 
 		void ResendAllFaders () {
 			for (int i = 0; i < faders.Count; i++) {
-				sendOSCMessage(i + 1, faders[i]);
+				sendOSCMessage(i, faders[i]);
 				Thread.Sleep(5);
 			}
 		}
 
 		public void sendOSCMessage (int channel, float value) {
-			OscMessage message = new OscMessage($"/iem/fader{channel}", value);
+			OscMessage message = new OscMessage($"/iem/fader{channel + 1}", value);
 			output.Send(message);
 		}
 	}
@@ -405,6 +409,7 @@ namespace YAMAHA_MIDI {
 			if (CheckSysEx(midiEvent.Data)) {
 				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
 				foreach (oscDevice device in oscDevices) {
+					device.Faders[16 * mix + channel] = value;
 					device.sendOSCMessage(16 * mix + channel, value);
 				}
 			}
@@ -417,7 +422,7 @@ namespace YAMAHA_MIDI {
 			SendSysEx(sysExEvent);
 		}
 
-		public void SendFaderValue (int mix, int channel, float value) {
+		public void SendFaderValue (int mix, int channel, float value, oscDevice sender) {
 			byte mixLSB = (byte)(mix);
 			byte mixMSB = (byte)(mix >> 8);
 
@@ -433,7 +438,13 @@ namespace YAMAHA_MIDI {
 			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, mixMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 
-			SendSysEx(sysExEvent);
+			//SendSysEx(sysExEvent);
+			foreach (oscDevice device in oscDevices) {
+				if (device != sender) { // Avoid feedback loop!
+					device.Faders[16 * mix + channel] = value;
+					device.sendOSCMessage(16 * mix + channel, value);
+				}
+			}
 		}
 
 		public void SendSysEx (NormalSysExEvent normalSysExEvent) {
@@ -446,7 +457,7 @@ namespace YAMAHA_MIDI {
 				Console.WriteLine($"Tried to use {LS9_in.Name} without initializing MIDI!");
 				MessageBox.Show("Initialize MIDI first!");
 			} catch (NullReferenceException) {
-				Console.WriteLine($"Tried to use {inputMIDIComboBox.SelectedItem} without initializing MIDI!");
+				Console.WriteLine($"Tried to use MIDI device without initializing MIDI!");
 				MessageBox.Show("Initialize MIDI first!");
 			}
 		}
