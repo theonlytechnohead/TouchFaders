@@ -136,29 +136,44 @@ namespace YAMAHA_MIDI {
 		}
 
 		void handleOSCMessage (OscMessage message) {
-			//Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
-			if (message.Address.Contains("/iem/fader")) {
-				int fader = int.Parse(String.Join("", message.Address.Where(char.IsDigit)));
-				int channel = fader % 16;
-				int mix = (fader - channel) / 16;
-				float value = (float)message.Arguments[0];
-				MainWindow.instance.SendFaderValue(mix, channel, value, this);
-				faders[fader - 1] = value;
+			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
+			if (message.Address.Contains("/mix")) {
+				string[] address = message.Address.Split('/');
+				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
+				if (address.Length > 1) {
+					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
+					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
+					float value = (float)message.Arguments[0];
+					MainWindow.instance.SendFaderValue(mix, channel, value, this);
+					faders[channel - 1] = value;
+				} else {
+					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
+					if (message.Arguments[0].ToString() == "1") {
+						ResendMixFaders(mix);
+					}
+				}
 			} else if (message.Address.Contains("/action/41743")) {
 				if (message.Arguments[0].ToString() == "1")
 					ResendAllFaders();
 			}
 		}
 
-		void ResendAllFaders () {
-			for (int i = 0; i < faders.Count; i++) {
-				sendOSCMessage(i, faders[i]);
-				Thread.Sleep(5);
+		void ResendMixFaders (int mix) {
+			int startChannel = 16 * (mix - 1);
+			for (int i = startChannel; i < startChannel + 16; i++) {
+				sendOSCMessage(i / 16 + 1, i % 16, faders[i]);
 			}
 		}
 
-		public void sendOSCMessage (int channel, float value) {
-			OscMessage message = new OscMessage($"/iem/fader{channel + 1}", value);
+		void ResendAllFaders () {
+			for (int i = 0; i < faders.Count; i++) {
+				sendOSCMessage(i / 16 + 1, i % 16, faders[i]);
+			}
+		}
+
+		public void sendOSCMessage (int mix, int channel, float value) {
+			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel + 1}");
+			OscMessage message = new OscMessage($"/mix{mix}/fader{channel + 1}", value);
 			output.Send(message);
 		}
 	}
@@ -327,11 +342,11 @@ namespace YAMAHA_MIDI {
 			GetFaderValuesForMix(0x14); // Mix 6
 		}
 
-		void GetFaderValuesForMix (int mix) {
+		void GetFaderValuesForMix (byte mix) {
 			for (int channel = 0; channel <= 15; channel++) {
 				Thread.Sleep(2);
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
-				byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, Convert.ToByte(mix), 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
 				SendSysEx(sysExEvent);
 			}
@@ -371,8 +386,14 @@ namespace YAMAHA_MIDI {
 				elementLSB == 0x43) {       // kInputToMix
 				int index = indexMSB << 7;
 				index += indexLSB;
-				if (index == 0x05 || index == 0x08 || index == 0x0E || index == 0x11 || index == 0x14) { // the index number must be for Mix1-6 send level
-					return true;
+				switch (index) { // the index number must be for Mix1-6 send level
+					case 0x05:  // Mix 1 ...
+					case 0x08:
+					case 0x0B:
+					case 0x0E:
+					case 0x11:
+					case 0x14:  // Mix 6
+						return true;
 				}
 			}
 			return false;
@@ -381,8 +402,8 @@ namespace YAMAHA_MIDI {
 		(int, int, int) ConvertByteArray (byte[] bytes) {
 			byte mixMSB = bytes[8];         // mix number MSB
 			byte mixLSB = bytes[9];         // mix number LSB
-			int mix = mixMSB << 7;          // Convert MSB to int in the right place
-			mix += mixLSB;                  // Add LSB
+			int mixHex = mixMSB << 7;       // Convert MSB to int in the right place
+			mixHex += mixLSB;               // Add LSB
 
 			byte channelMSB = bytes[10];    // channel number MSB
 			byte channelLSB = bytes[11];    // channel number LSB
@@ -394,7 +415,16 @@ namespace YAMAHA_MIDI {
 			byte valueLSB = bytes[16];      // value LSB
 			int value = valueMSB << 7;      // Convert MSB to int in the right place
 			value += valueLSB;              // Add LSB
-
+			int mix = mixHex switch
+			{
+				0x05 => 1,
+				0x08 => 2,
+				0x0B => 3,
+				0x0E => 4,
+				0x11 => 5,
+				0x14 => 6,
+				_ => throw new NotImplementedException()
+			};
 			return (mix, channel, value);
 		}
 		#endregion
@@ -409,8 +439,8 @@ namespace YAMAHA_MIDI {
 			if (CheckSysEx(midiEvent.Data)) {
 				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
 				foreach (oscDevice device in oscDevices) {
-					device.Faders[16 * mix + channel] = value;
-					device.sendOSCMessage(16 * mix + channel, value);
+					device.Faders[16 * (mix - 1) + channel] = value;
+					device.sendOSCMessage(mix, channel, value);
 				}
 			}
 		}
@@ -423,10 +453,17 @@ namespace YAMAHA_MIDI {
 		}
 
 		public void SendFaderValue (int mix, int channel, float value, oscDevice sender) {
-			byte mixLSB = (byte)(mix);
-			byte mixMSB = (byte)(mix >> 8);
-
-			channel--; // LS9 channels are 0-indexed, OSC/REAPER is 1-indexed
+			byte mixLSB = mix switch
+			{
+				1 => 0x05,
+				2 => 0x08,
+				3 => 0x0B,
+				4 => 0x0E,
+				5 => 0x11,
+				6 => 0x14,
+				_ => throw new NotImplementedException()
+			};
+			channel--; // LS9 channels are 0-indexed, OSC is 1-indexed
 			byte channelLSB = (byte)(channel);
 			byte channelMSB = (byte)(channel >> 8);
 
@@ -435,14 +472,15 @@ namespace YAMAHA_MIDI {
 			byte valueLSB = (byte)(value_int >> 8);
 
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //				Mix					Ch							  0 db		0 dB
-			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, mixMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
+			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 
-			//SendSysEx(sysExEvent);
+			if (activeSensingTimer != null)
+				SendSysEx(sysExEvent);
 			foreach (oscDevice device in oscDevices) {
 				if (device != sender) { // Avoid feedback loop!
-					device.Faders[16 * mix + channel] = value;
-					device.sendOSCMessage(16 * mix + channel, value);
+					device.Faders[16 * (mix - 1) + channel] = value;
+					device.sendOSCMessage(mix, channel, value);
 				}
 			}
 		}
