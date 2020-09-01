@@ -136,7 +136,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		void handleOSCMessage (OscMessage message) {
-			Console.WriteLine($"Received a message: {message.Address} {message.Arguments[0]}");
+			Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
 			if (message.Address.Contains("/mix")) {
 				string[] address = message.Address.Split('/');
 				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
@@ -152,9 +152,6 @@ namespace YAMAHA_MIDI {
 						ResendMixFaders(mix);
 					}
 				}
-			} else if (message.Address.Contains("/action/41743")) {
-				if (message.Arguments[0].ToString() == "1")
-					ResendAllFaders();
 			}
 		}
 
@@ -165,7 +162,7 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		void ResendAllFaders () {
+		public void ResendAllFaders () {
 			for (int i = 0; i < faders.Count; i++) {
 				sendOSCMessage(i / 16 + 1, i % 16, faders[i]);
 			}
@@ -264,8 +261,10 @@ namespace YAMAHA_MIDI {
 			} catch (FileNotFoundException) {
 				SaveAll();
 			}
-			foreach (oscDevice device in oscDevices)
+			foreach (oscDevice device in oscDevices) {
 				device.Refresh();
+				device.ResendAllFaders();
+			}
 		}
 
 		void displayMIDIDevices () {
@@ -512,8 +511,10 @@ namespace YAMAHA_MIDI {
 		}
 
 		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
-			foreach (oscDevice device in oscDevices)
+			foreach (oscDevice device in oscDevices) {
 				device.Refresh();
+				device.ResendAllFaders();
+			}
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
