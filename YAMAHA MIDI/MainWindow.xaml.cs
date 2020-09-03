@@ -527,8 +527,10 @@ namespace YAMAHA_MIDI {
 			displayMIDIDevices();
 		}
 
-		void sendSysEx_Click (object sender, RoutedEventArgs e) {
-			TestMixerOutput();
+		void refreshFadersButton_Click (object sender, RoutedEventArgs e) {
+			//TestMixerOutput();
+			if (activeSensingTimer != null)
+				GetAllFaderValues();
 		}
 
 		void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {

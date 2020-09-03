@@ -27,7 +27,7 @@
             <Button x:Name="startMIDIButton" Content="Start MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startMIDIButton_Click" Padding="5,1" Margin="0,0,0,30" Width="75"/>
             <Button x:Name="stopMIDIButton" Content="Stop MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopMIDIButton_Click" Padding="1" Width="75" Margin="0,30,0,0"/>
             <Button x:Name="refreshOSCButton" Click="refreshOSCButton_Click" Content="Refresh OSC" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="1" Margin="0,0,0,30" Width="75" Grid.Row="1"/>
-            <Button x:Name="sendSysEx" Content="Send SysEx" HorizontalAlignment="Center" VerticalAlignment="Center" Click="sendSysEx_Click" Padding="1" Grid.Row="1" Width="75" Margin="0,30,0,0"/>
+            <Button x:Name="refreshFadersButton" Content="Refresh MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshFadersButton_Click" Padding="1" Grid.Row="1" Width="75" Margin="0,30,0,0"/>
             <ComboBox x:Name="inputMIDIComboBox" Grid.Column="1" Margin="0,0,0,30" VerticalAlignment="Center" IsEnabled="False"/>
             <ComboBox x:Name="outputMIDIComboBox" Grid.Column="1" Margin="0,30,0,0" VerticalAlignment="Center" IsEnabled="False"/>
             <Button x:Name="addDeviceButton" Content="Add device" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Click="addDeviceButton_Click" Padding="1" Width="75"/>
