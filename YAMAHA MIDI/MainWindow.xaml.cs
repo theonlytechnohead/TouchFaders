@@ -188,6 +188,9 @@ namespace YAMAHA_MIDI {
 		InputDevice LS9_out;
 		Timer activeSensingTimer;
 
+		List<float> faders;
+		List<string> channelNames;
+
 		public MainWindow () {
 			InitializeComponent();
 			instance = this;
@@ -350,6 +353,21 @@ namespace YAMAHA_MIDI {
 				SendSysEx(sysExEvent);
 			}
 		}
+
+		void GetChannelNames () {
+			for (int channel = 0; channel <= 15; channel++) {
+				Thread.Sleep(2);
+				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
+				byte[] data1 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				kNameShort1.Data = data1;
+				SendSysEx(kNameShort1);
+				Thread.Sleep(2);
+				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
+				byte[] data2 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				kNameShort2.Data = data2;
+				SendSysEx(kNameShort2);
+			}
+		}
 		#endregion
 
 		#region SysExMIDIHelpers
@@ -426,6 +444,47 @@ namespace YAMAHA_MIDI {
 			};
 			return (mix, channel, value);
 		}
+
+		void HandleNonFaderMIDI (byte[] bytes) {
+			if (bytes.Length != 18) {
+				return; // This is not the data we're looking for...
+			}
+			byte sysExStart = bytes[0];     // Signals start of SysEx, 0xF0
+			byte manufacturerID = bytes[1]; // YAMAHA is 0x43
+			byte deviceNumber = bytes[2];   // device number is 0x1n where n is 0-15 (side note, 0x1n is for parameter change, while 0x3n is for paramter request!
+			byte groupID = bytes[3];        // Digital mixer is 0x3E
+			byte modelID = bytes[4];        // LS9 is 0x12
+			byte dataCategory = bytes[5];   // kNameInputChannel is in 0x01
+			byte elementMSB = bytes[6];     // kNameShort has MSB 0x01
+			byte elementLSB = bytes[7];     // kNameShort has LSB 0x14
+			byte indexMSB = bytes[8];       // kNameShort1 is 0x00, 0x00
+			byte indexLSB = bytes[9];       // kNameShort2 is 0x00, 0x01
+			byte channelMSB = bytes[10];    // Channel MSB per channel
+			byte channelLSB = bytes[11];    // Channel LSB with a 0 in the 8th bit
+			byte data5 = bytes[12];         // Data bytes start
+			byte data4 = bytes[13];         // ''
+			byte data3 = bytes[14];         // ''
+			byte data2 = bytes[15];         // ''
+			byte data1 = bytes[16];         // ''
+			byte sysExEnd = bytes[17];      // End of SysEx message, 0xF7
+
+			if (manufacturerID == 0x43 &&   // YAMAHA
+				deviceNumber == 0x10 &&     // Device 0
+				groupID == 0x3E &&          // Digital mixer
+				modelID == 0x12 &&          // LS9
+				dataCategory == 0x01 &&     // kNameInputChannel
+				elementMSB == 0x01 &&       // kNameShort
+				elementLSB == 0x14) {       // kNameShort
+				int index = indexMSB << 7;
+				index += indexLSB;
+				switch (index) { // the index number is either for kNameShort 1 or 2
+					case 0x00:
+						return;
+					case 0x01:
+						return;
+				}
+			}
+		}
 		#endregion
 
 		#region MIDI
@@ -441,6 +500,8 @@ namespace YAMAHA_MIDI {
 					device.Faders[16 * (mix - 1) + channel] = value;
 					device.sendOSCMessage(mix, channel, value);
 				}
+			} else {
+				HandleNonFaderMIDI(midiEvent.Data);
 			}
 		}
 
