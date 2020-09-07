@@ -11,6 +11,7 @@ using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using SharpOSC;
 using System.IO;
+using System.Text;
 
 namespace YAMAHA_MIDI {
 
@@ -150,6 +151,7 @@ namespace YAMAHA_MIDI {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
 						ResendMixFaders(mix);
+						ResendMixNames(mix, MainWindow.instance.channelNames);
 					}
 				}
 			}
@@ -165,6 +167,21 @@ namespace YAMAHA_MIDI {
 		public void ResendAllFaders () {
 			for (int i = 0; i < faders.Count; i++) {
 				sendOSCMessage(i / 16 + 1, i % 16, faders[i]);
+				Thread.Sleep(2);
+			}
+		}
+
+		public void ResendMixNames (int mix, List<string> channelNames) {
+			for (int label = 1; label <= 16; label++) {
+				OscMessage message = new OscMessage($"/mix{mix}/label{label}", channelNames[label - 1]);
+				output.Send(message);
+			}
+		}
+
+		public void ResendAllNames (List<string> channelNames) {
+			for (int mix = 1; mix < 6; mix++) {
+				ResendMixNames(mix, channelNames);
+				Thread.Sleep(2);
 			}
 		}
 
@@ -188,8 +205,25 @@ namespace YAMAHA_MIDI {
 		InputDevice LS9_out;
 		Timer activeSensingTimer;
 
-		List<float> faders;
-		List<string> channelNames;
+		public List<List<float>> sendsToMix = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
+		public List<string> channelNames = new List<string>() {
+			"Kick",
+			"Snare",
+			"Overhead",
+			"CH4",
+			"CH5",
+			"CH6",
+			"CH7",
+			"CH8",
+			"CH9",
+			"CH10",
+			"CH11",
+			"CH12",
+			"Amy",
+			"Aimee",
+			"Tim",
+			"Caleb"
+		};
 
 		public MainWindow () {
 			InitializeComponent();
@@ -259,14 +293,20 @@ namespace YAMAHA_MIDI {
 
 		void LoadAll () {
 			try {
-				string file = File.ReadAllText("oscDevices.txt");
-				oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(file, new JsonSerializerOptions { IgnoreNullValues = true, });
+				string devicesFile = File.ReadAllText("oscDevices.txt");
+				oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(devicesFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				string channelsFile = File.ReadAllText("channels.txt");
+				//channelNames = JsonSerializer.Deserialize<List<string>>(channelsFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				string sendsToMixFile = File.ReadAllText("sendsToMix.txt");
+				//sendsToMix = JsonSerializer.Deserialize<List<List<float>>>(sendsToMixFile, new JsonSerializerOptions { IgnoreNullValues = true, });
 			} catch (FileNotFoundException) {
-				SaveAll();
+				_ = SaveAll();
 			}
 			foreach (oscDevice device in oscDevices) {
 				device.Refresh();
 				device.ResendAllFaders();
+				Thread.Sleep(5);
+				device.ResendAllNames(channelNames);
 			}
 		}
 
@@ -321,6 +361,7 @@ namespace YAMAHA_MIDI {
 				activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
 				Title = "YAMAHA MIDI - MIDI running (active sensing)";
 				GetAllFaderValues();
+				GetChannelNames();
 			}
 		}
 
@@ -468,6 +509,11 @@ namespace YAMAHA_MIDI {
 			byte data1 = bytes[16];         // ''
 			byte sysExEnd = bytes[17];      // End of SysEx message, 0xF7
 
+			int channel = channelMSB << 7;
+			channel += channelLSB;
+
+			byte[] data = { data5, data4, data3, data2, data1 };
+
 			if (manufacturerID == 0x43 &&   // YAMAHA
 				deviceNumber == 0x10 &&     // Device 0
 				groupID == 0x3E &&          // Digital mixer
@@ -478,10 +524,12 @@ namespace YAMAHA_MIDI {
 				int index = indexMSB << 7;
 				index += indexLSB;
 				switch (index) { // the index number is either for kNameShort 1 or 2
-					case 0x00:
-						return;
-					case 0x01:
-						return;
+					case 0x00: // kNameShort1
+						channelNames[channel] = "1" + Encoding.ASCII.GetString(data);
+						break;
+					case 0x01: // kNameShort2
+						channelNames[channel] = "2" + Encoding.ASCII.GetString(data);
+						break;
 				}
 			}
 		}
@@ -590,8 +638,10 @@ namespace YAMAHA_MIDI {
 
 		void refreshFadersButton_Click (object sender, RoutedEventArgs e) {
 			//TestMixerOutput();
-			if (activeSensingTimer != null)
+			if (activeSensingTimer != null) {
 				GetAllFaderValues();
+				GetChannelNames();
+			}
 		}
 
 		void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -649,17 +699,21 @@ namespace YAMAHA_MIDI {
 		}
 		#endregion
 
-		async void SaveAll () {
+		async System.Threading.Tasks.Task SaveAll () {
 			using (FileStream fs = File.Create("oscDevices.txt")) {
 				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
+			using (FileStream fs = File.Create("sendsToMix.txt")) {
+				await JsonSerializer.SerializeAsync(fs, sendsToMix, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+			using (FileStream fs = File.Create("channels.txt")) {
+				await JsonSerializer.SerializeAsync(fs, channelNames, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
 		}
 
-		protected override void OnClosed (EventArgs e) {
-			(activeSensingTimer as IDisposable)?.Dispose();
-			(LS9_in as IDisposable)?.Dispose();
-			(LS9_out as IDisposable)?.Dispose();
-			SaveAll();
+		protected override async void OnClosed (EventArgs e) {
+			stopMIDIButton_Click(null, null);
+			await SaveAll();
 			base.OnClosed(e);
 		}
 
