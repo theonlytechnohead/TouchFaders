@@ -8,13 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("tevirtualmidi.dll")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("tevirtualmidi32.dll")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("typelite/typelite.net4.tt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uigeneration/profilecomponentcode.tt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uigeneration/profileview.tt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uigeneration/transformationcomponentcode.tt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("uigeneration/translationcomponentcode.tt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("nlog.config")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("xmlfile1.xml")]
 
 

@@ -151,7 +151,7 @@ namespace YAMAHA_MIDI {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
 						ResendMixFaders(mix);
-						ResendMixNames(mix, MainWindow.instance.channelNames);
+						ResendMixNames(mix, MainWindow.instance.channelNames.names);
 					}
 				}
 			}
@@ -192,24 +192,18 @@ namespace YAMAHA_MIDI {
 		}
 	}
 
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window {
+	public class ChannelNames {
+		public event EventHandler channelNamesChanged;
 
-		public static MainWindow instance;
+		public string this[int index] {
+			get { return names[index]; }
+			set { names[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
+		}
 
-		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
-
-		OutputDevice LS9_in;
-		InputDevice LS9_out;
-		Timer activeSensingTimer;
-
-		public List<List<float>> sendsToMix = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
-		public List<string> channelNames = new List<string>() {
+		public List<string> names { get; set; } = new List<string>() {
 			"Kick",
 			"Snare",
-			"Overhead",
+			"OvrHd1",
 			"CH4",
 			"CH5",
 			"CH6",
@@ -224,9 +218,58 @@ namespace YAMAHA_MIDI {
 			"Tim",
 			"Caleb"
 		};
+	}
+
+	public class ChannelFaders {
+		public event EventHandler channelFadersChanged;
+
+		public float this[int index] {
+			get { return faders[index]; }
+			set { faders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
+		}
+
+		public List<float> faders { get; set; } = new List<float>() {
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f,
+			0.8f
+		};
+	}
+
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window {
+
+		public static MainWindow instance;
+
+		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
+
+		OutputDevice LS9_in;
+		InputDevice LS9_out;
+		Timer activeSensingTimer;
+
+		public ChannelNames channelNames;
+		public ChannelFaders channelFaders;
+
+		public List<List<float>> sendsToMix = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
 
 		public MainWindow () {
 			InitializeComponent();
+			channelNames = new ChannelNames();
+			channelFaders = new ChannelFaders();
 			instance = this;
 			Title = "YAMAHA MIDI - MIDI not started";
 			LoadAll();
@@ -296,7 +339,7 @@ namespace YAMAHA_MIDI {
 				string devicesFile = File.ReadAllText("oscDevices.txt");
 				oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(devicesFile, new JsonSerializerOptions { IgnoreNullValues = true, });
 				string channelsFile = File.ReadAllText("channels.txt");
-				//channelNames = JsonSerializer.Deserialize<List<string>>(channelsFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				//channelNames.names = JsonSerializer.Deserialize<List<string>>(channelsFile, new JsonSerializerOptions { IgnoreNullValues = true, });
 				string sendsToMixFile = File.ReadAllText("sendsToMix.txt");
 				//sendsToMix = JsonSerializer.Deserialize<List<List<float>>>(sendsToMixFile, new JsonSerializerOptions { IgnoreNullValues = true, });
 			} catch (FileNotFoundException) {
@@ -306,7 +349,7 @@ namespace YAMAHA_MIDI {
 				device.Refresh();
 				device.ResendAllFaders();
 				Thread.Sleep(5);
-				device.ResendAllNames(channelNames);
+				device.ResendAllNames(channelNames.names);
 			}
 		}
 
@@ -697,6 +740,13 @@ namespace YAMAHA_MIDI {
 				oscDevices.Add(device);
 			}
 		}
+
+		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
+			InfoWindow infoWindow = new InfoWindow();
+			infoWindow.Owner = this;
+			infoWindow.DataContext = this.DataContext;
+			infoWindow.Show();
+		}
 		#endregion
 
 		async System.Threading.Tasks.Task SaveAll () {
@@ -707,7 +757,7 @@ namespace YAMAHA_MIDI {
 				await JsonSerializer.SerializeAsync(fs, sendsToMix, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
 			using (FileStream fs = File.Create("channels.txt")) {
-				await JsonSerializer.SerializeAsync(fs, channelNames, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+				await JsonSerializer.SerializeAsync(fs, channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
 		}
 
@@ -716,6 +766,7 @@ namespace YAMAHA_MIDI {
 			await SaveAll();
 			base.OnClosed(e);
 		}
+
 
 	}
 }

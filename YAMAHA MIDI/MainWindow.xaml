@@ -30,7 +30,7 @@
             <Button x:Name="refreshFadersButton" Content="Refresh MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshFadersButton_Click" Padding="1" Grid.Row="1" Width="75" Margin="0,30,0,0"/>
             <ComboBox x:Name="inputMIDIComboBox" Grid.Column="1" Margin="0,0,0,30" VerticalAlignment="Center" IsEnabled="False"/>
             <ComboBox x:Name="outputMIDIComboBox" Grid.Column="1" Margin="0,30,0,0" VerticalAlignment="Center" IsEnabled="False"/>
-            <Button x:Name="addDeviceButton" Content="Add device" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Click="addDeviceButton_Click" Padding="1" Width="75"/>
+            <Button x:Name="addDeviceButton" Content="Add device" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Click="addDeviceButton_Click" Padding="1" Width="75" Margin="0,0,0,30"/>
             <ListBox x:Name="deviceListBox" MouseDoubleClick="deviceListBox_MouseDoubleClick" Grid.Column="2" Margin="5" Grid.RowSpan="2" MouseDown="deviceListBox_MouseDown">
                 <ListBox.Resources>
                     <ContextMenu x:Key="OSC_device_menu">
@@ -53,6 +53,7 @@
             </ListBox>
             <Label Content="MIDI input device" Grid.Column="1" Margin="0,0,0,73" VerticalAlignment="Center" Height="23" VerticalContentAlignment="Center" Padding="0"/>
             <Label Content="MIDI output device" Grid.Column="1" VerticalAlignment="Center" Height="23" VerticalContentAlignment="Center" Margin="0,73,0,0" Padding="0"/>
+            <Button x:Name="infoWindowButton" Content="View info" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Click="infoWindowButton_Click" Padding="1" Width="75" Margin="0,30,0,0"/>
         </Grid>
 
     </Grid>

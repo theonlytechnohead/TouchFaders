@@ -1,0 +1,175 @@
+﻿<Window x:Name="infoWindow" x:Class="YAMAHA_MIDI.InfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YAMAHA_MIDI"
+        mc:Ignorable="d"
+        Title="Info" Height="450" Width="800" MinWidth="800" MinHeight="450" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Window.Resources>
+        <ResourceDictionary>
+
+            <!-- Custom progress bar -->
+            <Style x:Key="FaderProgressBar" TargetType="ProgressBar">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ProgressBar">
+                            <Border BorderBrush="#BCBCBC" BorderThickness="1" Margin="0">
+                                <Grid x:Name="PART_Track" Margin="0">
+                                    <Rectangle Fill="#E6E6E6" Margin="0"/>
+                                    <Decorator Name="PART_Indicator" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+                                        <Grid Name="Foreground">
+                                            <Rectangle Fill="#06B025" Name="Indicator" Margin="-1,1,-1,1" />
+                                        </Grid>
+                                    </Decorator>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Orientation" Value="Vertical">
+                                    <Setter Property="LayoutTransform" TargetName="PART_Track">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="-90"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid x:Name="infoGrid" SizeChanged="infoGrid_SizeChanged">
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="ApplicationScaleTransform"
+                        CenterX="0"
+                        CenterY="0"
+                        ScaleX="{Binding ScaleValue, ElementName=infoWindow}"
+                        ScaleY="{Binding ScaleValue, ElementName=infoWindow}" />
+        </Grid.LayoutTransform>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="labelChannel1" Content="Cha 1" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel2" Content="Cha 2" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="1" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel3" Content="Cha 3" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="2" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel4" Content="Cha 4" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="3" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel5" Content="Cha 5" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="4" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel6" Content="Cha 6" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="5" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel7" Content="Cha 7" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="6" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel8" Content="Cha 8" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="7" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel9" Content="Cha 9" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="8" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel10" Content="Cha 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="9" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel11" Content="Cha 11" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="10" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel12" Content="Cha 12" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="11" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel13" Content="Cha 13" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="12" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel14" Content="Cha 14" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="13" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel15" Content="Cha 15" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="14" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+            <Label x:Name="labelChannel16" Content="Cha 16" HorizontalAlignment="Center" VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Column="15" FontSize="32" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="5,1">
+                <Label.LayoutTransform>
+                    <RotateTransform Angle="-90" />
+                </Label.LayoutTransform>
+            </Label>
+
+            <ProgressBar x:Name="faderChannel1"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="0"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel2"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="1"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel3"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="2"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel4"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="3"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel5"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="4"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel6"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="5"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel7"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="6"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel8"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="7"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel9"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="8"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel10" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="9"  Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel11" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="10" Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel12" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="11" Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel13" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="12" Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel14" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="13" Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel15" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="14" Style="{StaticResource FaderProgressBar}" />
+            <ProgressBar x:Name="faderChannel16" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="15" Style="{StaticResource FaderProgressBar}" />
+        </Grid>
+
+    </Grid>
+</Window>
+    

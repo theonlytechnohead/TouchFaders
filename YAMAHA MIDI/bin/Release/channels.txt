@@ -1,7 +1,7 @@
 [
   "Kick",
   "Snare",
-  "OvrHd1",
+  "Overhead",
   "CH4",
   "CH5",
   "CH6",
