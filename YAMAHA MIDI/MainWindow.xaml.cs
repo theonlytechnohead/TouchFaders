@@ -192,6 +192,17 @@ namespace YAMAHA_MIDI {
 		}
 	}
 
+	public class SendsToMix {
+		public event EventHandler sendsChanged;
+
+		public float this[int mix, int channel] {
+			get { return sendLevel[mix][channel]; }
+			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
+		}
+
+		public List<List<float>> sendLevel = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
+	}
+
 	public class ChannelNames {
 		public event EventHandler channelNamesChanged;
 
@@ -201,22 +212,22 @@ namespace YAMAHA_MIDI {
 		}
 
 		public List<string> names { get; set; } = new List<string>() {
-			"Kick",
-			"Snare",
-			"OvrHd1",
-			"CH4",
-			"CH5",
-			"CH6",
-			"CH7",
-			"CH8",
-			"CH9",
-			"CH10",
-			"CH11",
-			"CH12",
-			"Amy",
-			"Aimee",
-			"Tim",
-			"Caleb"
+			"CH 1",
+			"CH 2",
+			"CH 3",
+			"CH 4",
+			"CH 5",
+			"CH 6",
+			"CH 7",
+			"CH 8",
+			"CH 9",
+			"CH 10",
+			"CH 11",
+			"CH 12",
+			"CH 13",
+			"CH 14",
+			"CH 15",
+			"CH 16"
 		};
 	}
 
@@ -229,22 +240,22 @@ namespace YAMAHA_MIDI {
 		}
 
 		public List<float> faders { get; set; } = new List<float>() {
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f,
-			0.8f
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f,
+			823f / 1023f
 		};
 	}
 
@@ -261,13 +272,13 @@ namespace YAMAHA_MIDI {
 		InputDevice LS9_out;
 		Timer activeSensingTimer;
 
+		public SendsToMix sendsToMix;
 		public ChannelNames channelNames;
 		public ChannelFaders channelFaders;
 
-		public List<List<float>> sendsToMix = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
-
 		public MainWindow () {
 			InitializeComponent();
+			sendsToMix = new SendsToMix();
 			channelNames = new ChannelNames();
 			channelFaders = new ChannelFaders();
 			instance = this;
@@ -338,15 +349,18 @@ namespace YAMAHA_MIDI {
 			try {
 				string devicesFile = File.ReadAllText("oscDevices.txt");
 				oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(devicesFile, new JsonSerializerOptions { IgnoreNullValues = true, });
-				string channelsFile = File.ReadAllText("channels.txt");
-				//channelNames.names = JsonSerializer.Deserialize<List<string>>(channelsFile, new JsonSerializerOptions { IgnoreNullValues = true, });
 				string sendsToMixFile = File.ReadAllText("sendsToMix.txt");
-				//sendsToMix = JsonSerializer.Deserialize<List<List<float>>>(sendsToMixFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				sendsToMix.sendLevel = JsonSerializer.Deserialize<List<List<float>>>(sendsToMixFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				string channelNamesFile = File.ReadAllText("channelNames.txt");
+				channelNames.names = JsonSerializer.Deserialize<List<string>>(channelNamesFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				string channelFadersFile = File.ReadAllText("channelFaders.txt");
+				channelFaders.faders = JsonSerializer.Deserialize<List<float>>(channelFadersFile, new JsonSerializerOptions { IgnoreNullValues = true, });
 			} catch (FileNotFoundException) {
 				_ = SaveAll();
 			}
 			foreach (oscDevice device in oscDevices) {
 				device.Refresh();
+				Thread.Sleep(5);
 				device.ResendAllFaders();
 				Thread.Sleep(5);
 				device.ResendAllNames(channelNames.names);
@@ -426,6 +440,7 @@ namespace YAMAHA_MIDI {
 			GetFaderValuesForMix(0x0E);
 			GetFaderValuesForMix(0x11);
 			GetFaderValuesForMix(0x14); // Mix 6
+			GetChannelFaders();         // Channel faders to STEREO
 		}
 
 		void GetFaderValuesForMix (byte mix) {
@@ -452,6 +467,16 @@ namespace YAMAHA_MIDI {
 				SendSysEx(kNameShort2);
 			}
 		}
+
+		void GetChannelFaders () {
+			for (int channel = 0; channel <= 15; channel++) {
+				Thread.Sleep(2);
+				NormalSysExEvent kFader = new NormalSysExEvent();
+				byte[] data = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				kFader.Data = data;
+				SendSysEx(kFader);
+			}
+		}
 		#endregion
 
 		#region SysExMIDIHelpers
@@ -464,38 +489,25 @@ namespace YAMAHA_MIDI {
 			byte deviceNumber = bytes[2];   // device number is 0x1n where n is 0-15
 			byte groupID = bytes[3];        // Digital mixer is 0x3E
 			byte modelID = bytes[4];        // LS9 is 0x12
-			byte dataCategory = bytes[5];   // kInputToMix is in 0x01
-			byte elementMSB = bytes[6];     // kInputToMix has MSB 0x00
-			byte elementLSB = bytes[7];     // kInputToMix has LSB 0x43
-			byte indexMSB = bytes[8];       // index MSB is for the Mix ...
-			byte indexLSB = bytes[9];       // ... as on the desk, MIX 0-5
+			byte dataCategory = bytes[5];
+			byte elementMSB = bytes[6];
+			byte elementLSB = bytes[7];
+			byte indexMSB = bytes[8];
+			byte indexLSB = bytes[9];
 			byte channelMSB = bytes[10];    // Channel MSB per channel
 			byte channelLSB = bytes[11];    // Channel LSB with a 0 in the 8th bit
 			byte data5 = bytes[12];         // Data bytes start
-			byte data4 = bytes[13];         // ''
-			byte data3 = bytes[14];         // ''
-			byte data2 = bytes[15];         // ''
-			byte data1 = bytes[16];         // ''
+			byte data4 = bytes[13];
+			byte data3 = bytes[14];
+			byte data2 = bytes[15];
+			byte data1 = bytes[16];
 			byte sysExEnd = bytes[17];      // End of SysEx message, 0xF7
 
 			if (manufacturerID == 0x43 &&   // YAMAHA
-				deviceNumber == 0x10 &&     // Device 0
+				deviceNumber == 0x10 &&     // 1 = parameter send; 3 = parameter request, device ID 0
 				groupID == 0x3E &&          // Digital mixer
-				modelID == 0x12 &&          // LS9
-				dataCategory == 0x01 &&     // kInput
-				elementMSB == 0x00 &&       // kInputToMix
-				elementLSB == 0x43) {       // kInputToMix
-				int index = indexMSB << 7;
-				index += indexLSB;
-				switch (index) { // the index number must be for Mix1-6 send level
-					case 0x05:  // Mix 1 ...
-					case 0x08:
-					case 0x0B:
-					case 0x0E:
-					case 0x11:
-					case 0x14:  // Mix 6
-						return true;
-				}
+				modelID == 0x12) {          // LS9
+				return true;
 			}
 			return false;
 		}
@@ -529,52 +541,57 @@ namespace YAMAHA_MIDI {
 			return (mix, channel, value);
 		}
 
-		void HandleNonFaderMIDI (byte[] bytes) {
-			if (bytes.Length != 18) {
-				return; // This is not the data we're looking for...
+		void HandleMixSendMIDI (SysExEvent midiEvent) {
+			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
+			foreach (oscDevice device in oscDevices) {
+				device.Faders[16 * (mix - 1) + channel] = value;
+				device.sendOSCMessage(mix, channel, value);
 			}
-			byte sysExStart = bytes[0];     // Signals start of SysEx, 0xF0
-			byte manufacturerID = bytes[1]; // YAMAHA is 0x43
-			byte deviceNumber = bytes[2];   // device number is 0x1n where n is 0-15 (side note, 0x1n is for parameter change, while 0x3n is for paramter request!
-			byte groupID = bytes[3];        // Digital mixer is 0x3E
-			byte modelID = bytes[4];        // LS9 is 0x12
-			byte dataCategory = bytes[5];   // kNameInputChannel is in 0x01
-			byte elementMSB = bytes[6];     // kNameShort has MSB 0x01
-			byte elementLSB = bytes[7];     // kNameShort has LSB 0x14
+		}
+
+		void HandleChannelName (byte[] bytes) {
 			byte indexMSB = bytes[8];       // kNameShort1 is 0x00, 0x00
 			byte indexLSB = bytes[9];       // kNameShort2 is 0x00, 0x01
 			byte channelMSB = bytes[10];    // Channel MSB per channel
 			byte channelLSB = bytes[11];    // Channel LSB with a 0 in the 8th bit
 			byte data5 = bytes[12];         // Data bytes start
-			byte data4 = bytes[13];         // ''
-			byte data3 = bytes[14];         // ''
-			byte data2 = bytes[15];         // ''
-			byte data1 = bytes[16];         // ''
-			byte sysExEnd = bytes[17];      // End of SysEx message, 0xF7
+			byte data4 = bytes[13];
+			byte data3 = bytes[14];
+			byte data2 = bytes[15];
+			byte data1 = bytes[16];
+
+			int index = indexMSB << 7;
+			index += indexLSB;
 
 			int channel = channelMSB << 7;
 			channel += channelLSB;
 
 			byte[] data = { data5, data4, data3, data2, data1 };
 
-			if (manufacturerID == 0x43 &&   // YAMAHA
-				deviceNumber == 0x10 &&     // Device 0
-				groupID == 0x3E &&          // Digital mixer
-				modelID == 0x12 &&          // LS9
-				dataCategory == 0x01 &&     // kNameInputChannel
-				elementMSB == 0x01 &&       // kNameShort
-				elementLSB == 0x14) {       // kNameShort
-				int index = indexMSB << 7;
-				index += indexLSB;
-				switch (index) { // the index number is either for kNameShort 1 or 2
-					case 0x00: // kNameShort1
-						channelNames[channel] = "1" + Encoding.ASCII.GetString(data);
-						break;
-					case 0x01: // kNameShort2
-						channelNames[channel] = "2" + Encoding.ASCII.GetString(data);
-						break;
-				}
+			switch (index) { // the index number is either for kNameShort 1 or 2
+				case 0x00: // kNameShort1
+					channelNames[channel] = "1" + Encoding.ASCII.GetString(data);
+					break;
+				case 0x01: // kNameShort2
+					channelNames[channel] = "2" + Encoding.ASCII.GetString(data);
+					break;
 			}
+		}
+
+		void HandleChannelFader (byte[] bytes) {
+			byte channelMSB = bytes[10];    // Channel MSB per channel
+			byte channelLSB = bytes[11];    // Channel LSB with a 0 in the 8th bit
+			byte data2 = bytes[15];
+			byte data1 = bytes[16];
+
+			int channel = channelMSB << 7;
+			channel += channelLSB;
+
+			int level = data2 << 7;
+			level += data1;
+			float value = level / 1023f;
+			channelFaders[channel] = value;
+
 		}
 		#endregion
 
@@ -584,15 +601,50 @@ namespace YAMAHA_MIDI {
 			if (e.Event.EventType != MidiEventType.NormalSysEx)
 				return;
 			SysExEvent midiEvent = (SysExEvent)e.Event;
+			byte[] bytes = midiEvent.Data;
 			Console.WriteLine($"Event received from '{LS9_device.Name}' as: {e.Event}");
-			if (CheckSysEx(midiEvent.Data)) {
-				(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-				foreach (oscDevice device in oscDevices) {
-					device.Faders[16 * (mix - 1) + channel] = value;
-					device.sendOSCMessage(mix, channel, value);
+			if (CheckSysEx(bytes)) {
+				byte dataCategory = bytes[5];   // kInputToMix is in 0x01
+				byte elementMSB = bytes[6];     // kInputToMix has MSB 0x00
+				byte elementLSB = bytes[7];     // kInputToMix has LSB 0x43
+				byte indexMSB = bytes[8];       // index MSB is for the Mix ...
+				byte indexLSB = bytes[9];       // ... as on the desk, MIX 0-5
+				byte channelMSB = bytes[10];    // Channel MSB per channel
+				byte channelLSB = bytes[11];    // Channel LSB with a 0 in the 8th bit
+
+				int channel = channelMSB << 7;
+				channel += channelLSB;
+
+				if (dataCategory == 0x01 &&     // kInput
+					elementMSB == 0x00 &&       // kInputToMix
+					elementLSB == 0x43 &&       // kInputToMix
+					0 <= channel &&
+					channel <= 16) {
+					int index = indexMSB << 7;
+					index += indexLSB;
+					switch (index) { // the index number must be for Mix1-6 send level
+						case 0x05:  // Mix 1 ...
+						case 0x08:
+						case 0x0B:
+						case 0x0E:
+						case 0x11:
+						case 0x14:  // Mix 6
+							HandleMixSendMIDI(midiEvent);
+							return;
+					}
+				} else if (dataCategory == 0x01 &&  // kNameInputChannel
+						   elementMSB == 0x01 &&    // kNameShort
+						   elementLSB == 0x14 &&    // kNameShort
+						   0 <= channel &&
+						   channel <= 16) {
+					HandleChannelName(bytes);
+				} else if (dataCategory == 0x01 &&  // kInput
+						   elementMSB == 0x00 &&    // kFader
+						   elementLSB == 0x33 &&    // kFader
+						   0 <= channel &&
+						   channel <= 16) {
+					HandleChannelFader(bytes);
 				}
-			} else {
-				HandleNonFaderMIDI(midiEvent.Data);
 			}
 		}
 
@@ -754,10 +806,13 @@ namespace YAMAHA_MIDI {
 				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
 			using (FileStream fs = File.Create("sendsToMix.txt")) {
-				await JsonSerializer.SerializeAsync(fs, sendsToMix, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+				await JsonSerializer.SerializeAsync(fs, sendsToMix.sendLevel, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
-			using (FileStream fs = File.Create("channels.txt")) {
+			using (FileStream fs = File.Create("channelNames.txt")) {
 				await JsonSerializer.SerializeAsync(fs, channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+			using (FileStream fs = File.Create("channelFaders.txt")) {
+				await JsonSerializer.SerializeAsync(fs, channelFaders.faders, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
 		}
 
@@ -766,7 +821,6 @@ namespace YAMAHA_MIDI {
 			await SaveAll();
 			base.OnClosed(e);
 		}
-
 
 	}
 }
