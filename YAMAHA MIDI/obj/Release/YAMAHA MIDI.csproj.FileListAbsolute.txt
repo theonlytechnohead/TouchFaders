@@ -40,3 +40,5 @@ D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Release\YAMAHA MIDI.exe
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Release\YAMAHA MIDI.pdb
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Release\YAMAHA MIDI.csprojAssemblyReference.cache
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Release\SharpOSC.dll
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Release\InfoWindow.g.cs
+D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Release\InfoWindow.baml
