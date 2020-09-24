@@ -61,3 +61,47 @@ D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csprojAssembl
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\SharpOSC.dll
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\InfoWindow.g.cs
 D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\InfoWindow.baml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\YAMAHA MIDI.exe.config
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\YAMAHA MIDI.exe
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\YAMAHA MIDI.pdb
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\SharpOSC.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Buffers.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Memory.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Json.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.ValueTuple.dll
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Melanchall.DryWetMidi.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Buffers.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Memory.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Text.Json.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\bin\Debug\System.ValueTuple.xml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csprojAssemblyReference.cache
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\InfoWindow.baml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\IPTextBox.baml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\MainWindow.baml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\CreateOSCDevice.g.cs
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\InfoWindow.g.cs
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\IPTextBox.g.cs
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\MainWindow.g.cs
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\App.g.cs
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI_MarkupCompile.cache
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI_MarkupCompile.lref
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\CreateOSCDevice.baml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.g.resources
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA_MIDI.Properties.Resources.resources
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.GenerateResource.cache
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CoreCompileInputs.cache
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.csproj.CopyComplete
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.exe
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\YAMAHA MIDI.pdb
