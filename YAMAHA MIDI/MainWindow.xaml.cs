@@ -377,15 +377,20 @@ namespace YAMAHA_MIDI {
 			try {
 				JsonSerializerOptions jsonDeserializerOptions = new JsonSerializerOptions { IgnoreNullValues = true, };
 
-				ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(File.Open("oscDevices.txt", FileMode.Open), jsonDeserializerOptions);
+				FileStream oscDevicesFile = File.OpenRead("oscDevices.txt");
+				ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(oscDevicesFile, jsonDeserializerOptions);
+				oscDevicesFile.Close();
 				await Dispatcher.BeginInvoke(new Action(() => {
 					foreach (oscDevice device in loadDevices) {
 						oscDevices.Add(device);
 					}
 				}));
-				sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(File.Open("sendsToMix.txt", FileMode.Open), jsonDeserializerOptions);
-				channelNames.names = await JsonSerializer.DeserializeAsync<List<string>>(File.Open("channelNames.txt", FileMode.Open), jsonDeserializerOptions);
-				channelFaders.faders = await JsonSerializer.DeserializeAsync<List<float>>(File.Open("channelFaders.txt", FileMode.Open), jsonDeserializerOptions);
+				using (FileStream sendsToMixFile = File.OpenRead("sendsToMix.txt"))
+					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(sendsToMixFile, jsonDeserializerOptions);
+				using (FileStream channelNamesFile = File.OpenRead("channelNames.txt"))
+					channelNames.names = await JsonSerializer.DeserializeAsync<List<string>>(channelNamesFile, jsonDeserializerOptions);
+				using (FileStream channelFadersFile = File.OpenRead("channelFaders.txt"))
+					channelFaders.faders = await JsonSerializer.DeserializeAsync<List<float>>(channelFadersFile, jsonDeserializerOptions);
 			} catch (FileNotFoundException) {
 				await SaveAll();
 			}
@@ -408,6 +413,7 @@ namespace YAMAHA_MIDI {
 		}
 		#endregion
 
+		#region Device UI management
 		async Task RefreshOSCDevices () {
 			await Task.Run(() => {
 				foreach (oscDevice device in oscDevices) {
@@ -435,9 +441,10 @@ namespace YAMAHA_MIDI {
 				outputMIDIComboBox.IsEnabled = true;
 			}
 		}
+		#endregion
 
-		#region setupMIDI
-		public void InitializeIO () {
+		#region MIDI management
+		public async void InitializeMIDI () {
 			try {
 				LS9_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString());
 				LS9_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString());
@@ -459,21 +466,28 @@ namespace YAMAHA_MIDI {
 				return;
 			}
 			if (LS9_out.IsListeningForEvents) {
-				ResetEvent systemReset = new ResetEvent();
-				try {
-					LS9_in.SendEvent(systemReset);
-				} catch (MidiDeviceException ex) {
-					Console.WriteLine($"Couldn't send system reset MIDI event to {inputMIDIComboBox.SelectedItem}");
-					Console.WriteLine(ex.Message);
-					return;
+				if (ResetMIDI()) {
+					inputMIDIComboBox.IsEnabled = false;
+					outputMIDIComboBox.IsEnabled = false;
+					activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
+					Title = "YAMAHA MIDI - MIDI running (active sensing)";
+					await GetAllFaderValues();
+					await GetChannelFaders();         // Channel faders to STEREO
+					await GetChannelNames();
 				}
-				inputMIDIComboBox.IsEnabled = false;
-				outputMIDIComboBox.IsEnabled = false;
-				activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
-				Title = "YAMAHA MIDI - MIDI running (active sensing)";
-				GetAllFaderValues();
-				GetChannelNames();
 			}
+		}
+
+		bool ResetMIDI () {
+			ResetEvent systemReset = new ResetEvent();
+			try {
+				LS9_in.SendEvent(systemReset);
+			} catch (MidiDeviceException ex) {
+				Console.WriteLine($"Couldn't send system reset MIDI event to {inputMIDIComboBox.SelectedItem}");
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+			return true;
 		}
 
 		void sendActiveSense (object state) {
@@ -487,48 +501,47 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		void GetAllFaderValues () {
-			GetFaderValuesForMix(0x05); // Mix 1 level...
-			GetFaderValuesForMix(0x08);
-			GetFaderValuesForMix(0x0B);
-			GetFaderValuesForMix(0x0E);
-			GetFaderValuesForMix(0x11);
-			GetFaderValuesForMix(0x14); // Mix 6
-			GetChannelFaders();         // Channel faders to STEREO
+		async Task GetAllFaderValues () {
+			await GetFaderValuesForMix(0x05); // Mix 1 level...
+			await GetFaderValuesForMix(0x08);
+			await GetFaderValuesForMix(0x0B);
+			await GetFaderValuesForMix(0x0E);
+			await GetFaderValuesForMix(0x11);
+			await GetFaderValuesForMix(0x14); // Mix 6
 		}
 
-		void GetFaderValuesForMix (byte mix) {
+		async Task GetFaderValuesForMix (byte mix) {
 			for (int channel = 0; channel <= 15; channel++) {
 				Thread.Sleep(2);
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
 				byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
-				SendSysEx(sysExEvent);
+				await SendSysEx(sysExEvent);
 			}
 		}
 
-		void GetChannelNames () {
+		async Task GetChannelNames () {
 			for (int channel = 0; channel <= 15; channel++) {
 				Thread.Sleep(2);
 				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
 				byte[] data1 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort1.Data = data1;
-				SendSysEx(kNameShort1);
+				await SendSysEx(kNameShort1);
 				Thread.Sleep(2);
 				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
 				byte[] data2 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort2.Data = data2;
-				SendSysEx(kNameShort2);
+				await SendSysEx(kNameShort2);
 			}
 		}
 
-		void GetChannelFaders () {
+		async Task GetChannelFaders () {
 			for (int channel = 0; channel <= 15; channel++) {
 				Thread.Sleep(2);
 				NormalSysExEvent kFader = new NormalSysExEvent();
 				byte[] data = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kFader.Data = data;
-				SendSysEx(kFader);
+				await SendSysEx(kFader);
 			}
 		}
 		#endregion
@@ -649,7 +662,7 @@ namespace YAMAHA_MIDI {
 		}
 		#endregion
 
-		#region MIDI
+		#region MIDI I/O
 		void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
 			var LS9_device = (MidiDevice)sender;
 			if (e.Event.EventType != MidiEventType.NormalSysEx)
@@ -706,7 +719,7 @@ namespace YAMAHA_MIDI {
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //			  Mix1		  Ch 1					  0 db  0 dB
 			byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x37, 0xF7 };
 			sysExEvent.Data = data;
-			SendSysEx(sysExEvent);
+			_ = SendSysEx(sysExEvent);
 		}
 
 		public void SendFaderValue (int mix, int channel, float value, oscDevice sender) {
@@ -733,7 +746,7 @@ namespace YAMAHA_MIDI {
 			sysExEvent.Data = data;
 
 			if (activeSensingTimer != null)
-				SendSysEx(sysExEvent);
+				_ = SendSysEx(sysExEvent);
 			foreach (oscDevice device in oscDevices) {
 				if (device != sender) { // Avoid feedback loop!
 					device.Faders[16 * (mix - 1) + channel] = value;
@@ -742,19 +755,21 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		public void SendSysEx (NormalSysExEvent normalSysExEvent) {
-			try {
-				LS9_in.SendEvent(normalSysExEvent);
-			} catch (MidiDeviceException ex) {
-				Console.WriteLine($"Well shucks, {LS9_in.Name} don't work no more...");
-				Console.WriteLine(ex.Message);
-			} catch (ObjectDisposedException) {
-				Console.WriteLine($"Tried to use {LS9_in.Name} without initializing MIDI!");
-				MessageBox.Show("Initialize MIDI first!");
-			} catch (NullReferenceException) {
-				Console.WriteLine($"Tried to use MIDI device without initializing MIDI!");
-				MessageBox.Show("Initialize MIDI first!");
-			}
+		public async Task SendSysEx (NormalSysExEvent normalSysExEvent) {
+			await Task.Run(() => {
+				try {
+					LS9_in.SendEvent(normalSysExEvent);
+				} catch (MidiDeviceException ex) {
+					Console.WriteLine($"Well shucks, {LS9_in.Name} don't work no more...");
+					Console.WriteLine(ex.Message);
+				} catch (ObjectDisposedException) {
+					Console.WriteLine($"Tried to use {LS9_in.Name} without initializing MIDI!");
+					MessageBox.Show("Initialize MIDI first!");
+				} catch (NullReferenceException) {
+					Console.WriteLine($"Tried to use MIDI device without initializing MIDI!");
+					MessageBox.Show("Initialize MIDI first!");
+				}
+			});
 		}
 
 		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
@@ -766,7 +781,7 @@ namespace YAMAHA_MIDI {
 		#region UIEvents
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			startMIDIButton.IsEnabled = false;
-			InitializeIO();
+			InitializeMIDI();
 			startMIDIButton.IsEnabled = true;
 		}
 
