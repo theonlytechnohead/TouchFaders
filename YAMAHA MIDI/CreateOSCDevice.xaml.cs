@@ -25,29 +25,18 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		private void textChanged (object sender, TextChangedEventArgs e) {
-			checkValidInfo();
-		}
+		private void textChanged (object sender, TextChangedEventArgs e) => checkValidInfo();
 
-		private void addButton_Click (object sender, RoutedEventArgs e) {
-			DialogResult = true;
-		}
+		private void addButton_Click (object sender, RoutedEventArgs e) => DialogResult = true;
 
-		private void listenPort_PreviewTextInput (object sender, TextCompositionEventArgs e) {
-			e.Handled = !IsValidPort(((TextBox)sender).Text + e.Text);
-		}
+		private void listenPort_PreviewTextInput (object sender, TextCompositionEventArgs e) => e.Handled = !IsValidPort(((TextBox)sender).Text + e.Text);
 
-		private void sendPort_PreviewTextInput (object sender, TextCompositionEventArgs e) {
-			e.Handled = !IsValidPort(((TextBox)sender).Text + e.Text);
-		}
+		private void sendPort_PreviewTextInput (object sender, TextCompositionEventArgs e) => e.Handled = !IsValidPort(((TextBox)sender).Text + e.Text);
 
 		public static bool IsValidPort (string str) {
-			int i;
-			return int.TryParse(str, out i) && 0 < i && i <= 65535; // Make sure that the int entered is a valid UDP port
+			return int.TryParse(str, out int i) && 0 < i && i <= 65535; // Make sure that the int entered is a valid UDP port
 		}
 
-		private void cancelButton_Click (object sender, RoutedEventArgs e) {
-			Close();
-		}
+		private void cancelButton_Click (object sender, RoutedEventArgs e) => Close();
 	}
 }

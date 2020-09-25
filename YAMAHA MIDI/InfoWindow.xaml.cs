@@ -8,9 +8,8 @@ namespace YAMAHA_MIDI {
 	/// Interaction logic for InfoWindow.xaml
 	/// </summary>
 	public partial class InfoWindow : Window {
-
-		List<Label> labels;
-		List<ProgressBar> faderBars;
+		readonly List<Label> labels;
+		readonly List<ProgressBar> faderBars;
 
 		public InfoWindow () {
 			InitializeComponent();

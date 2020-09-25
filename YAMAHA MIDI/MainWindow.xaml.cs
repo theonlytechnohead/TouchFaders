@@ -12,6 +12,7 @@ using Melanchall.DryWetMidi.Devices;
 using SharpOSC;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace YAMAHA_MIDI {
 
@@ -358,13 +359,20 @@ namespace YAMAHA_MIDI {
 			} catch (FileNotFoundException) {
 				_ = SaveAll();
 			}
-			foreach (oscDevice device in oscDevices) {
-				device.Refresh();
-				Thread.Sleep(5);
-				device.ResendAllFaders();
-				Thread.Sleep(5);
-				device.ResendAllNames(channelNames.names);
-			}
+			RefreshOSCDevices();
+		}
+
+		async void RefreshOSCDevices () {
+			await Task.Run(() => {
+				foreach (oscDevice device in oscDevices) {
+					device.Refresh();
+					Thread.Sleep(5);
+					device.ResendAllFaders();
+					Thread.Sleep(5);
+					device.ResendAllNames(channelNames.names);
+				}
+			});
+			refreshOSCButton.IsEnabled = true;
 		}
 
 		void displayMIDIDevices () {
@@ -711,14 +719,14 @@ namespace YAMAHA_MIDI {
 
 		#region UIEvents
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
+			startMIDIButton.IsEnabled = false;
 			InitializeIO();
+			startMIDIButton.IsEnabled = true;
 		}
 
 		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
-			foreach (oscDevice device in oscDevices) {
-				device.Refresh();
-				device.ResendAllFaders();
-			}
+			refreshOSCButton.IsEnabled = false;
+			RefreshOSCDevices();
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
@@ -732,11 +740,14 @@ namespace YAMAHA_MIDI {
 		}
 
 		void refreshFadersButton_Click (object sender, RoutedEventArgs e) {
-			//TestMixerOutput();
-			if (activeSensingTimer != null) {
-				GetAllFaderValues();
-				GetChannelNames();
-			}
+			refreshFadersButton.IsEnabled = false;
+			Task.Run(() => {
+				if (activeSensingTimer != null) {
+					GetAllFaderValues();
+					GetChannelNames();
+				}
+				Dispatcher.Invoke(new Action(() => { refreshFadersButton.IsEnabled = true; }));
+			});
 		}
 
 		void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -801,7 +812,7 @@ namespace YAMAHA_MIDI {
 		}
 		#endregion
 
-		async System.Threading.Tasks.Task SaveAll () {
+		async Task SaveAll () {
 			using (FileStream fs = File.Create("oscDevices.txt")) {
 				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
