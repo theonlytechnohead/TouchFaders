@@ -444,10 +444,10 @@ namespace YAMAHA_MIDI {
 		#endregion
 
 		#region MIDI management
-		public async void InitializeMIDI () {
+		public async Task InitializeMIDI () {
 			try {
-				LS9_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString());
-				LS9_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString());
+				Dispatcher.Invoke(() => { LS9_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString()); });
+				Dispatcher.Invoke(() => { LS9_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString()); });
 			} catch (ArgumentException ex) {
 				MessageBox.Show($"Can't initialize {inputMIDIComboBox.SelectedItem} and {outputMIDIComboBox.SelectedItem} MIDI ports!\n{ex.Message}");
 				Console.WriteLine(ex.Message);
@@ -467,10 +467,12 @@ namespace YAMAHA_MIDI {
 			}
 			if (LS9_out.IsListeningForEvents) {
 				if (ResetMIDI()) {
-					inputMIDIComboBox.IsEnabled = false;
-					outputMIDIComboBox.IsEnabled = false;
+					Dispatcher.Invoke(() => {
+						inputMIDIComboBox.IsEnabled = false;
+						outputMIDIComboBox.IsEnabled = false;
+						Title = "YAMAHA MIDI - MIDI running (active sensing)";
+					});
 					activeSensingTimer = new Timer(sendActiveSense, null, 0, 350);
-					Title = "YAMAHA MIDI - MIDI running (active sensing)";
 					await GetAllFaderValues();
 					await GetChannelFaders();         // Channel faders to STEREO
 					await GetChannelNames();
@@ -512,7 +514,7 @@ namespace YAMAHA_MIDI {
 
 		async Task GetFaderValuesForMix (byte mix) {
 			for (int channel = 0; channel <= 15; channel++) {
-				Thread.Sleep(2);
+				Thread.Sleep(25);
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
 				byte[] data = { 0xF0, 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
@@ -520,28 +522,28 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		async Task GetChannelNames () {
-			for (int channel = 0; channel <= 15; channel++) {
-				Thread.Sleep(2);
-				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
-				byte[] data1 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
-				kNameShort1.Data = data1;
-				await SendSysEx(kNameShort1);
-				Thread.Sleep(2);
-				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
-				byte[] data2 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
-				kNameShort2.Data = data2;
-				await SendSysEx(kNameShort2);
-			}
-		}
-
 		async Task GetChannelFaders () {
 			for (int channel = 0; channel <= 15; channel++) {
-				Thread.Sleep(2);
+				Thread.Sleep(25);
 				NormalSysExEvent kFader = new NormalSysExEvent();
 				byte[] data = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kFader.Data = data;
 				await SendSysEx(kFader);
+			}
+		}
+
+		async Task GetChannelNames () {
+			for (int channel = 0; channel <= 15; channel++) {
+				Thread.Sleep(25);
+				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
+				byte[] data1 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				kNameShort1.Data = data1;
+				await SendSysEx(kNameShort1);
+				Thread.Sleep(25);
+				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
+				byte[] data2 = { 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				kNameShort2.Data = data2;
+				await SendSysEx(kNameShort2);
 			}
 		}
 		#endregion
@@ -774,20 +776,20 @@ namespace YAMAHA_MIDI {
 
 		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
 			var LS9_device = (MidiDevice)sender;
-			Console.WriteLine($"Event sent to '{LS9_device.Name}' as: {e.Event}");
+			Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent to '{LS9_device.Name}' as: {e.Event}");
 		}
 		#endregion
 
 		#region UIEvents
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			startMIDIButton.IsEnabled = false;
-			InitializeMIDI();
-			startMIDIButton.IsEnabled = true;
-		}
-
-		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
-			refreshOSCButton.IsEnabled = false;
-			_ = RefreshOSCDevices();
+			Task.Run(async () => {
+				await InitializeMIDI();
+				Dispatcher.Invoke(() => {
+					refreshMIDIButton.IsEnabled = true;
+					stopMIDIButton.IsEnabled = true;
+				});
+			});
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
@@ -795,19 +797,27 @@ namespace YAMAHA_MIDI {
 			if (activeSensingTimer != null)
 				Title = "YAMAHA MIDI - MIDI not started";
 			Console.WriteLine("Disposed active sensing timer");
+			refreshMIDIButton.IsEnabled = false;
+			startMIDIButton.IsEnabled = true;
+			stopMIDIButton.IsEnabled = false;
 			(LS9_in as IDisposable)?.Dispose();
 			(LS9_out as IDisposable)?.Dispose();
 			displayMIDIDevices();
 		}
 
-		void refreshFadersButton_Click (object sender, RoutedEventArgs e) {
-			refreshFadersButton.IsEnabled = false;
-			Task.Run(() => {
+		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
+			refreshOSCButton.IsEnabled = false;
+			_ = RefreshOSCDevices();
+		}
+
+		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
+			refreshMIDIButton.IsEnabled = false;
+			Task.Run(async () => {
 				if (activeSensingTimer != null) {
-					GetAllFaderValues();
-					GetChannelNames();
+					await GetAllFaderValues();
+					await GetChannelNames();
 				}
-				Dispatcher.Invoke(new Action(() => { refreshFadersButton.IsEnabled = true; }));
+				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
 			});
 		}
 

@@ -105,7 +105,7 @@
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
                     <Button x:Name="startMIDIButton" Content="Start MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startMIDIButton_Click" Padding="5,1" Width="76" Margin="0"/>
-                    <Button x:Name="stopMIDIButton" Content="Stop MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopMIDIButton_Click" Padding="1" Width="76" Grid.Row="1"/>
+                    <Button x:Name="stopMIDIButton" Content="Stop MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopMIDIButton_Click" Padding="1" Width="76" Grid.Row="1" IsEnabled="False"/>
                     <ComboBox x:Name="inputMIDIComboBox" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Margin="0,22,0,0"/>
                     <ComboBox x:Name="outputMIDIComboBox" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Grid.Row="1" Margin="0,22,0,0"/>
                     <Label Content="MIDI input device" Grid.Column="1" VerticalAlignment="Center" Height="22" VerticalContentAlignment="Center" Padding="0" Margin="0,0,0,22"/>
@@ -123,7 +123,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Button x:Name="refreshOSCButton" Click="refreshOSCButton_Click" Content="Refresh OSC" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="1" Width="76"/>
-                    <Button x:Name="refreshFadersButton" Content="Refresh MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshFadersButton_Click" Padding="1" Grid.Row="1" Width="76"/>
+                    <Button x:Name="refreshMIDIButton" Content="Refresh MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshMIDIButton_Click" Padding="1" Grid.Row="1" Width="76" IsEnabled="False"/>
 
                 </Grid>
             </GroupBox>
