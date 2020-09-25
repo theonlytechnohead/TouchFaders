@@ -64,15 +64,19 @@ namespace YAMAHA_MIDI {
 		}
 
 		void SetLabelsText (List<string> channelNames) {
-			for (int i = 0; i <= 15; i++) {
-				labels[i].Content = channelNames[i];
-			}
+			Dispatcher.Invoke(() => {
+				for (int i = 0; i <= 15; i++) {
+					labels[i].Content = channelNames[i];
+				}
+			});
 		}
 
 		void SetFadersValue (List<float> channelFaders) {
-			for (int i = 0; i <= 15; i++) {
-				faderBars[i].Value = channelFaders[i];
-			}
+			Dispatcher.Invoke(() => {
+				for (int i = 0; i <= 15; i++) {
+					faderBars[i].Value = channelFaders[i];
+				}
+			});
 		}
 
 		#region Scaling

@@ -13,6 +13,7 @@ using SharpOSC;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace YAMAHA_MIDI {
 
@@ -201,18 +202,16 @@ namespace YAMAHA_MIDI {
 			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		public List<List<float>> sendLevel = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
+		private List<List<float>> levels = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
+
+		public List<List<float>> sendLevel {
+			get { return levels; }
+			set { levels = value; sendsChanged?.Invoke(this, new EventArgs()); }
+		}
 	}
 
 	public class ChannelNames {
-		public event EventHandler channelNamesChanged;
-
-		public string this[int index] {
-			get { return names[index]; }
-			set { names[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		public List<string> names { get; set; } = new List<string>() {
+		private List<string> channelNames = new List<string>() {
 			"CH 1",
 			"CH 2",
 			"CH 3",
@@ -230,17 +229,31 @@ namespace YAMAHA_MIDI {
 			"CH 15",
 			"CH 16"
 		};
+
+		public event EventHandler channelNamesChanged;
+
+		public string this[int index] {
+			get { return names[index]; }
+			set { names[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
+		}
+
+		public List<string> names {
+			get => channelNames; set {
+				channelNames = value;
+				channelNamesChanged?.Invoke(this, new EventArgs());
+			}
+		}
 	}
 
 	public class ChannelFaders {
 		public event EventHandler channelFadersChanged;
 
 		public float this[int index] {
-			get { return faders[index]; }
-			set { faders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
+			get { return channelFaders[index]; }
+			set { channelFaders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		public List<float> faders { get; set; } = new List<float>() {
+		private List<float> channelFaders = new List<float>() {
 			823f / 1023f,
 			823f / 1023f,
 			823f / 1023f,
@@ -258,6 +271,11 @@ namespace YAMAHA_MIDI {
 			823f / 1023f,
 			823f / 1023f
 		};
+
+		public List<float> faders {
+			get { return channelFaders; }
+			set { channelFaders = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
+		}
 	}
 
 	/// <summary>
@@ -277,6 +295,7 @@ namespace YAMAHA_MIDI {
 		public ChannelNames channelNames;
 		public ChannelFaders channelFaders;
 
+		#region WindowEvents
 		public MainWindow () {
 			InitializeComponent();
 			sendsToMix = new SendsToMix();
@@ -284,10 +303,17 @@ namespace YAMAHA_MIDI {
 			channelFaders = new ChannelFaders();
 			instance = this;
 			Title = "YAMAHA MIDI - MIDI not started";
-			LoadAll();
 			deviceListBox.ItemsSource = oscDevices;
+			Task.Run(() => LoadAll());
 			displayMIDIDevices();
 		}
+
+		protected override async void OnClosed (EventArgs e) {
+			stopMIDIButton_Click(null, null);
+			await SaveAll();
+			base.OnClosed(e);
+		}
+		#endregion
 
 		#region Scaling
 		// This section smoothly scales everything within the mainGrid
@@ -346,23 +372,43 @@ namespace YAMAHA_MIDI {
 
 		#endregion
 
-		void LoadAll () {
+		#region File I/O
+		async Task LoadAll () {
 			try {
-				string devicesFile = File.ReadAllText("oscDevices.txt");
-				oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(devicesFile, new JsonSerializerOptions { IgnoreNullValues = true, });
-				string sendsToMixFile = File.ReadAllText("sendsToMix.txt");
-				sendsToMix.sendLevel = JsonSerializer.Deserialize<List<List<float>>>(sendsToMixFile, new JsonSerializerOptions { IgnoreNullValues = true, });
-				string channelNamesFile = File.ReadAllText("channelNames.txt");
-				channelNames.names = JsonSerializer.Deserialize<List<string>>(channelNamesFile, new JsonSerializerOptions { IgnoreNullValues = true, });
-				string channelFadersFile = File.ReadAllText("channelFaders.txt");
-				channelFaders.faders = JsonSerializer.Deserialize<List<float>>(channelFadersFile, new JsonSerializerOptions { IgnoreNullValues = true, });
+				JsonSerializerOptions jsonDeserializerOptions = new JsonSerializerOptions { IgnoreNullValues = true, };
+
+				ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(File.Open("oscDevices.txt", FileMode.Open), jsonDeserializerOptions);
+				await Dispatcher.BeginInvoke(new Action(() => {
+					foreach (oscDevice device in loadDevices) {
+						oscDevices.Add(device);
+					}
+				}));
+				sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(File.Open("sendsToMix.txt", FileMode.Open), jsonDeserializerOptions);
+				channelNames.names = await JsonSerializer.DeserializeAsync<List<string>>(File.Open("channelNames.txt", FileMode.Open), jsonDeserializerOptions);
+				channelFaders.faders = await JsonSerializer.DeserializeAsync<List<float>>(File.Open("channelFaders.txt", FileMode.Open), jsonDeserializerOptions);
 			} catch (FileNotFoundException) {
-				_ = SaveAll();
+				await SaveAll();
 			}
-			RefreshOSCDevices();
+			await RefreshOSCDevices();
 		}
 
-		async void RefreshOSCDevices () {
+		async Task SaveAll () {
+			using (FileStream fs = File.Create("oscDevices.txt")) {
+				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+			using (FileStream fs = File.Create("sendsToMix.txt")) {
+				await JsonSerializer.SerializeAsync(fs, sendsToMix.sendLevel, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+			using (FileStream fs = File.Create("channelNames.txt")) {
+				await JsonSerializer.SerializeAsync(fs, channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+			using (FileStream fs = File.Create("channelFaders.txt")) {
+				await JsonSerializer.SerializeAsync(fs, channelFaders.faders, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+			}
+		}
+		#endregion
+
+		async Task RefreshOSCDevices () {
 			await Task.Run(() => {
 				foreach (oscDevice device in oscDevices) {
 					device.Refresh();
@@ -726,7 +772,7 @@ namespace YAMAHA_MIDI {
 
 		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
 			refreshOSCButton.IsEnabled = false;
-			RefreshOSCDevices();
+			_ = RefreshOSCDevices();
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
@@ -811,27 +857,6 @@ namespace YAMAHA_MIDI {
 			infoWindow.Show();
 		}
 		#endregion
-
-		async Task SaveAll () {
-			using (FileStream fs = File.Create("oscDevices.txt")) {
-				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-			using (FileStream fs = File.Create("sendsToMix.txt")) {
-				await JsonSerializer.SerializeAsync(fs, sendsToMix.sendLevel, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-			using (FileStream fs = File.Create("channelNames.txt")) {
-				await JsonSerializer.SerializeAsync(fs, channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-			using (FileStream fs = File.Create("channelFaders.txt")) {
-				await JsonSerializer.SerializeAsync(fs, channelFaders.faders, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-		}
-
-		protected override async void OnClosed (EventArgs e) {
-			stopMIDIButton_Click(null, null);
-			await SaveAll();
-			base.OnClosed(e);
-		}
 
 	}
 }
