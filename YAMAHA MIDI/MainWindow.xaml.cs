@@ -377,7 +377,7 @@ namespace YAMAHA_MIDI {
 			try {
 				JsonSerializerOptions jsonDeserializerOptions = new JsonSerializerOptions { IgnoreNullValues = true, };
 
-				FileStream oscDevicesFile = File.OpenRead("oscDevices.txt");
+				FileStream oscDevicesFile = File.OpenRead("config/oscDevices.txt");
 				ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(oscDevicesFile, jsonDeserializerOptions);
 				oscDevicesFile.Close();
 				await Dispatcher.BeginInvoke(new Action(() => {
@@ -385,11 +385,11 @@ namespace YAMAHA_MIDI {
 						oscDevices.Add(device);
 					}
 				}));
-				using (FileStream sendsToMixFile = File.OpenRead("sendsToMix.txt"))
+				using (FileStream sendsToMixFile = File.OpenRead("config/sendsToMix.txt"))
 					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(sendsToMixFile, jsonDeserializerOptions);
-				using (FileStream channelNamesFile = File.OpenRead("channelNames.txt"))
+				using (FileStream channelNamesFile = File.OpenRead("config/channelNames.txt"))
 					channelNames.names = await JsonSerializer.DeserializeAsync<List<string>>(channelNamesFile, jsonDeserializerOptions);
-				using (FileStream channelFadersFile = File.OpenRead("channelFaders.txt"))
+				using (FileStream channelFadersFile = File.OpenRead("config/channelFaders.txt"))
 					channelFaders.faders = await JsonSerializer.DeserializeAsync<List<float>>(channelFadersFile, jsonDeserializerOptions);
 			} catch (FileNotFoundException) {
 				await SaveAll();
@@ -398,16 +398,17 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task SaveAll () {
-			using (FileStream fs = File.Create("oscDevices.txt")) {
+			_ = Directory.CreateDirectory("config");
+			using (FileStream fs = File.Create("config/oscDevices.txt")) {
 				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
-			using (FileStream fs = File.Create("sendsToMix.txt")) {
+			using (FileStream fs = File.Create("config/sendsToMix.txt")) {
 				await JsonSerializer.SerializeAsync(fs, sendsToMix.sendLevel, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
-			using (FileStream fs = File.Create("channelNames.txt")) {
+			using (FileStream fs = File.Create("config/channelNames.txt")) {
 				await JsonSerializer.SerializeAsync(fs, channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
-			using (FileStream fs = File.Create("channelFaders.txt")) {
+			using (FileStream fs = File.Create("config/channelFaders.txt")) {
 				await JsonSerializer.SerializeAsync(fs, channelFaders.faders, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
 			}
 		}
@@ -424,22 +425,25 @@ namespace YAMAHA_MIDI {
 					device.ResendAllNames(channelNames.names);
 				}
 			});
-			refreshOSCButton.IsEnabled = true;
+			Dispatcher.Invoke(() => {
+				refreshOSCButton.IsEnabled = true;
+			});
 		}
 
 		void displayMIDIDevices () {
-			inputMIDIComboBox.IsEnabled = false;
+			Dispatcher.Invoke(() => { inputMIDIComboBox.IsEnabled = false; });
 			inputMIDIComboBox.Items.Clear();
 			foreach (InputDevice inputDevice in InputDevice.GetAll()) {
 				inputMIDIComboBox.Items.Add(inputDevice.Name);
-				inputMIDIComboBox.IsEnabled = true;
+				Dispatcher.Invoke(() => { inputMIDIComboBox.IsEnabled = true; });
 			}
-			outputMIDIComboBox.IsEnabled = false;
+			Dispatcher.Invoke(() => { outputMIDIComboBox.IsEnabled = false; });
 			outputMIDIComboBox.Items.Clear();
 			foreach (OutputDevice outputDevice in OutputDevice.GetAll()) {
 				outputMIDIComboBox.Items.Add(outputDevice.Name);
-				outputMIDIComboBox.IsEnabled = true;
+				Dispatcher.Invoke(() => { outputMIDIComboBox.IsEnabled = true; });
 			}
+			Dispatcher.Invoke(() => { startMIDIButton.IsEnabled = true; });
 		}
 		#endregion
 
@@ -451,9 +455,6 @@ namespace YAMAHA_MIDI {
 			} catch (ArgumentException ex) {
 				MessageBox.Show($"Can't initialize {inputMIDIComboBox.SelectedItem} and {outputMIDIComboBox.SelectedItem} MIDI ports!\n{ex.Message}");
 				Console.WriteLine(ex.Message);
-				return;
-			} catch (NullReferenceException) {
-				MessageBox.Show("Please select a MIDI input and output first!");
 				return;
 			}
 			LS9_in.EventSent += LS9_in_EventSent;
@@ -764,6 +765,7 @@ namespace YAMAHA_MIDI {
 				} catch (MidiDeviceException ex) {
 					Console.WriteLine($"Well shucks, {LS9_in.Name} don't work no more...");
 					Console.WriteLine(ex.Message);
+					MessageBox.Show(ex.Message);
 				} catch (ObjectDisposedException) {
 					Console.WriteLine($"Tried to use {LS9_in.Name} without initializing MIDI!");
 					MessageBox.Show("Initialize MIDI first!");
@@ -782,14 +784,18 @@ namespace YAMAHA_MIDI {
 
 		#region UIEvents
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
-			startMIDIButton.IsEnabled = false;
-			Task.Run(async () => {
-				await InitializeMIDI();
-				Dispatcher.Invoke(() => {
-					refreshMIDIButton.IsEnabled = true;
-					stopMIDIButton.IsEnabled = true;
+			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
+				startMIDIButton.IsEnabled = false;
+				Task.Run(async () => {
+					await InitializeMIDI();
+					Dispatcher.Invoke(() => {
+						refreshMIDIButton.IsEnabled = true;
+						stopMIDIButton.IsEnabled = true;
+					});
 				});
-			});
+			} else {
+				MessageBox.Show("Please select a MIDI input and output first!");
+			}
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
