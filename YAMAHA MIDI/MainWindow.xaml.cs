@@ -20,10 +20,10 @@ namespace YAMAHA_MIDI {
 	public class oscDevice : INotifyPropertyChanged {
 		public string name;
 		[JsonIgnore]
-		public string Name {
+		public string Name { // Display name for ObservableCollection in UI
 			get {
 				if (input == null && output == null) {
-					return DeviceName + " with " + faders.Count + " faders";
+					return DeviceName + " is not configured";
 				} else {
 					return DeviceName + " at " + Address + ":" + SendPort + ", " + ListenPort;
 				}
@@ -75,6 +75,7 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
+		/*
 		List<float> faders;
 		public List<float> Faders {
 			get {
@@ -87,6 +88,7 @@ namespace YAMAHA_MIDI {
 				faders = value;
 			}
 		}
+		*/
 		#endregion
 
 		public UDPListener input = null;
@@ -96,7 +98,7 @@ namespace YAMAHA_MIDI {
 
 		public oscDevice () {
 			Name = "Unnamed device";
-			faders = (from number in Enumerable.Range(1, 96) select 823f / 1023f).ToList(); // 0dB is at 823 when value is 10-bit, therefore 823/1023
+			//faders = (from number in Enumerable.Range(1, 96) select 823f / 1023f).ToList(); // 0dB is at 823 when value is 10-bit, therefore 823/1023
 		}
 
 		public void Refresh () {
@@ -148,7 +150,7 @@ namespace YAMAHA_MIDI {
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
 					float value = (float)message.Arguments[0];
 					MainWindow.instance.SendFaderValue(mix, channel, value, this);
-					faders[channel - 1] = value;
+					//faders[channel - 1] = value;
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
@@ -160,16 +162,15 @@ namespace YAMAHA_MIDI {
 		}
 
 		void ResendMixFaders (int mix) {
-			int startChannel = 16 * (mix - 1);
-			for (int i = startChannel; i < startChannel + 16; i++) {
-				sendOSCMessage(i / 16 + 1, i % 16, faders[i]);
+			for (int channel = 1; channel <= MainWindow.instance.sendsToMix.sendLevel[mix - 1].Count; channel++) {
+				sendOSCMessage(mix, channel, MainWindow.instance.sendsToMix[mix - 1, channel - 1]);
+				Thread.Sleep(5);
 			}
 		}
 
 		public void ResendAllFaders () {
-			for (int i = 0; i < faders.Count; i++) {
-				sendOSCMessage(i / 16 + 1, i % 16, faders[i]);
-				Thread.Sleep(2);
+			for (int mix = 1; mix <= MainWindow.instance.sendsToMix.sendLevel.Count; mix++) {
+				ResendMixFaders(mix);
 			}
 		}
 
@@ -188,8 +189,8 @@ namespace YAMAHA_MIDI {
 		}
 
 		public void sendOSCMessage (int mix, int channel, float value) {
-			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel + 1}");
-			OscMessage message = new OscMessage($"/mix{mix}/fader{channel + 1}", value);
+			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel}");
+			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
 			output.Send(message);
 		}
 	}
@@ -202,7 +203,7 @@ namespace YAMAHA_MIDI {
 			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<List<float>> levels = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList();
+		private List<List<float>> levels = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList(); // Initalized to 0dB
 
 		public List<List<float>> sendLevel {
 			get { return levels; }
@@ -614,7 +615,7 @@ namespace YAMAHA_MIDI {
 		void HandleMixSendMIDI (SysExEvent midiEvent) {
 			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
 			foreach (oscDevice device in oscDevices) {
-				device.Faders[16 * (mix - 1) + channel] = value;
+				//device.Faders[16 * (mix - 1) + channel] = value;
 				device.sendOSCMessage(mix, channel, value);
 			}
 		}
@@ -726,6 +727,8 @@ namespace YAMAHA_MIDI {
 		}
 
 		public void SendFaderValue (int mix, int channel, float value, oscDevice sender) {
+			_ = SendOSCValue(mix, channel, value, sender);
+			//sendsToMix[mix - 1, channel - 1] = value;
 			byte mixLSB = mix switch
 			{
 				1 => 0x05,
@@ -750,12 +753,16 @@ namespace YAMAHA_MIDI {
 
 			if (activeSensingTimer != null)
 				_ = SendSysEx(sysExEvent);
-			foreach (oscDevice device in oscDevices) {
-				if (device != sender) { // Avoid feedback loop!
-					device.Faders[16 * (mix - 1) + channel] = value;
-					device.sendOSCMessage(mix, channel, value);
+		}
+
+		private async Task SendOSCValue (int mix, int channel, float value, oscDevice sender) {
+			await Task.Run(() => {
+				foreach (oscDevice device in oscDevices) {
+					if (device != sender) { // Avoid feedback loop!
+						device.sendOSCMessage(mix, channel, value);
+					}
 				}
-			}
+			});
 		}
 
 		public async Task SendSysEx (NormalSysExEvent normalSysExEvent) {
