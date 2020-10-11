@@ -538,7 +538,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task GetFaderValuesForMix (byte mix) {
-			for (int channel = 0; channel <= 15; channel++) {
+			for (int channel = 0; channel < 16; channel++) {
 				//Thread.Sleep(25);
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
 				byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
@@ -548,7 +548,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task GetChannelFaders () {
-			for (int channel = 0; channel <= 15; channel++) {
+			for (int channel = 0; channel < 16; channel++) {
 				//Thread.Sleep(25);
 				NormalSysExEvent kFader = new NormalSysExEvent();
 				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
@@ -558,7 +558,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task GetChannelNames () {
-			for (int channel = 0; channel <= 15; channel++) {
+			for (int channel = 0; channel < 16; channel++) {
 				//Thread.Sleep(25);
 				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
 				byte[] data1 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
@@ -566,7 +566,7 @@ namespace YAMAHA_MIDI {
 				await SendSysEx(kNameShort1);
 				//Thread.Sleep(25);
 				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
-				byte[] data2 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data2 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort2.Data = data2;
 				await SendSysEx(kNameShort2);
 			}
@@ -747,7 +747,7 @@ namespace YAMAHA_MIDI {
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix1		Ch 1					0 db  0 dB
 			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x37, 0xF7 };
 			sysExEvent.Data = data;
-			SendSysEx(sysExEvent);
+			_ = SendSysEx(sysExEvent);
 		}
 
 		public void SendFaderValue (int mix, int channel, float value, oscDevice sender) {
@@ -779,7 +779,7 @@ namespace YAMAHA_MIDI {
 			sysExEvent.Data = data;
 
 			if (activeSensingTimer != null)
-				SendSysEx(sysExEvent);
+				_ = SendSysEx(sysExEvent);
 		}
 
 		private void SendOSCValue (int mix, int channel, float value, oscDevice sender) {
