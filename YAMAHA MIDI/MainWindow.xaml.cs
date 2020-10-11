@@ -478,7 +478,7 @@ namespace YAMAHA_MIDI {
 						Title = "YAMAHA MIDI - MIDI running (active sensing)";
 					});
 					activeSensingTimer = new Timer(sendActiveSense, null, 0, 375);
-					queueTimer = new Timer(sendQueueItem, null, 0, 20);
+					queueTimer = new Timer(sendQueueItem, null, 0, 15);
 					await GetAllFaderValues();
 					await GetChannelFaders();         // Channel faders to STEREO
 					await GetChannelNames();
@@ -511,9 +511,8 @@ namespace YAMAHA_MIDI {
 
 		void sendQueueItem (object state) {
 			if (queue.Count > 0) {
-				NormalSysExEvent sysExEvent = queue.Dequeue();
 				try {
-					LS9_in.SendEvent(sysExEvent);
+					LS9_in.SendEvent(queue.Dequeue());
 				} catch (MidiDeviceException ex) {
 					Console.WriteLine($"Well shucks, {LS9_in.Name} don't work no more...");
 					Console.WriteLine(ex.Message);
@@ -539,7 +538,6 @@ namespace YAMAHA_MIDI {
 
 		async Task GetFaderValuesForMix (byte mix) {
 			for (int channel = 0; channel < 16; channel++) {
-				//Thread.Sleep(25);
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
 				byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
@@ -549,7 +547,6 @@ namespace YAMAHA_MIDI {
 
 		async Task GetChannelFaders () {
 			for (int channel = 0; channel < 16; channel++) {
-				//Thread.Sleep(25);
 				NormalSysExEvent kFader = new NormalSysExEvent();
 				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kFader.Data = data;
@@ -559,7 +556,6 @@ namespace YAMAHA_MIDI {
 
 		async Task GetChannelNames () {
 			for (int channel = 0; channel < 16; channel++) {
-				//Thread.Sleep(25);
 				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
 				byte[] data1 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort1.Data = data1;
@@ -801,7 +797,9 @@ namespace YAMAHA_MIDI {
 
 		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
 			var LS9_device = (MidiDevice)sender;
-			//Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent to '{LS9_device.Name}' as: {e.Event}");
+			NormalSysExEvent sysExEvent = e.Event as NormalSysExEvent;
+			string byte_string = BitConverter.ToString(sysExEvent.Data).Replace("-", ", ");
+			Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent with data: {byte_string}");
 		}
 		#endregion
 
