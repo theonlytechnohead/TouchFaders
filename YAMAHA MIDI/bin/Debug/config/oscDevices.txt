@@ -1,7 +1,7 @@
 [
   {
     "DeviceName": "Note7",
-    "Address": "192.168.1.160",
+    "Address": "192.168.43.1",
     "SendPort": 9001,
     "ListenPort": 8001
   },

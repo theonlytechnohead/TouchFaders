@@ -150,7 +150,7 @@ namespace YAMAHA_MIDI {
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
 					float value = (float)message.Arguments[0];
 					MainWindow.instance.SendFaderValue(mix, channel, value, this);
-					Console.WriteLine($"OSC queued: {message.Address} {message.Arguments[0]}");
+					//Console.WriteLine($"OSC queued: {message.Address} {message.Arguments[0]}");
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
@@ -189,7 +189,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		public void sendOSCMessage (int mix, int channel, float value) {
-			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel}");
+			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");
 			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
 			output.Send(message);
 		}
@@ -483,7 +483,7 @@ namespace YAMAHA_MIDI {
 					queueTimer = new Timer(sendQueueItem, null, 0, 15);
 					await GetAllFaderValues();
 					await GetChannelFaders();         // Channel faders to STEREO
-					await GetChannelNames();
+													  //await GetChannelNames();
 				}
 			}
 		}
@@ -541,7 +541,7 @@ namespace YAMAHA_MIDI {
 		async Task GetFaderValuesForMix (byte mix) {
 			for (int channel = 0; channel < 16; channel++) {
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
-				byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
 				await SendSysEx(sysExEvent);
 			}
@@ -633,11 +633,11 @@ namespace YAMAHA_MIDI {
 
 		void HandleMixSendMIDI (SysExEvent midiEvent) {
 			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-			sendsToMix[mix - 1, channel - 1] = value;
+			sendsToMix[mix - 1, channel - 1] = value / 1023f;
 			Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
 			foreach (oscDevice device in oscDevices) {
 				//device.Faders[16 * (mix - 1) + channel] = value;
-				device.sendOSCMessage(mix, channel, value);
+				device.sendOSCMessage(mix, channel, value / 1023f);
 			}
 		}
 
@@ -800,8 +800,8 @@ namespace YAMAHA_MIDI {
 		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
 			var LS9_device = (MidiDevice)sender;
 			NormalSysExEvent sysExEvent = e.Event as NormalSysExEvent;
-			string byte_string = BitConverter.ToString(sysExEvent.Data).Replace("-", ", ");
-			Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent with data: {byte_string}");
+			//string byte_string = BitConverter.ToString(sysExEvent.Data).Replace("-", ", ");
+			//Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent with data: {byte_string}");
 		}
 		#endregion
 
