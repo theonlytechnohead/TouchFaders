@@ -149,8 +149,13 @@ namespace YAMAHA_MIDI {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
 					float value = (float)message.Arguments[0];
+					int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
+					if (linkedIndex != -1) {
+						sendOSCMessage(mix, linkedIndex + 1, value);
+						//MainWindow.instance.sendsToMix[mix - 1, linkedIndex] = value;
+						MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
+					}
 					MainWindow.instance.SendFaderValue(mix, channel, value, this);
-					//Console.WriteLine($"OSC queued: {message.Address} {message.Arguments[0]}");
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
@@ -279,6 +284,42 @@ namespace YAMAHA_MIDI {
 		}
 	}
 
+	public class LinkedChannel {
+		public int leftChannel, rightChannel;
+
+		public bool isLinked (int index) {
+			if (index == leftChannel || index == rightChannel) {
+				return true;
+			}
+			return false;
+		}
+
+		public LinkedChannel (int leftIndex, int rightIndex) {
+			this.leftChannel = leftIndex;
+			this.rightChannel = rightIndex;
+		}
+	}
+
+	public class LinkedChannels {
+		public List<LinkedChannel> links;
+
+		public int getIndex (int index) {
+			foreach (LinkedChannel linkedChannel in links) {
+				if (linkedChannel.isLinked(index)) {
+					if (index == linkedChannel.leftChannel) {
+						return linkedChannel.rightChannel;
+					}
+					return linkedChannel.leftChannel;
+				}
+			}
+			return -1;
+		}
+
+		public LinkedChannels () {
+			links = new List<LinkedChannel>();
+		}
+	}
+
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
@@ -296,6 +337,7 @@ namespace YAMAHA_MIDI {
 		public SendsToMix sendsToMix;
 		public ChannelNames channelNames;
 		public ChannelFaders channelFaders;
+		public LinkedChannels linkedChannels;
 
 		public Queue<NormalSysExEvent> queue = new Queue<NormalSysExEvent>();
 
@@ -305,6 +347,10 @@ namespace YAMAHA_MIDI {
 			sendsToMix = new SendsToMix();
 			channelNames = new ChannelNames();
 			channelFaders = new ChannelFaders();
+			linkedChannels = new LinkedChannels();
+			linkedChannels.links.Add(new LinkedChannel(4, 5)); // Keys
+			linkedChannels.links.Add(new LinkedChannel(8, 9)); // Track
+															   //linkedChannels.links.Add(new LinkedChannel(10, 11)); //Click?
 			instance = this;
 			Title = "YAMAHA MIDI - MIDI not started";
 			deviceListBox.ItemsSource = oscDevices;
@@ -633,10 +679,16 @@ namespace YAMAHA_MIDI {
 
 		void HandleMixSendMIDI (SysExEvent midiEvent) {
 			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
+			int linkedIndex = linkedChannels.getIndex(channel - 1);
+			if (linkedIndex != -1) {
+				sendsToMix[mix - 1, linkedIndex] = value / 1023f;
+			}
 			sendsToMix[mix - 1, channel - 1] = value / 1023f;
 			Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
 			foreach (oscDevice device in oscDevices) {
-				//device.Faders[16 * (mix - 1) + channel] = value;
+				if (linkedIndex != -1) {
+					device.sendOSCMessage(mix, linkedIndex + 1, value / 1023f);
+				}
 				device.sendOSCMessage(mix, channel, value / 1023f);
 			}
 		}
@@ -662,10 +714,10 @@ namespace YAMAHA_MIDI {
 
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
-					channelNames[channel] = Encoding.ASCII.GetString(data);
+					channelNames[channel] = BitConverter.ToString(data);
 					break;
 				case 0x01: // kNameShort2
-					channelNames[channel] = Encoding.ASCII.GetString(data);
+					channelNames[channel] += "-" + BitConverter.ToString(data);
 					break;
 			}
 		}
@@ -682,8 +734,12 @@ namespace YAMAHA_MIDI {
 			ushort level = (ushort)(data2 << 7);
 			level += data1;
 			float value = level / 1023f;
-			channelFaders[channel] = value;
 
+			int linkedIndex = linkedChannels.getIndex(channel);
+			if (linkedIndex != -1) {
+				channelFaders[linkedIndex] = value;
+			}
+			channelFaders[channel] = value;
 		}
 		#endregion
 
@@ -694,8 +750,8 @@ namespace YAMAHA_MIDI {
 				return;
 			SysExEvent midiEvent = (SysExEvent)e.Event;
 			byte[] bytes = midiEvent.Data;
-			string byte_string = BitConverter.ToString(bytes).Replace("-", ", ");
-			Console.WriteLine($"Event received from '{LS9_device.Name}' date: {byte_string}");
+			//string byte_string = BitConverter.ToString(bytes).Replace("-", ", ");
+			//Console.WriteLine($"Event received from '{LS9_device.Name}' date: {byte_string}");
 			if (CheckSysEx(bytes)) {
 				byte dataCategory = bytes[4];   // kInputToMix is in 0x01
 				byte elementMSB = bytes[5];     // kInputToMix has MSB 0x00
