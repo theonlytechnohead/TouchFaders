@@ -310,9 +310,11 @@ namespace YAMAHA_MIDI {
 			deviceListBox.ItemsSource = oscDevices;
 			Task.Run(() => LoadAll());
 			displayMIDIDevices();
+			this.KeyDown += MainWindow_KeyDown;
 		}
 
 		protected override async void OnClosed (EventArgs e) {
+			Console.WriteLine("Closing...");
 			stopMIDIButton_Click(null, null);
 			await SaveAll();
 			base.OnClosed(e);
@@ -845,7 +847,6 @@ namespace YAMAHA_MIDI {
 					await GetAllFaderValues();
 					await GetChannelNames();
 				}
-				TestMixerOutput();
 				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
 			});
 		}
@@ -909,6 +910,35 @@ namespace YAMAHA_MIDI {
 			infoWindow.Owner = this;
 			infoWindow.DataContext = this.DataContext;
 			infoWindow.Show();
+		}
+
+		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
+			switch (e.Key) {
+				case System.Windows.Input.Key.R:
+					displayMIDIDevices();
+					break;
+				case System.Windows.Input.Key.M:
+					if (refreshMIDIButton.IsEnabled)
+						refreshMIDIButton_Click(this, new RoutedEventArgs());
+					break;
+				case System.Windows.Input.Key.O:
+					if (refreshOSCButton.IsEnabled)
+						refreshOSCButton_Click(this, new RoutedEventArgs());
+					break;
+				case System.Windows.Input.Key.S:
+					if (startMIDIButton.IsEnabled)
+						startMIDIButton_Click(this, new RoutedEventArgs());
+					if (stopMIDIButton.IsEnabled)
+						stopMIDIButton_Click(this, new RoutedEventArgs());
+					break;
+				case System.Windows.Input.Key.W:
+					if (activeSensingTimer != null)
+						TestMixerOutput();
+					break;
+				case System.Windows.Input.Key.Q:
+					this.Close();
+					break;
+			}
 		}
 		#endregion
 
