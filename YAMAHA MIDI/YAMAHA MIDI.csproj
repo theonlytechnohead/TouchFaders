@@ -117,6 +117,7 @@
     <Compile Include="CreateOSCDevice.xaml.cs">
       <DependentUpon>CreateOSCDevice.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataStructures.cs" />
     <Compile Include="InfoWindow.xaml.cs">
       <DependentUpon>InfoWindow.xaml</DependentUpon>
     </Compile>
@@ -129,6 +130,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="oscDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

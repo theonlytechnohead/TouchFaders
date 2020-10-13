@@ -1,325 +1,15 @@
 ﻿using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
-using SharpOSC;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace YAMAHA_MIDI {
-
-	public class oscDevice : INotifyPropertyChanged {
-		public string name;
-		[JsonIgnore]
-		public string Name { // Display name for ObservableCollection in UI
-			get {
-				if (input == null && output == null) {
-					return DeviceName + " is not configured";
-				} else {
-					return DeviceName + " at " + Address + ":" + SendPort + ", " + ListenPort;
-				}
-			}
-			set {
-				DeviceName = value;
-			}
-		}
-
-		#region JsonProperties
-		public string DeviceName { get { return name; } set { name = value; } }
-
-		string address;
-		public string Address {
-			get {
-				if (output != null)
-					return output.Address;
-				else
-					return address;
-			}
-			set {
-				address = value;
-			}
-		}
-
-		int sendPort;
-		public int? SendPort {
-			get {
-				if (output != null)
-					return output.Port;
-				else
-					return sendPort;
-			}
-			set {
-				sendPort = value.Value;
-			}
-		}
-
-		int listenPort;
-		public int? ListenPort {
-			get {
-				if (input != null)
-					return input.Port;
-				else
-					return listenPort;
-			}
-			set {
-				listenPort = value.Value;
-			}
-		}
-
-		/*
-		List<float> faders;
-		public List<float> Faders {
-			get {
-				if (faders != null)
-					return faders;
-				else
-					return null;
-			}
-			set {
-				faders = value;
-			}
-		}
-		*/
-		#endregion
-
-		public UDPListener input = null;
-		public UDPSender output = null;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public oscDevice () {
-			Name = "Unnamed device";
-			//faders = (from number in Enumerable.Range(1, 96) select 823f / 1023f).ToList(); // 0dB is at 823 when value is 10-bit, therefore 823/1023
-		}
-
-		public void Refresh () {
-			if (DeviceName != null)
-				SetDeviceName(DeviceName);
-			if (Address != null && ListenPort != null && SendPort != null)
-				InitializeIO(Address, SendPort.Value, ListenPort.Value);
-		}
-
-		public void SetDeviceName (string value) {
-			Name = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
-		}
-
-		public void InitializeIO (string address, int port, int localPort) {
-			Address = address;
-			SendPort = port;
-			ListenPort = localPort;
-			(input as IDisposable)?.Dispose();
-			(output as IDisposable)?.Dispose();
-			input = new UDPListener(localPort, parseOSCMessage);
-			output = new UDPSender(address, port);
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
-		}
-
-		void parseOSCMessage (OscPacket packet) {
-			if (packet is OscBundle) {
-				OscBundle messageBundle = (OscBundle)packet;
-				foreach (OscMessage message in messageBundle.Messages) {
-					handleOSCMessage(message);
-				}
-			} else {
-				OscMessage message = (OscMessage)packet;
-				try {
-					handleOSCMessage(message);
-				} catch (NullReferenceException) {
-					return;
-				}
-			}
-		}
-
-		void handleOSCMessage (OscMessage message) {
-			//Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
-			if (message.Address.Contains("/mix")) {
-				string[] address = message.Address.Split('/');
-				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
-				if (address.Length > 1) {
-					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
-					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
-					float value = (float)message.Arguments[0];
-					int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
-					if (linkedIndex != -1) {
-						sendOSCMessage(mix, linkedIndex + 1, value);
-						//MainWindow.instance.sendsToMix[mix - 1, linkedIndex] = value;
-						MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
-					}
-					MainWindow.instance.SendFaderValue(mix, channel, value, this);
-				} else {
-					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
-					if (message.Arguments[0].ToString() == "1") {
-						ResendMixFaders(mix);
-						ResendMixNames(mix, MainWindow.instance.channelNames.names);
-					}
-				}
-			}
-		}
-
-		void ResendMixFaders (int mix) {
-			for (int channel = 1; channel <= MainWindow.instance.sendsToMix.sendLevel[mix - 1].Count; channel++) {
-				sendOSCMessage(mix, channel, MainWindow.instance.sendsToMix[mix - 1, channel - 1]);
-				Thread.Sleep(5);
-			}
-		}
-
-		public void ResendAllFaders () {
-			for (int mix = 1; mix <= MainWindow.instance.sendsToMix.sendLevel.Count; mix++) {
-				ResendMixFaders(mix);
-			}
-		}
-
-		public void ResendMixNames (int mix, List<string> channelNames) {
-			for (int label = 1; label <= 16; label++) {
-				OscMessage message = new OscMessage($"/mix{mix}/label{label}", channelNames[label - 1]);
-				output.Send(message);
-			}
-		}
-
-		public void ResendAllNames (List<string> channelNames) {
-			for (int mix = 1; mix < 6; mix++) {
-				ResendMixNames(mix, channelNames);
-				Thread.Sleep(2);
-			}
-		}
-
-		public void sendOSCMessage (int mix, int channel, float value) {
-			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");
-			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
-			output.Send(message);
-		}
-	}
-
-	public class SendsToMix {
-		public event EventHandler sendsChanged;
-
-		public float this[int mix, int channel] {
-			get { return sendLevel[mix][channel]; }
-			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		private List<List<float>> levels = (from mix in Enumerable.Range(1, 6) select (from channel in Enumerable.Range(1, 16) select 823f / 1023f).ToList()).ToList(); // Initalized to 0dB
-
-		public List<List<float>> sendLevel {
-			get { return levels; }
-			set { levels = value; sendsChanged?.Invoke(this, new EventArgs()); }
-		}
-	}
-
-	public class ChannelNames {
-		private List<string> channelNames = new List<string>() {
-			"CH 1",
-			"CH 2",
-			"CH 3",
-			"CH 4",
-			"CH 5",
-			"CH 6",
-			"CH 7",
-			"CH 8",
-			"CH 9",
-			"CH 10",
-			"CH 11",
-			"CH 12",
-			"CH 13",
-			"CH 14",
-			"CH 15",
-			"CH 16"
-		};
-
-		public event EventHandler channelNamesChanged;
-
-		public string this[int index] {
-			get { return names[index]; }
-			set { names[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		public List<string> names {
-			get => channelNames; set {
-				channelNames = value;
-				channelNamesChanged?.Invoke(this, new EventArgs());
-			}
-		}
-	}
-
-	public class ChannelFaders {
-		public event EventHandler channelFadersChanged;
-
-		public float this[int index] {
-			get { return channelFaders[index]; }
-			set { channelFaders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		private List<float> channelFaders = new List<float>() {
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f,
-			823f / 1023f
-		};
-
-		public List<float> faders {
-			get { return channelFaders; }
-			set { channelFaders = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
-		}
-	}
-
-	public class LinkedChannel {
-		public int leftChannel, rightChannel;
-
-		public bool isLinked (int index) {
-			if (index == leftChannel || index == rightChannel) {
-				return true;
-			}
-			return false;
-		}
-
-		public LinkedChannel (int leftIndex, int rightIndex) {
-			this.leftChannel = leftIndex;
-			this.rightChannel = rightIndex;
-		}
-	}
-
-	public class LinkedChannels {
-		public List<LinkedChannel> links;
-
-		public int getIndex (int index) {
-			foreach (LinkedChannel linkedChannel in links) {
-				if (linkedChannel.isLinked(index)) {
-					if (index == linkedChannel.leftChannel) {
-						return linkedChannel.rightChannel;
-					}
-					return linkedChannel.leftChannel;
-				}
-			}
-			return -1;
-		}
-
-		public LinkedChannels () {
-			links = new List<LinkedChannel>();
-		}
-	}
-
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
@@ -331,7 +21,6 @@ namespace YAMAHA_MIDI {
 
 		OutputDevice LS9_in;
 		InputDevice LS9_out;
-		Timer activeSensingTimer;
 		Timer queueTimer;
 
 		public SendsToMix sendsToMix;
@@ -519,41 +208,16 @@ namespace YAMAHA_MIDI {
 				return;
 			}
 			if (LS9_out.IsListeningForEvents) {
-				if (ResetMIDI()) {
-					Dispatcher.Invoke(() => {
-						inputMIDIComboBox.IsEnabled = false;
-						outputMIDIComboBox.IsEnabled = false;
-						Title = "YAMAHA MIDI - MIDI running (active sensing)";
-					});
-					activeSensingTimer = new Timer(sendActiveSense, null, 0, 375);
-					queueTimer = new Timer(sendQueueItem, null, 0, 15);
-					await GetAllFaderValues();
-					await GetChannelFaders();         // Channel faders to STEREO
-													  //await GetChannelNames();
-				}
-			}
-		}
-
-		bool ResetMIDI () {
-			ResetEvent systemReset = new ResetEvent();
-			try {
-				//LS9_in.SendEvent(systemReset);
-			} catch (MidiDeviceException ex) {
-				Console.WriteLine($"Couldn't send system reset MIDI event to {inputMIDIComboBox.SelectedItem}");
-				Console.WriteLine(ex.Message);
-				return false;
-			}
-			return true;
-		}
-
-		void sendActiveSense (object state) {
-			ActiveSensingEvent activeSense = new ActiveSensingEvent();
-			try {
-				//LS9_in.SendEvent(activeSense); // MIDI should now be initialized with the desk
-			} catch (MidiDeviceException e) {
-				Title = "YAMAHA MIDI - Couldn't active sense";
-				Console.WriteLine("Couldn't send active sensing MIDI event to LS9");
-				Console.WriteLine(e.Message);
+				Dispatcher.Invoke(() => {
+					inputMIDIComboBox.IsEnabled = false;
+					outputMIDIComboBox.IsEnabled = false;
+					Title = "YAMAHA MIDI - MIDI started";
+					Console.WriteLine("Started MIDI");
+				});
+				queueTimer = new Timer(sendQueueItem, null, 0, 15);
+				await GetAllFaderValues();
+				await GetChannelFaders();         // Channel faders to STEREO
+												  //await GetChannelNames();
 			}
 		}
 
@@ -608,7 +272,6 @@ namespace YAMAHA_MIDI {
 				byte[] data1 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort1.Data = data1;
 				await SendSysEx(kNameShort1);
-				//Thread.Sleep(25);
 				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
 				byte[] data2 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort2.Data = data2;
@@ -758,7 +421,7 @@ namespace YAMAHA_MIDI {
 				byte elementLSB = bytes[6];     // kInputToMix has LSB 0x43
 				byte indexMSB = bytes[7];       // index MSB is for the Mix ...
 				byte indexLSB = bytes[8];       // ... as on the desk, MIX 0-5
-				byte channelMSB = bytes[9];    // Channel MSB per channel
+				byte channelMSB = bytes[9];     // Channel MSB per channel
 				byte channelLSB = bytes[10];    // Channel LSB with a 0 in the 8th bit
 
 				ushort channel = (ushort)(channelMSB << 7);
@@ -835,11 +498,11 @@ namespace YAMAHA_MIDI {
 			ushort shiftedValue = (ushort)(value_int >> 7);
 			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
 
-			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  0 db		0 dB
+			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  db		dB
 			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 
-			if (activeSensingTimer != null)
+			if (stopMIDIButton.IsEnabled)
 				_ = SendSysEx(sysExEvent);
 		}
 
@@ -871,7 +534,7 @@ namespace YAMAHA_MIDI {
 		#region UIEvents
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
-				startMIDIButton.IsEnabled = false;
+				Dispatcher.Invoke(() => { startMIDIButton.IsEnabled = false; });
 				Task.Run(async () => {
 					await InitializeMIDI();
 					Dispatcher.Invoke(() => {
@@ -885,32 +548,33 @@ namespace YAMAHA_MIDI {
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
-			(activeSensingTimer as IDisposable)?.Dispose();
 			(queueTimer as IDisposable)?.Dispose();
-			if (activeSensingTimer != null)
+			Console.WriteLine("Stopped MIDI");
+			Dispatcher.Invoke(() => {
 				Title = "YAMAHA MIDI - MIDI not started";
-			Console.WriteLine("Disposed active sensing timer");
-			refreshMIDIButton.IsEnabled = false;
-			startMIDIButton.IsEnabled = true;
-			stopMIDIButton.IsEnabled = false;
+				refreshMIDIButton.IsEnabled = false;
+				startMIDIButton.IsEnabled = true;
+				stopMIDIButton.IsEnabled = false;
+			});
 			(LS9_in as IDisposable)?.Dispose();
 			(LS9_out as IDisposable)?.Dispose();
 			displayMIDIDevices();
 		}
 
 		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
-			refreshOSCButton.IsEnabled = false;
+			Dispatcher.Invoke(() => { refreshOSCButton.IsEnabled = false; });
 			_ = RefreshOSCDevices();
 		}
 
 		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
-			refreshMIDIButton.IsEnabled = false;
+			//Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = false; }));
 			Task.Run(async () => {
-				if (activeSensingTimer != null) {
+				if (stopMIDIButton.IsEnabled) {
 					await GetAllFaderValues();
+					await GetChannelFaders();
 					await GetChannelNames();
 				}
-				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
+				//Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
 			});
 		}
 
@@ -970,7 +634,6 @@ namespace YAMAHA_MIDI {
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
 			InfoWindow infoWindow = new InfoWindow();
-			//infoWindow.Owner = this;
 			infoWindow.KeyDown += MainWindow_KeyDown;
 			infoWindow.DataContext = this.DataContext;
 			infoWindow.Show();
@@ -1005,7 +668,7 @@ namespace YAMAHA_MIDI {
 						break;
 					}
 				case System.Windows.Input.Key.T:
-					if (activeSensingTimer != null) {
+					if (stopMIDIButton.IsEnabled) {
 						if (sendsToMix[0, 0] != 0f) {
 							TestMixerOutputHigh();
 							break;

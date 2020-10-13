@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="YAMAHA MIDI" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="200" Width="600" Height="300">
+        Title="YAMAHA MIDI" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="275" Width="600" Height="300">
     <Window.Resources>
         <ResourceDictionary>
             <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
