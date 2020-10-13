@@ -567,15 +567,17 @@ namespace YAMAHA_MIDI {
 		}
 
 		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
-			//Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = false; }));
+			Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = false; }));
+			bool enabled = stopMIDIButton.IsEnabled;
 			Task.Run(async () => {
-				if (stopMIDIButton.IsEnabled) {
+				if (enabled) {
 					await GetAllFaderValues();
 					await GetChannelFaders();
 					await GetChannelNames();
 				}
-				//Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
+				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
 			});
+
 		}
 
 		void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
