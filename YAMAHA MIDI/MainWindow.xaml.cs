@@ -797,9 +797,16 @@ namespace YAMAHA_MIDI {
 			}
 		}
 
-		void TestMixerOutput () {
+		void TestMixerOutputHigh () {
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix1		Ch 1					0 db  0 dB
 			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x37, 0xF7 };
+			sysExEvent.Data = data;
+			_ = SendSysEx(sysExEvent);
+		}
+
+		void TestMixerOutputLow () {
+			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix1		Ch 1					-inf dB
+			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF7 };
 			sysExEvent.Data = data;
 			_ = SendSysEx(sysExEvent);
 		}
@@ -963,7 +970,8 @@ namespace YAMAHA_MIDI {
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
 			InfoWindow infoWindow = new InfoWindow();
-			infoWindow.Owner = this;
+			//infoWindow.Owner = this;
+			infoWindow.KeyDown += MainWindow_KeyDown;
 			infoWindow.DataContext = this.DataContext;
 			infoWindow.Show();
 		}
@@ -987,9 +995,25 @@ namespace YAMAHA_MIDI {
 					if (stopMIDIButton.IsEnabled)
 						stopMIDIButton_Click(this, new RoutedEventArgs());
 					break;
-				case System.Windows.Input.Key.W:
-					if (activeSensingTimer != null)
-						TestMixerOutput();
+				case System.Windows.Input.Key.I:
+					if (sender is InfoWindow) {
+						InfoWindow infoWindow = sender as InfoWindow;
+						infoWindow.Close();
+						break;
+					} else {
+						infoWindowButton_Click(this, new RoutedEventArgs());
+						break;
+					}
+				case System.Windows.Input.Key.T:
+					if (activeSensingTimer != null) {
+						if (sendsToMix[0, 0] != 0f) {
+							TestMixerOutputHigh();
+							break;
+						} else {
+							TestMixerOutputLow();
+							break;
+						}
+					}
 					break;
 				case System.Windows.Input.Key.Q:
 					this.Close();
