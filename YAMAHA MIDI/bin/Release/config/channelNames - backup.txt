@@ -1,0 +1,18 @@
+[
+  "Kick",
+  "FlrTom",
+  "Bass",
+  "E. Gtr",
+  "Key L",
+  "Key R",
+  "A. Gtr",
+  "OverHd",
+  "TrackL",
+  "TrackR",
+  "Click",
+  "Click2",
+  "Amy",
+  "Aimee",
+  "Tim",
+  "Caleb"
+]

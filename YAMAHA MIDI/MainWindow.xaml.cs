@@ -217,7 +217,7 @@ namespace YAMAHA_MIDI {
 				queueTimer = new Timer(sendQueueItem, null, 0, 15);
 				await GetAllFaderValues();
 				await GetChannelFaders();         // Channel faders to STEREO
-												  //await GetChannelNames();
+				await GetChannelNames();
 			}
 		}
 
@@ -380,7 +380,7 @@ namespace YAMAHA_MIDI {
 					channelNames[channel] = BitConverter.ToString(data);
 					break;
 				case 0x01: // kNameShort2
-					channelNames[channel] += "-" + BitConverter.ToString(data);
+					channelNames[channel] += " " + BitConverter.ToString(data);
 					break;
 			}
 		}
