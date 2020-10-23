@@ -87,7 +87,6 @@ namespace YAMAHA_MIDI {
 
 		public oscDevice () {
 			Name = "Unnamed device";
-			//faders = (from number in Enumerable.Range(1, 96) select 823f / 1023f).ToList(); // 0dB is at 823 when value is 10-bit, therefore 823/1023
 		}
 
 		public void Refresh () {
@@ -141,7 +140,6 @@ namespace YAMAHA_MIDI {
 					int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
 					if (linkedIndex != -1) {
 						sendOSCMessage(mix, linkedIndex + 1, value);
-						//MainWindow.instance.sendsToMix[mix - 1, linkedIndex] = value;
 						MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
 					}
 					MainWindow.instance.SendFaderValue(mix, channel, value, this);
@@ -156,29 +154,29 @@ namespace YAMAHA_MIDI {
 		}
 
 		void ResendMixFaders (int mix) {
-			for (int channel = 1; channel <= MainWindow.instance.sendsToMix.sendLevel[mix - 1].Count; channel++) {
+			for (int channel = 1; channel < MainWindow.NUM_CHANNELS; channel++) {
 				sendOSCMessage(mix, channel, MainWindow.instance.sendsToMix[mix - 1, channel - 1]);
-				Thread.Sleep(5);
+				Thread.Sleep(3);
 			}
 		}
 
 		public void ResendAllFaders () {
-			for (int mix = 1; mix <= MainWindow.instance.sendsToMix.sendLevel.Count; mix++) {
+			for (int mix = 1; mix <= MainWindow.NUM_MIXES; mix++) {
 				ResendMixFaders(mix);
 			}
 		}
 
 		public void ResendMixNames (int mix, List<string> channelNames) {
-			for (int label = 1; label <= 16; label++) {
+			for (int label = 1; label <= MainWindow.NUM_CHANNELS; label++) {
 				OscMessage message = new OscMessage($"/mix{mix}/label{label}", channelNames[label - 1]);
 				output.Send(message);
 			}
 		}
 
 		public void ResendAllNames (List<string> channelNames) {
-			for (int mix = 1; mix < 6; mix++) {
+			for (int mix = 1; mix <= MainWindow.NUM_MIXES; mix++) {
 				ResendMixNames(mix, channelNames);
-				Thread.Sleep(2);
+				Thread.Sleep(3);
 			}
 		}
 
