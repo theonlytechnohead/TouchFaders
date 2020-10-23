@@ -16,7 +16,7 @@ namespace YAMAHA_MIDI {
 	public partial class MainWindow : Window {
 
 		public const int NUM_CHANNELS = 64;
-		public const int NUM_MIXES = 6;
+		public const int NUM_MIXES = 16;
 
 		public static MainWindow instance;
 
