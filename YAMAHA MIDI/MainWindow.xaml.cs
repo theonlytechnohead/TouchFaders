@@ -15,6 +15,9 @@ namespace YAMAHA_MIDI {
 	/// </summary>
 	public partial class MainWindow : Window {
 
+		public const int NUM_CHANNELS = 64;
+		public const int NUM_MIXES = 6;
+
 		public static MainWindow instance;
 
 		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
@@ -249,7 +252,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task GetFaderValuesForMix (byte mix) {
-			for (int channel = 0; channel < 16; channel++) {
+			for (int channel = 0; channel < NUM_CHANNELS; channel++) {
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
 				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
@@ -258,7 +261,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task GetChannelFaders () {
-			for (int channel = 0; channel < 16; channel++) {
+			for (int channel = 0; channel < NUM_CHANNELS; channel++) {
 				NormalSysExEvent kFader = new NormalSysExEvent();
 				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kFader.Data = data;
@@ -267,7 +270,7 @@ namespace YAMAHA_MIDI {
 		}
 
 		async Task GetChannelNames () {
-			for (int channel = 0; channel < 16; channel++) {
+			for (int channel = 0; channel < NUM_CHANNELS; channel++) {
 				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
 				byte[] data1 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort1.Data = data1;
@@ -431,7 +434,7 @@ namespace YAMAHA_MIDI {
 					elementMSB == 0x00 &&       // kInputToMix
 					elementLSB == 0x43 &&       // kInputToMix
 					0 <= channel &&
-					channel < 16) {
+					channel < NUM_CHANNELS) {
 					ushort index = (ushort)(indexMSB << 7);
 					index += indexLSB;
 					switch (index) { // the index number must be for Mix1-6 send level
@@ -448,13 +451,13 @@ namespace YAMAHA_MIDI {
 						   elementMSB == 0x01 &&    // kNameShort
 						   elementLSB == 0x14 &&    // kNameShort
 						   0 <= channel &&
-						   channel < 16) {
+						   channel < NUM_CHANNELS) {
 					HandleChannelName(bytes);
 				} else if (dataCategory == 0x01 &&  // kInput
 						   elementMSB == 0x00 &&    // kFader
 						   elementLSB == 0x33 &&    // kFader
 						   0 <= channel &&
-						   channel < 16) {
+						   channel < NUM_CHANNELS) {
 					HandleChannelFader(bytes);
 				}
 			}
