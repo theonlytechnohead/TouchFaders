@@ -217,7 +217,7 @@ namespace YAMAHA_MIDI {
 				queueTimer = new Timer(sendQueueItem, null, 0, 15);
 				await GetAllFaderValues();
 				await GetChannelFaders();         // Channel faders to STEREO
-				await GetChannelNames();
+												  //await GetChannelNames();
 			}
 		}
 
@@ -501,8 +501,9 @@ namespace YAMAHA_MIDI {
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  db		dB
 			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
-
-			if (stopMIDIButton.IsEnabled)
+			bool enabled = false;
+			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
+			if (enabled)
 				_ = SendSysEx(sysExEvent);
 		}
 
