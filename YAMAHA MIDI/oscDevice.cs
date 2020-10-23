@@ -154,14 +154,14 @@ namespace YAMAHA_MIDI {
 		}
 
 		void ResendMixFaders (int mix) {
-			for (int channel = 1; channel <= MainWindow.instance.sendsToMix.sendLevel[mix - 1].Count; channel++) {
+			for (int channel = 1; channel < MainWindow.NUM_CHANNELS; channel++) {
 				sendOSCMessage(mix, channel, MainWindow.instance.sendsToMix[mix - 1, channel - 1]);
-				Thread.Sleep(5);
+				Thread.Sleep(3);
 			}
 		}
 
 		public void ResendAllFaders () {
-			for (int mix = 1; mix <= MainWindow.NUM_CHANNELS; mix++) {
+			for (int mix = 1; mix <= MainWindow.NUM_MIXES; mix++) {
 				ResendMixFaders(mix);
 			}
 		}
@@ -174,9 +174,9 @@ namespace YAMAHA_MIDI {
 		}
 
 		public void ResendAllNames (List<string> channelNames) {
-			for (int mix = 1; mix < MainWindow.NUM_MIXES; mix++) {
+			for (int mix = 1; mix <= MainWindow.NUM_MIXES; mix++) {
 				ResendMixNames(mix, channelNames);
-				Thread.Sleep(2);
+				Thread.Sleep(3);
 			}
 		}
 

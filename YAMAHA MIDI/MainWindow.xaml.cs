@@ -129,12 +129,17 @@ namespace YAMAHA_MIDI {
 						oscDevices.Add(device);
 					}
 				}));
-				using (FileStream sendsToMixFile = File.OpenRead("config/sendsToMix.txt"))
+				using (FileStream sendsToMixFile = File.OpenRead("config/sendsToMix.txt")) {
 					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(sendsToMixFile, jsonDeserializerOptions);
-				using (FileStream channelNamesFile = File.OpenRead("config/channelNames.txt"))
+				}
+
+				using (FileStream channelNamesFile = File.OpenRead("config/channelNames.txt")) {
 					channelNames.names = await JsonSerializer.DeserializeAsync<List<string>>(channelNamesFile, jsonDeserializerOptions);
-				using (FileStream channelFadersFile = File.OpenRead("config/channelFaders.txt"))
+				}
+
+				using (FileStream channelFadersFile = File.OpenRead("config/channelFaders.txt")) {
 					channelFaders.faders = await JsonSerializer.DeserializeAsync<List<float>>(channelFadersFile, jsonDeserializerOptions);
+				}
 			} catch (FileNotFoundException) {
 				await SaveAll();
 			}
@@ -160,15 +165,15 @@ namespace YAMAHA_MIDI {
 
 		#region Device UI management
 		async Task RefreshOSCDevices () {
-			await Task.Run(() => {
-				foreach (oscDevice device in oscDevices) {
+			foreach (oscDevice device in oscDevices) {
+				await Task.Run(() => {
 					device.Refresh();
 					Thread.Sleep(5);
 					device.ResendAllFaders();
 					Thread.Sleep(5);
 					device.ResendAllNames(channelNames.names);
-				}
-			});
+				});
+			}
 			Dispatcher.Invoke(() => {
 				refreshOSCButton.IsEnabled = true;
 			});
@@ -249,6 +254,16 @@ namespace YAMAHA_MIDI {
 			await GetFaderValuesForMix(0x0E);
 			await GetFaderValuesForMix(0x11);
 			await GetFaderValuesForMix(0x14); // Mix 6
+			await GetFaderValuesForMix(0x17);
+			await GetFaderValuesForMix(0x1A); // Mix8
+			await GetFaderValuesForMix(0x1D);
+			await GetFaderValuesForMix(0x20);
+			await GetFaderValuesForMix(0x23);
+			await GetFaderValuesForMix(0x26);
+			await GetFaderValuesForMix(0x29);
+			await GetFaderValuesForMix(0x2C);
+			await GetFaderValuesForMix(0x2F);
+			await GetFaderValuesForMix(0x32); // Mix 16
 		}
 
 		async Task GetFaderValuesForMix (byte mix) {
@@ -338,6 +353,16 @@ namespace YAMAHA_MIDI {
 				0x0E => 4,
 				0x11 => 5,
 				0x14 => 6,
+				0x17 => 7,
+				0x1A => 8,
+				0x1D => 9,
+				0x20 => 10,
+				0x23 => 11,
+				0x26 => 12,
+				0x29 => 13,
+				0x2C => 14,
+				0x2F => 15,
+				0x32 => 16,
 				_ => throw new NotImplementedException()
 			};
 			return (mix, channel, value);
@@ -444,6 +469,16 @@ namespace YAMAHA_MIDI {
 						case 0x0E:
 						case 0x11:
 						case 0x14:  // Mix 6
+						case 0x17:
+						case 0x1A:  // Mix 8
+						case 0x1D:
+						case 0x20:
+						case 0x23:
+						case 0x26:
+						case 0x29:
+						case 0x2C:
+						case 0x2F:
+						case 0x32:  // Mix 16
 							HandleMixSendMIDI(midiEvent);
 							return;
 					}
@@ -488,6 +523,16 @@ namespace YAMAHA_MIDI {
 				4 => 0x0E,
 				5 => 0x11,
 				6 => 0x14,
+				7 => 0x17,
+				8 => 0x1A,
+				9 => 0x1D,
+				10 => 0x20,
+				11 => 0x23,
+				12 => 0x26,
+				13 => 0x29,
+				14 => 0x2C,
+				15 => 0x2F,
+				16 => 0x32,
 				_ => throw new NotImplementedException()
 			};
 			channel--; // LS9 channels are 0-indexed, OSC is 1-indexed
