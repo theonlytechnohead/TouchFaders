@@ -16,9 +16,6 @@ Unfortunately, I can't easily fix 1 or 2, so instead I decided to focus my effor
 It uses the MIDI (v1) protocol to communicate to the console, and then forwards appropriate data to the specified OSC devices
 Requests received from OSC devices are also issued to the console on their behalf, as MIDI
 
-## No really, like how does all the nitty gritty work?
-See the section below on 'How did I make this happen?'
-
 ## Instructions for use:
 You need:
 * A USB to MIDI adapter / cable/ interface (to make the PC talk to the console)
@@ -50,18 +47,14 @@ Once that's all done, follow the below steps:
 1. You're done! Except... it's up to you to setup and configure the TouchOSC app or my app to work accordingly.
 See https://hexler.net/products/touchosc for details on how to configure TouchOSC
 
-## Hey, this is neat! Can you ... ?
-Raise an issue if you want me to change something.
-Not guaranteed for anything to happen
+## How did I make this happen?
+Get ready for a story... soon.
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
 You're welcome to clone it for a closer look, but please don't redistribute this code, or any modified code (except as a pull request to this repository)
 If you really like it and want to do more with it, go make your own project! Use this as the functional example I didn't have, and go make something cool!
 That's not a legal licence, but also it's not like I can stop you anyway
-
-## How did I make this happen?
-Get ready for a story... soon.
 
 ## I can make this so much better
 Please make a pull request when you do, otherwise suggestions via the 'Issues' tab are appreciated
