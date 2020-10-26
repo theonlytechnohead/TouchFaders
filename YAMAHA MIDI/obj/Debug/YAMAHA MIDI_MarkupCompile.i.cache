@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\obj\Debug\
 YAMAHA_MIDI
 none
 false
 DEBUG;TRACE
-D:\desktop\Documents\YAMAHA-MIDI\YAMAHA MIDI\App.xaml
+C:\Users\HP\Documents\YAMAHA-MIDI\YAMAHA MIDI\App.xaml
 4-1196472339
 
 11256804867
-28-198204524
+282097575668
 CreateOSCDevice.xaml;InfoWindow.xaml;IPTextBox.xaml;MainWindow.xaml;
 
-False
+True
 
