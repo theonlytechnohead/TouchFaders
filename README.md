@@ -19,7 +19,7 @@ Requests received from OSC devices are also issued to the console on their behal
 ## Instructions for use:
 You need:
 * A USB to MIDI adapter / cable/ interface (to make the PC talk to the console)
-  * Alternatively, you can attempt to use the Network MIDI driver from YAMAHA, that you would normally use for Studio Manager
+  * Alternatively, you can attempt to use the Network MIDI driver from YAMAHA (Network driver v1.2.4 is compatible with Win10v2004), which you would use with Studio Manager
 * A computer
 * A wireless LAN network
 * Mobile device(s) with the TouchOSC app installed
@@ -27,7 +27,7 @@ You need:
   * Conversely, you can create your own layout / app, or head to theonlytechnohead/YAMAHA-OSC and try out my WIP app
 
 Once that's all done, follow the below steps:
-1. Connect the computer and console, using the MIDI ports on the console, or the network driver if you have it working
+1. Connect the computer and console, using the MIDI ports on the console, or the network driver
 1. Enable MIDI SysEx on the console
     1. In the DISPLAY ACCESS section, press the [SETUP] key repeatedly to access the MISC SETUP screen within the SETUP screens
     1. Move the cursor to the MIDI SETUP popup button, and press the [ENTER] key to access the MIDI SETUP popup window
