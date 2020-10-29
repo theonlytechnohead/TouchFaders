@@ -121,14 +121,15 @@ namespace YAMAHA_MIDI {
 			try {
 				JsonSerializerOptions jsonDeserializerOptions = new JsonSerializerOptions { IgnoreNullValues = true, };
 
-				FileStream oscDevicesFile = File.OpenRead("config/oscDevices.txt");
-				ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(oscDevicesFile, jsonDeserializerOptions);
-				oscDevicesFile.Close();
-				await Dispatcher.BeginInvoke(new Action(() => {
-					foreach (oscDevice device in loadDevices) {
-						oscDevices.Add(device);
-					}
-				}));
+				using (FileStream oscDevicesFile = File.OpenRead("config/oscDevices.txt")) {
+					ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(oscDevicesFile, jsonDeserializerOptions);
+					await Dispatcher.BeginInvoke(new Action(() => {
+						foreach (oscDevice device in loadDevices) {
+							oscDevices.Add(device);
+						}
+					}));
+				}
+
 				using (FileStream sendsToMixFile = File.OpenRead("config/sendsToMix.txt")) {
 					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(sendsToMixFile, jsonDeserializerOptions);
 				}
