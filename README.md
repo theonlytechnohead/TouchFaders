@@ -24,7 +24,7 @@ You need:
 * A wireless LAN network
 * Mobile device(s) with the TouchOSC app installed
 * An appropriate layout file for TouchOSC
-  * Conversely, you can create your own layout / app, or head to http://github.com/theonlytechnohead/YAMAHA-OSC and try out my WIP app
+  * Conversely, you can create your own layout / app, or head to http://github.com/theonlytechnohead/TouchFaders_APP and try out my WIP app
 
 Once that's all done, follow the below steps:
 1. Connect the computer and console, using the MIDI ports on the console, or the network driver
