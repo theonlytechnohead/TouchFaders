@@ -1,4 +1,4 @@
-# TouchFaders-MIDI
+# TouchFaders MIDI
 
 GitHub repo for TouchFaders MIDI program, developed by Craig Anderson
 
