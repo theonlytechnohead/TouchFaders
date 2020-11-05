@@ -1,13 +1,13 @@
-# YAMAHA-MIDI
+# TouchFaders-MIDI
 
-GitHub repo for YAMAHA MIDI program, developed by Craig Anderson
+GitHub repo for TouchFaders MIDI program, developed by Craig Anderson
 
 ## What is this?
-The YAMAHA LS9 digital mixing console for audio is a fantastically capable device. There exists three issues with it:
+The YAMAHA® LS9 digital mixing console for audio is a fantastically capable device. There exists three issues with it:
 
 1. No DCA's is a very unfortunate omission, especially considering the M7CL series has them (and released a year earlier!)
-1. Input-to-Matrix is not supported ☹
-1. Only one remote device can control the desk at a time (and the only mobile device that can is an iPad with StageMix)
+1. Input-to-Matrix is not supported ☹ (again, M7CL getting all the love)
+1. Only one remote device can control the desk at a time (and the only mobile device that can do so is an iPad, with the StageMix app from YAMAHA®)
 
 Unfortunately, I can't easily fix 1 or 2, so instead I decided to focus my efforts on 3.  
 *This program is the solution*
@@ -19,12 +19,12 @@ Requests received from OSC devices are also issued to the console on their behal
 ## Instructions for use:
 You need:
 * A USB to MIDI adapter / cable/ interface (to make the PC talk to the console)
-  * Alternatively, you can attempt to use the Network MIDI driver from YAMAHA (Network driver v1.2.4 is compatible with Win10v2004), which you would use with Studio Manager
+  * Alternatively, you can attempt to use the Network MIDI driver from YAMAHA® (Network driver v1.2.4 is compatible with Win10 2004), which you would use with Studio Manager
 * A computer
 * A wireless LAN network
 * Mobile device(s) with the TouchOSC app installed
 * An appropriate layout file for TouchOSC
-  * Conversely, you can create your own layout / app, or head to theonlytechnohead/YAMAHA-OSC and try out my WIP app
+  * Conversely, you can create your own layout / app, or head to http://github.com/theonlytechnohead/YAMAHA-OSC and try out my WIP app
 
 Once that's all done, follow the below steps:
 1. Connect the computer and console, using the MIDI ports on the console, or the network driver
@@ -58,3 +58,6 @@ That's not a legal licence, but also it's not like I can stop you anyway
 
 ## I can make this so much better
 Please make a pull request when you do, otherwise suggestions via the 'Issues' tab are appreciated
+
+---
+"Yamaha" is a registered trademark of Yamaha Corporation.
