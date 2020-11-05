@@ -34,7 +34,7 @@ Once that's all done, follow the below steps:
     1. Ensure that 'MIDI' is selected as the port in the TX and RX fields
     1. Check that channel 1 is used for all MIDI communications in the field below the port selection
     1. Move the cursor to the TX and RX buttons, toggling each so that the 'Parameter Change' TX and RX buttons are lit, and all other TX, RX, and ECHO buttons are dark
-1. Open the YAMAHA MIDI program on the computer
+1. Open the TouchFaders MIDI program on the computer
 1. Select the appropriate MIDI ports from the 'MIDI input device' and 'MIDI outuput device' lists
 1. Click 'Start MIDI' (or press the 'S' key). The app will now sync with the console
 1. Click 'Add device' to open the device dialog
