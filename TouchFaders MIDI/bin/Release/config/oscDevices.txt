@@ -1,0 +1,30 @@
+[
+  {
+    "DeviceName": "Note7",
+    "LegacyApp": false,
+    "Address": "192.168.1.160",
+    "SendPort": 9001,
+    "ListenPort": 8001
+  },
+  {
+    "DeviceName": "m3note",
+    "LegacyApp": true,
+    "Address": "192.168.1.193",
+    "SendPort": 9002,
+    "ListenPort": 8002
+  },
+  {
+    "DeviceName": "m2note",
+    "LegacyApp": true,
+    "Address": "192.168.1.49",
+    "SendPort": 9003,
+    "ListenPort": 8003
+  },
+  {
+    "DeviceName": "SHIELD",
+    "LegacyApp": true,
+    "Address": "192.168.1.123",
+    "SendPort": 9004,
+    "ListenPort": 8004
+  }
+]

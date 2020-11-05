@@ -1,0 +1,43 @@
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\TouchFaders MIDI.exe.config
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\TouchFaders MIDI.exe
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\TouchFaders MIDI.pdb
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\Melanchall.DryWetMidi.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\Microsoft.Bcl.AsyncInterfaces.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\SharpOSC.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Buffers.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Memory.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Numerics.Vectors.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Runtime.CompilerServices.Unsafe.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Text.Encodings.Web.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Text.Json.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Threading.Tasks.Extensions.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.ValueTuple.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\Melanchall.DryWetMidi.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\Microsoft.Bcl.AsyncInterfaces.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Buffers.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Memory.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Numerics.Vectors.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Text.Encodings.Web.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Text.Json.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.Threading.Tasks.Extensions.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Release\System.ValueTuple.xml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\InfoWindow.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\IPTextBox.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\MainWindow.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\CreateOSCDevice.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\InfoWindow.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\IPTextBox.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\MainWindow.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\App.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\GeneratedInternalTypeHelper.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI_MarkupCompile.cache
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI_MarkupCompile.lref
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\CreateOSCDevice.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI.g.resources
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders_MIDI.Properties.Resources.resources
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI.csproj.GenerateResource.cache
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI.csproj.CoreCompileInputs.cache
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI.csproj.CopyComplete
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI.exe
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Release\TouchFaders MIDI.pdb
