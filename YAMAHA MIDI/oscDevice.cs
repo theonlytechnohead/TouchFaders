@@ -25,6 +25,8 @@ namespace YAMAHA_MIDI {
 		#region JsonProperties
 		public string DeviceName { get { return name; } set { name = value; } }
 
+		public bool LegacyApp { get; set; } = false;
+
 		string address;
 		public string Address {
 			get {
@@ -136,13 +138,24 @@ namespace YAMAHA_MIDI {
 				if (address.Length > 1) {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
-					float value = (float)message.Arguments[0];
-					int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
-					if (linkedIndex != -1) {
-						sendOSCMessage(mix, linkedIndex + 1, value);
-						MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
+					if (message.Arguments[0] is float) { // Legacy TouchOSC clients use floats for fader values
+						int value = Convert.ToInt32((float)message.Arguments[0] * 1023);
+						int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
+						if (linkedIndex != -1) {
+							sendOSCMessage(mix, linkedIndex + 1, (float)message.Arguments[0]);
+							MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
+						}
+						MainWindow.instance.SendFaderValue(mix, channel, value, this);
 					}
-					MainWindow.instance.SendFaderValue(mix, channel, value, this);
+					if (message.Arguments[0] is int) { // YAMAHA-OSC clients use 1:1 mapping ints for fader values (can be passed directly to the console)
+						int value = (int)message.Arguments[0];
+						int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
+						if (linkedIndex != -1) {
+							sendOSCMessage(mix, linkedIndex + 1, value);
+							MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
+						}
+						MainWindow.instance.SendFaderValue(mix, channel, value, this);
+					}
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
@@ -155,7 +168,12 @@ namespace YAMAHA_MIDI {
 
 		void ResendMixFaders (int mix) {
 			for (int channel = 1; channel < MainWindow.NUM_CHANNELS; channel++) {
-				sendOSCMessage(mix, channel, MainWindow.instance.sendsToMix[mix - 1, channel - 1]);
+				int level = MainWindow.instance.sendsToMix[mix - 1, channel - 1];
+				if (LegacyApp) {
+					sendOSCMessage(mix, channel, level / 1023f);
+				} else {
+					sendOSCMessage(mix, channel, level);
+				}
 				Thread.Sleep(3);
 			}
 		}
@@ -181,6 +199,12 @@ namespace YAMAHA_MIDI {
 		}
 
 		public void sendOSCMessage (int mix, int channel, float value) {
+			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");
+			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
+			output.Send(message);
+		}
+
+		public void sendOSCMessage (int mix, int channel, int value) {
 			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");
 			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
 			output.Send(message);

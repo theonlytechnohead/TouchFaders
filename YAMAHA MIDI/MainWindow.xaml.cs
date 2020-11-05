@@ -131,7 +131,7 @@ namespace YAMAHA_MIDI {
 				}
 
 				using (FileStream sendsToMixFile = File.OpenRead("config/sendsToMix.txt")) {
-					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<float>>>(sendsToMixFile, jsonDeserializerOptions);
+					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<int>>>(sendsToMixFile, jsonDeserializerOptions);
 				}
 
 				using (FileStream channelNamesFile = File.OpenRead("config/channelNames.txt")) {
@@ -139,7 +139,7 @@ namespace YAMAHA_MIDI {
 				}
 
 				using (FileStream channelFadersFile = File.OpenRead("config/channelFaders.txt")) {
-					channelFaders.faders = await JsonSerializer.DeserializeAsync<List<float>>(channelFadersFile, jsonDeserializerOptions);
+					channelFaders.faders = await JsonSerializer.DeserializeAsync<List<int>>(channelFadersFile, jsonDeserializerOptions);
 				}
 			} catch (FileNotFoundException) {
 				await SaveAll();
@@ -223,7 +223,7 @@ namespace YAMAHA_MIDI {
 					Title = "YAMAHA MIDI - MIDI started";
 					Console.WriteLine("Started MIDI");
 				});
-				queueTimer = new Timer(sendQueueItem, null, 0, 15);
+				queueTimer = new Timer(sendQueueItem, null, 0, 20);
 				await GetAllFaderValues();
 				await GetChannelFaders();         // Channel faders to STEREO
 												  //await GetChannelNames();
@@ -373,15 +373,23 @@ namespace YAMAHA_MIDI {
 			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
 			int linkedIndex = linkedChannels.getIndex(channel - 1);
 			if (linkedIndex != -1) {
-				sendsToMix[mix - 1, linkedIndex] = value / 1023f;
+				sendsToMix[mix - 1, linkedIndex] = value;
 			}
-			sendsToMix[mix - 1, channel - 1] = value / 1023f;
+			sendsToMix[mix - 1, channel - 1] = value;
 			Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
 			foreach (oscDevice device in oscDevices) {
 				if (linkedIndex != -1) {
-					device.sendOSCMessage(mix, linkedIndex + 1, value / 1023f);
+					if (device.LegacyApp) {
+						device.sendOSCMessage(mix, linkedIndex + 1, value / 1023f);
+					} else {
+						device.sendOSCMessage(mix, linkedIndex + 1, value);
+					}
 				}
-				device.sendOSCMessage(mix, channel, value / 1023f);
+				if (device.LegacyApp) {
+					device.sendOSCMessage(mix, channel, value / 1023f);
+				} else {
+					device.sendOSCMessage(mix, channel, value);
+				}
 			}
 		}
 
@@ -425,13 +433,12 @@ namespace YAMAHA_MIDI {
 
 			ushort level = (ushort)(data2 << 7);
 			level += data1;
-			float value = level / 1023f;
 
 			int linkedIndex = linkedChannels.getIndex(channel);
 			if (linkedIndex != -1) {
-				channelFaders[linkedIndex] = value;
+				channelFaders[linkedIndex] = level;
 			}
-			channelFaders[channel] = value;
+			channelFaders[channel] = level;
 		}
 		#endregion
 
@@ -513,7 +520,7 @@ namespace YAMAHA_MIDI {
 			_ = SendSysEx(sysExEvent);
 		}
 
-		public void SendFaderValue (int mix, int channel, float value, oscDevice sender) {
+		public void SendFaderValue (int mix, int channel, int value, oscDevice sender) {
 			sendsToMix[mix - 1, channel - 1] = value;
 			SendOSCValue(mix, channel, value, sender);
 			byte mixLSB = mix switch
@@ -542,7 +549,7 @@ namespace YAMAHA_MIDI {
 			ushort shiftedChannel = (ushort)(channel_int >> 7);
 			byte channelMSB = (byte)(shiftedChannel & 0x7Fu);
 
-			ushort value_int = Convert.ToUInt16(value * 1023); // There are 1023 fader levels as per the LS9 manual, hence remapping 0-1f to 0-1023
+			ushort value_int = Convert.ToUInt16(value); // There are 1023 fader levels as per the LS9 manual
 			byte valueLSB = (byte)(value_int & 0x7Fu);
 			ushort shiftedValue = (ushort)(value_int >> 7);
 			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
@@ -556,11 +563,15 @@ namespace YAMAHA_MIDI {
 				_ = SendSysEx(sysExEvent);
 		}
 
-		private void SendOSCValue (int mix, int channel, float value, oscDevice sender) {
+		private void SendOSCValue (int mix, int channel, int value, oscDevice sender) {
 			Task.Run(() => {
 				foreach (oscDevice device in oscDevices) {
 					if (device != sender) { // Avoid feedback loop!
-						device.sendOSCMessage(mix, channel, value);
+						if (device.LegacyApp) {
+							device.sendOSCMessage(mix, channel, value / 1023f);
+						} else {
+							device.sendOSCMessage(mix, channel, value);
+						}
 					}
 				}
 			});

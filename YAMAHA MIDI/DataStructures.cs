@@ -9,14 +9,14 @@ namespace YAMAHA_MIDI {
 	public class SendsToMix {
 		public event EventHandler sendsChanged;
 
-		public float this[int mix, int channel] {
+		public int this[int mix, int channel] {
 			get { return sendLevel[mix][channel]; }
 			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<List<float>> levels = (from mix in Enumerable.Range(1, MainWindow.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.NUM_CHANNELS) select 823f / 1023f).ToList()).ToList(); // Initalized to 0dB
+		private List<List<int>> levels = (from mix in Enumerable.Range(1, MainWindow.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.NUM_CHANNELS) select 823).ToList()).ToList(); // Initalized to 0dB
 
-		public List<List<float>> sendLevel {
+		public List<List<int>> sendLevel {
 			get { return levels; }
 			set { levels = value; sendsChanged?.Invoke(this, new EventArgs()); }
 		}
@@ -43,14 +43,14 @@ namespace YAMAHA_MIDI {
 	public class ChannelFaders {
 		public event EventHandler channelFadersChanged;
 
-		public float this[int index] {
+		public int this[int index] {
 			get { return channelFaders[index]; }
 			set { channelFaders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<float> channelFaders = (from channel in Enumerable.Range(1, MainWindow.NUM_CHANNELS) select 823f / 1023f).ToList();
+		private List<int> channelFaders = (from channel in Enumerable.Range(1, MainWindow.NUM_CHANNELS) select 823).ToList();
 
-		public List<float> faders {
+		public List<int> faders {
 			get { return channelFaders; }
 			set { channelFaders = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
 		}

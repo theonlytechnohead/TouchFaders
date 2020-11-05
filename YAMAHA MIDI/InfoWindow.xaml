@@ -214,22 +214,22 @@
                 </Label.LayoutTransform>
             </Label>
 
-            <ProgressBar x:Name="faderChannel1"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="0"  Style="{DynamicResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel2"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="1"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel3"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="2"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel4"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="3"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel5"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="4"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel6"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="5"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel7"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="6"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel8"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="7"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel9"  Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="8"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel10" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="9"  Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel11" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="10" Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel12" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="11" Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel13" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="12" Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel14" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="13" Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel15" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="14" Style="{StaticResource ProgressBarNarrowStyle}" />
-            <ProgressBar x:Name="faderChannel16" Grid.Row="1" Maximum="1" Orientation="Vertical" Grid.Column="15" Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel1"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="0"  Style="{DynamicResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel2"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="1"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel3"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="2"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel4"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="3"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel5"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="4"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel6"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="5"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel7"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="6"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel8"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="7"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel9"  Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="8"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel10" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="9"  Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel11" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="10" Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel12" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="11" Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel13" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="12" Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel14" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="13" Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel15" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="14" Style="{StaticResource ProgressBarNarrowStyle}" />
+            <ProgressBar x:Name="faderChannel16" Grid.Row="1" Maximum="1023" Orientation="Vertical" Grid.Column="15" Style="{StaticResource ProgressBarNarrowStyle}" />
         </Grid>
 
     </Grid>

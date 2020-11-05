@@ -71,7 +71,7 @@ namespace YAMAHA_MIDI {
 			});
 		}
 
-		void SetFadersValue (List<float> channelFaders) {
+		void SetFadersValue (List<int> channelFaders) {
 			Dispatcher.Invoke(() => {
 				for (int i = 0; i <= 15; i++) {
 					faderBars[i].Value = channelFaders[i];
