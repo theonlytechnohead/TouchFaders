@@ -50,6 +50,10 @@ See https://hexler.net/products/touchosc for details on how to configure TouchOS
 ## How did I make this happen?
 Get ready for a story... soon.
 
+## Todo
+- Add general config file for storing data about settings
+- Implement 'versioning' and settings for other config files
+
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
 You're welcome to clone it for a closer look, but please don't redistribute this code, or any modified code (except as a pull request to this repository)
