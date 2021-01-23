@@ -167,7 +167,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		void ResendMixFaders (int mix) {
-			for (int channel = 1; channel < MainWindow.NUM_CHANNELS; channel++) {
+			for (int channel = 1; channel < MainWindow.instance.config.NUM_CHANNELS; channel++) {
 				int level = MainWindow.instance.sendsToMix[mix - 1, channel - 1];
 				if (LegacyApp) {
 					sendOSCMessage(mix, channel, level / 1023f);
@@ -179,20 +179,20 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void ResendAllFaders () {
-			for (int mix = 1; mix <= MainWindow.NUM_MIXES; mix++) {
+			for (int mix = 1; mix <= MainWindow.instance.config.NUM_MIXES; mix++) {
 				ResendMixFaders(mix);
 			}
 		}
 
 		public void ResendMixNames (int mix, List<string> channelNames) {
-			for (int label = 1; label <= MainWindow.NUM_CHANNELS; label++) {
+			for (int label = 1; label <= MainWindow.instance.config.NUM_CHANNELS; label++) {
 				OscMessage message = new OscMessage($"/mix{mix}/label{label}", channelNames[label - 1]);
 				output.Send(message);
 			}
 		}
 
 		public void ResendAllNames (List<string> channelNames) {
-			for (int mix = 1; mix <= MainWindow.NUM_MIXES; mix++) {
+			for (int mix = 1; mix <= MainWindow.instance.config.NUM_MIXES; mix++) {
 				ResendMixNames(mix, channelNames);
 				Thread.Sleep(3);
 			}

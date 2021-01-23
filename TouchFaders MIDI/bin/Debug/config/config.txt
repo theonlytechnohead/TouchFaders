@@ -1,0 +1,9 @@
+{
+  "config_version": 1,
+  "oscDevices_version": 1,
+  "sendsToMix_version": 1,
+  "channelNames_version": 1,
+  "channelFaders_version": 1,
+  "NUM_CHANNELS": 64,
+  "NUM_MIXES": 16
+}
