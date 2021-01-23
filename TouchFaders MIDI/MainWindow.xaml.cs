@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Text.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace TouchFaders_MIDI {
@@ -20,7 +18,7 @@ namespace TouchFaders_MIDI {
 
 		public static MainWindow instance;
 
-		ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
+		ObservableCollection<oscDevice> oscDevices;
 
 		OutputDevice LS9_in;
 		InputDevice LS9_out;
@@ -36,25 +34,28 @@ namespace TouchFaders_MIDI {
 		#region WindowEvents
 		public MainWindow () {
 			InitializeComponent();
-			sendsToMix = new SendsToMix();
-			channelNames = new ChannelNames();
-			channelFaders = new ChannelFaders();
 			linkedChannels = new LinkedChannels();
 			linkedChannels.links.Add(new LinkedChannel(4, 5)); // Keys
 			linkedChannels.links.Add(new LinkedChannel(8, 9)); // Track
 															   //linkedChannels.links.Add(new LinkedChannel(10, 11)); //Click?
 			instance = this;
 			Title = "TouchFaders MIDI - MIDI not started";
-			deviceListBox.ItemsSource = oscDevices;
-			Task.Run(() => LoadAll());
-			displayMIDIDevices();
+
+			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
+
 			this.KeyDown += MainWindow_KeyDown;
 		}
 
 		protected override async void OnClosed (EventArgs e) {
 			Console.WriteLine("Closing...");
 			stopMIDIButton_Click(null, null);
-			await SaveAll();
+			HandleIO.FileData fileData = new HandleIO.FileData() {
+				oscDevices = this.oscDevices,
+				sendsToMix = this.sendsToMix,
+				channelNames = this.channelNames,
+				channelFaders = this.channelFaders
+			};
+			await HandleIO.SaveAll(fileData);
 			base.OnClosed(e);
 		}
 		#endregion
@@ -117,64 +118,33 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region File I/O
-		async Task LoadAll () {
-			try {
-				JsonSerializerOptions jsonDeserializerOptions = new JsonSerializerOptions { IgnoreNullValues = true, };
+		void DataLoaded (HandleIO.FileData fileData) {
+			Dispatcher.Invoke(() => {
+				oscDevices = fileData.oscDevices;
+				deviceListBox.ItemsSource = oscDevices;
+			});
+			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
+			Dispatcher.Invoke(() => { channelNames = fileData.channelNames; });
+			Dispatcher.Invoke(() => { channelFaders = fileData.channelFaders; });
 
-				using (FileStream oscDevicesFile = File.OpenRead("config/oscDevices.txt")) {
-					ObservableCollection<oscDevice> loadDevices = await JsonSerializer.DeserializeAsync<ObservableCollection<oscDevice>>(oscDevicesFile, jsonDeserializerOptions);
-					await Dispatcher.BeginInvoke(new Action(() => {
-						foreach (oscDevice device in loadDevices) {
-							oscDevices.Add(device);
-						}
-					}));
-				}
-
-				using (FileStream sendsToMixFile = File.OpenRead("config/sendsToMix.txt")) {
-					sendsToMix.sendLevel = await JsonSerializer.DeserializeAsync<List<List<int>>>(sendsToMixFile, jsonDeserializerOptions);
-				}
-
-				using (FileStream channelNamesFile = File.OpenRead("config/channelNames.txt")) {
-					channelNames.names = await JsonSerializer.DeserializeAsync<List<string>>(channelNamesFile, jsonDeserializerOptions);
-				}
-
-				using (FileStream channelFadersFile = File.OpenRead("config/channelFaders.txt")) {
-					channelFaders.faders = await JsonSerializer.DeserializeAsync<List<int>>(channelFadersFile, jsonDeserializerOptions);
-				}
-			} catch (FileNotFoundException) {
-				await SaveAll();
-			}
-			await RefreshOSCDevices();
-		}
-
-		async Task SaveAll () {
-			_ = Directory.CreateDirectory("config");
-			using (FileStream fs = File.Create("config/oscDevices.txt")) {
-				await JsonSerializer.SerializeAsync(fs, oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-			using (FileStream fs = File.Create("config/sendsToMix.txt")) {
-				await JsonSerializer.SerializeAsync(fs, sendsToMix.sendLevel, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-			using (FileStream fs = File.Create("config/channelNames.txt")) {
-				await JsonSerializer.SerializeAsync(fs, channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
-			using (FileStream fs = File.Create("config/channelFaders.txt")) {
-				await JsonSerializer.SerializeAsync(fs, channelFaders.faders, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
-			}
+			Task.Run(async () => await RefreshOSCDevices());
+			Dispatcher.Invoke(() => displayMIDIDevices());
 		}
 		#endregion
 
 		#region Device UI management
 		async Task RefreshOSCDevices () {
+			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in oscDevices) {
-				await Task.Run(() => {
+				tasks.Add(Task.Run(() => {
 					device.Refresh();
 					Thread.Sleep(5);
 					device.ResendAllFaders();
 					Thread.Sleep(5);
 					device.ResendAllNames(channelNames.names);
-				});
+				}));
 			}
+			await Task.WhenAll(tasks);
 			Dispatcher.Invoke(() => {
 				refreshOSCButton.IsEnabled = true;
 			});
@@ -346,8 +316,7 @@ namespace TouchFaders_MIDI {
 			byte valueLSB = bytes[15];      // value LSB
 			ushort value = (ushort)(valueMSB << 7);      // Convert MSB to int in the right place
 			value += valueLSB;              // Add LSB
-			int mix = mixHex switch
-			{
+			int mix = mixHex switch {
 				0x05 => 1,
 				0x08 => 2,
 				0x0B => 3,
@@ -523,8 +492,7 @@ namespace TouchFaders_MIDI {
 		public void SendFaderValue (int mix, int channel, int value, oscDevice sender) {
 			sendsToMix[mix - 1, channel - 1] = value;
 			SendOSCValue(mix, channel, value, sender);
-			byte mixLSB = mix switch
-			{
+			byte mixLSB = mix switch {
 				1 => 0x05,
 				2 => 0x08,
 				3 => 0x0B,
