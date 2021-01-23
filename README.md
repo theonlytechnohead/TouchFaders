@@ -48,16 +48,21 @@ Once that's all done, follow the below steps:
 See https://hexler.net/products/touchosc for details on how to configure TouchOSC
 
 ## How did I make this happen?
-Get ready for a story... soon.
+A lot of research and frustration.
+Maybe a story... soon.
 
 ## Todo
-- Add general config file for storing data about settings
-- Implement 'versioning' and settings for other config files
+- ~~Add general config file for storing data about settings~~
+- ~~Implement 'versioning' and settings for other config files~~
+- Add UI to adjust settings
+- Update 'Add device' dialog UI to be scalable, rearrange vertically
+- Find the MIDI command for the 'selected channel' info
+  - Implement 'selected channel' status into main window UI
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
 You're welcome to clone it for a closer look, but please don't redistribute this code, or any modified code (except as a pull request to this repository)
-If you really like it and want to do more with it, go make your own project! Use this as the functional example I didn't have, and go make something cool!
+If you really like it and want to do more with it, go make your own project! Use this as the functional example I didn't have, and go make even something cooler
 That's not a legal licence, but also it's not like I can stop you anyway
 
 ## I can make this so much better
