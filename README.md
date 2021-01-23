@@ -13,8 +13,7 @@ Unfortunately, I can't easily fix 1 or 2, so instead I decided to focus my effor
 *This program is the solution*
 
 ## How does it work?
-It uses the MIDI (v1) protocol to communicate to the console, and then forwards appropriate data to the specified OSC devices
-
+It uses the MIDI (v1) protocol to communicate to the console, and then forwards appropriate data to the specified OSC devices  
 Requests received from OSC devices are also issued to the console on their behalf, as MIDI
 
 ## Instructions for use:
@@ -62,10 +61,8 @@ Maybe a story... soon.
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
-You're welcome to clone it for a closer look, but please don't redistribute this code, or any modified code (except as a pull request to this repository)
-
-If you really like it and want to do more with it, go make your own project! Use this as the functional example I didn't have, and go make even something cooler
-
+You're welcome to clone it for a closer look, but please don't redistribute this code, or any modified code (except as a pull request to this repository)  
+If you really like it and want to do more with it, go make your own project! Use this as the functional example I didn't have, and go make even something cooler  
 That's not a legal licence, but also it's not like I can stop you anyway
 
 ## I can make this so much better
