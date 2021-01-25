@@ -670,6 +670,14 @@ namespace TouchFaders_MIDI {
 			infoWindow.Show();
 		}
 
+		private void configWindowButton_Click (object sender, RoutedEventArgs e) {
+			ConfigWindow configWindow = new ConfigWindow();
+			configWindow.Owner = this;
+			configWindow.DataContext = this.DataContext;
+			configWindow.config = config;
+			configWindow.ShowDialog();
+		}
+
 		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
 			switch (e.Key) {
 				case System.Windows.Input.Key.R:

@@ -39,8 +39,8 @@ namespace TouchFaders_MIDI {
 					sendsToMix_version = 1,
 					channelNames_version = 1,
 					channelFaders_version = 1,
-					NUM_MIXES = 16,
-					NUM_CHANNELS = 64,
+					NUM_MIXES = 8,
+					NUM_CHANNELS = 32,
 					linkedChannels = new LinkedChannels() { links = new List<LinkedChannel>() { new LinkedChannel() { leftChannel = 4, rightChannel = 5 } } }
 				};
 			}
