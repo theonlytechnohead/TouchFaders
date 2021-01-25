@@ -31,9 +31,9 @@ Once that's all done, follow the below steps:
 1. Enable MIDI SysEx on the console
     1. In the DISPLAY ACCESS section, press the [SETUP] key repeatedly to access the MISC SETUP screen within the SETUP screens
     1. Move the cursor to the MIDI SETUP popup button, and press the [ENTER] key to access the MIDI SETUP popup window
-    1. Ensure that 'MIDI' is selected as the port in the TX and RX fields
-    1. Check that channel 1 is used for all MIDI communications in the field below the port selection
-    1. Move the cursor to the TX and RX buttons, toggling each so that the 'Parameter Change' TX and RX buttons are lit, and all other TX, RX, and ECHO buttons are dark
+    1. Use the [INC] and [DEC] keys or the data wheel to change the PORT/CH field to 'MIDI'f for both Tx and Rx
+    1. Set an appropriate device ID (1 - 16) in the field below the port selection. Please use the same ID for both Tx and Rx
+    1. Move the cursor to the Tx and Rx buttons, toggling each so that the 'Parameter Change' Tx and Rx buttons are lit, and all other Tx, Rx, and ECHO buttons are dark
 1. Open the TouchFaders MIDI program on the computer
 1. Select the appropriate MIDI ports from the 'MIDI input device' and 'MIDI outuput device' lists
 1. Click 'Start MIDI' (or press the 'S' key). The app will now sync with the console
