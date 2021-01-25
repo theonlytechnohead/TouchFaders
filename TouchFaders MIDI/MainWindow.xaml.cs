@@ -188,7 +188,7 @@ namespace TouchFaders_MIDI {
 				Dispatcher.Invoke(() => {
 					inputMIDIComboBox.IsEnabled = false;
 					outputMIDIComboBox.IsEnabled = false;
-					Title = "TouchFaders MIDI - MIDI started";
+					Title = "TouchFaders MIDI | MIDI started";
 					Console.WriteLine("Started MIDI");
 				});
 				queueTimer = new Timer(sendQueueItem, null, 0, 20);
@@ -589,7 +589,7 @@ namespace TouchFaders_MIDI {
 			(queueTimer as IDisposable)?.Dispose();
 			Console.WriteLine("Stopped MIDI");
 			Dispatcher.Invoke(() => {
-				Title = "TouchFaders MIDI - MIDI not started";
+				Title = "TouchFaders MIDI | MIDI not started";
 				refreshMIDIButton.IsEnabled = false;
 				startMIDIButton.IsEnabled = true;
 				stopMIDIButton.IsEnabled = false;

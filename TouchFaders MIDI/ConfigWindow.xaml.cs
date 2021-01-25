@@ -29,13 +29,13 @@ namespace TouchFaders_MIDI {
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			if (config == null) return;
 
-			deviceIDLabel.Content = $"Device ID: {config.device_ID}";
+			deviceGroupBox.Header = $"Device ID: {config.device_ID}";
 			deviceIDSlider.Value = config.device_ID;
 
-			channelLabel.Content = $"Channels: {config.NUM_CHANNELS}";
+			channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
 			channelSlider.Value = config.NUM_CHANNELS;
 
-			mixLabel.Content = $"Mixes: {config.NUM_MIXES}";
+			mixGroupBox.Header = $"Mixes: {config.NUM_MIXES}";
 			mixSlider.Value = config.NUM_MIXES;
 		}
 
@@ -44,18 +44,75 @@ namespace TouchFaders_MIDI {
 			base.OnClosed(e);
 		}
 
+		#region Scaling
+		// This section smoothly scales everything within the mainGrid
+		public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
+			typeof(double),
+			typeof(ConfigWindow),
+			new UIPropertyMetadata(1.0,
+				new PropertyChangedCallback(OnScaleValueChanged),
+				new CoerceValueCallback(OnCoerceScaleValue)));
+
+		private static object OnCoerceScaleValue (DependencyObject o, object value) {
+			ConfigWindow configWindow = o as ConfigWindow;
+			if (configWindow != null)
+				return configWindow.OnCoerceScaleValue((double)value);
+			else
+				return value;
+		}
+
+		private static void OnScaleValueChanged (DependencyObject o, DependencyPropertyChangedEventArgs e) {
+			ConfigWindow configWindow = o as ConfigWindow;
+			if (configWindow != null)
+				configWindow.OnScaleValueChanged((double)e.OldValue, (double)e.NewValue);
+		}
+
+		protected virtual double OnCoerceScaleValue (double value) {
+			if (double.IsNaN(value))
+				return 1.0f;
+
+			value = Math.Max(1f, value);
+			return value;
+		}
+
+		protected virtual void OnScaleValueChanged (double oldValue, double newValue) {
+			// Don't need to do anything
+		}
+
+		public double ScaleValue {
+			get {
+				return (double)GetValue(ScaleValueProperty);
+			}
+			set {
+				SetValue(ScaleValueProperty, value);
+			}
+		}
+
+		private void configGrid_SizeChanged (object sender, SizeChangedEventArgs e) {
+			CalculateScale();
+		}
+
+		private void CalculateScale () {
+			double xScale = ActualWidth / 400f; // must be set to initial window sizing for proper scaling!!!
+			double yScale = ActualHeight / 300f; // must be set to initial window sizing for proper scaling!!!
+			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
+			ScaleValue = (double)OnCoerceScaleValue(configWindow, value); // Update the actual scale for the main window
+		}
+
+		#endregion
+
 		private void deviceIDSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider slider = sender as Slider;
 			if (config == null) return;
 			config.device_ID = (int)slider.Value;
-			deviceIDLabel.Content = $"Device ID: {config.device_ID}";
+			deviceGroupBox.Header = $"Device ID: {config.device_ID}";
 		}
 
 		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider slider = sender as Slider;
 			if (config == null) return;
 			config.NUM_CHANNELS = (int)slider.Value;
-			channelLabel.Content = $"Channels: {config.NUM_CHANNELS}";
+			channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
 		}
 
 		private void editChannelNamesButton_Click (object sender, RoutedEventArgs e) {
@@ -69,7 +126,7 @@ namespace TouchFaders_MIDI {
 			Slider slider = sender as Slider;
 			if (config == null) return;
 			config.NUM_MIXES = (int)slider.Value;
-			mixLabel.Content = $"Mixes: {config.NUM_MIXES}";
+			mixGroupBox.Header = $"Mixes: {config.NUM_MIXES}";
 		}
 
 		private void editMixNamesButton_Click (object sender, RoutedEventArgs e) {

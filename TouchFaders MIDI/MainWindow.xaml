@@ -134,7 +134,7 @@
                     </Grid.ColumnDefinitions>
                     <Button x:Name="addDeviceButton" Content="Add device" HorizontalAlignment="Center" VerticalAlignment="Center" Click="addDeviceButton_Click" Padding="1" Width="76"/>
                     <Button x:Name="deleteDeviceButton" Content="Delete device" HorizontalAlignment="Center" VerticalAlignment="Center" Click="deleteDeviceButton_Click" Padding="1" Width="86" Grid.Column="1" IsEnabled="False"/>
-                    <ListBox x:Name="deviceListBox" SelectionChanged="deviceListBox_SelectionChanged" MouseDoubleClick="deviceListBox_MouseDoubleClick" Grid.Column="0" MouseDown="deviceListBox_MouseDown" Grid.Row="1" Grid.ColumnSpan="2" Margin="0" BorderBrush="#FFDDDDDD" Background="#FFF4F4F4">
+                    <ListBox x:Name="deviceListBox" SelectionChanged="deviceListBox_SelectionChanged" MouseDoubleClick="deviceListBox_MouseDoubleClick" Grid.Column="0" MouseDown="deviceListBox_MouseDown" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,4,0,0" BorderBrush="#FFDDDDDD" Background="#FFF4F4F4" Padding="0">
                         <ListBox.Resources>
                             <ContextMenu x:Key="OSC_device_menu">
                                 <MenuItem Header="Delete" Click="MenuItem_Click">
