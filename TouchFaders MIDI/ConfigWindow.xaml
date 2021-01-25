@@ -13,12 +13,15 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Content="Channels:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,23"/>
             <Slider x:Name="channelSlider" Margin="20,23,20,0" VerticalAlignment="Center" Maximum="64" Minimum="1" SmallChange="1" Value="32" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="channelSlider_ValueChanged"/>
             <Label Content="Mixes:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,23" Grid.Row="1"/>
             <Slider x:Name="mixSlider" Margin="20,23,20,0" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="8" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" Grid.Row="1" IsSnapToTickEnabled="True" ValueChanged="mixSlider_ValueChanged"/>
+            <Button x:Name="editChannelNamesButton" Content="Edit names" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="editChannelNamesButton_Click"/>
+            <Button x:Name="editMixNamesButton" Content="Edit names" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Click="editMixNamesButton_Click" Grid.Row="1" IsEnabled="False"/>
         </Grid>
 
     </Grid>

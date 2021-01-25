@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,10 +43,25 @@ namespace TouchFaders_MIDI {
 			config.NUM_CHANNELS = (int)channelSlider.Value;
 		}
 
+		private void editChannelNamesButton_Click (object sender, RoutedEventArgs e) {
+			Process fileopener = new Process();
+			fileopener.StartInfo.FileName = "explorer";
+			fileopener.StartInfo.Arguments = "\"config\\channelNames.txt\"";
+			fileopener.Start();
+		}
+
 		private void mixSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider mixSlider = sender as Slider;
 			if (config == null) return;
 			config.NUM_MIXES = (int)mixSlider.Value;
 		}
+
+		private void editMixNamesButton_Click (object sender, RoutedEventArgs e) {
+			Process fileopener = new Process();
+			fileopener.StartInfo.FileName = "explorer";
+			fileopener.StartInfo.Arguments = "\"config\\mixNames.txt\"";
+			fileopener.Start();
+		}
+
 	}
 }
