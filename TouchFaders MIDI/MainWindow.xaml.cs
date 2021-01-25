@@ -236,31 +236,37 @@ namespace TouchFaders_MIDI {
 		}
 
 		async Task GetFaderValuesForMix (byte mix) {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
-				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
 				await SendSysEx(sysExEvent);
 			}
 		}
 
 		async Task GetChannelFaders () {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				NormalSysExEvent kFader = new NormalSysExEvent();
-				byte[] data = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kFader.Data = data;
 				await SendSysEx(kFader);
 			}
 		}
 
 		async Task GetChannelNames () {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
-				byte[] data1 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data1 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort1.Data = data1;
 				await SendSysEx(kNameShort1);
 				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
-				byte[] data2 = { 0x43, 0x30, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
+				byte[] data2 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
 				kNameShort2.Data = data2;
 				await SendSysEx(kNameShort2);
 			}
@@ -289,10 +295,13 @@ namespace TouchFaders_MIDI {
 			byte data2 = bytes[14];
 			byte data1 = bytes[15];
 
-			if (manufacturerID == 0x43 &&   // YAMAHA
-				deviceNumber == 0x10 &&     // 1 = parameter send; 3 = parameter request, device ID 0
-				groupID == 0x3E &&          // Digital mixer
-				modelID == 0x12) {          // LS9
+			byte device_byte = 0x10;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+
+			if (manufacturerID == 0x43 &&       // YAMAHA
+				deviceNumber == device_byte &&  // 1 = parameter send; 3 = parameter request, device ID 1
+				groupID == 0x3E &&              // Digital mixer
+				modelID == 0x12) {              // LS9
 				return true;
 			}
 			return false;
@@ -521,7 +530,9 @@ namespace TouchFaders_MIDI {
 			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
 
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  db		dB
-			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
+			byte device_byte = 0x10;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 			bool enabled = false;
 			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });

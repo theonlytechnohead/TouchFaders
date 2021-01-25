@@ -28,7 +28,14 @@ namespace TouchFaders_MIDI {
 
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			if (config == null) return;
+
+			deviceIDLabel.Content = $"Device ID: {config.device_ID}";
+			deviceIDSlider.Value = config.device_ID;
+
+			channelLabel.Content = $"Channels: {config.NUM_CHANNELS}";
 			channelSlider.Value = config.NUM_CHANNELS;
+
+			mixLabel.Content = $"Mixes: {config.NUM_MIXES}";
 			mixSlider.Value = config.NUM_MIXES;
 		}
 
@@ -37,10 +44,18 @@ namespace TouchFaders_MIDI {
 			base.OnClosed(e);
 		}
 
-		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
-			Slider channelSlider = sender as Slider;
+		private void deviceIDSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
+			Slider slider = sender as Slider;
 			if (config == null) return;
-			config.NUM_CHANNELS = (int)channelSlider.Value;
+			config.device_ID = (int)slider.Value;
+			deviceIDLabel.Content = $"Device ID: {config.device_ID}";
+		}
+
+		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
+			Slider slider = sender as Slider;
+			if (config == null) return;
+			config.NUM_CHANNELS = (int)slider.Value;
+			channelLabel.Content = $"Channels: {config.NUM_CHANNELS}";
 		}
 
 		private void editChannelNamesButton_Click (object sender, RoutedEventArgs e) {
@@ -51,9 +66,10 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void mixSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
-			Slider mixSlider = sender as Slider;
+			Slider slider = sender as Slider;
 			if (config == null) return;
-			config.NUM_MIXES = (int)mixSlider.Value;
+			config.NUM_MIXES = (int)slider.Value;
+			mixLabel.Content = $"Mixes: {config.NUM_MIXES}";
 		}
 
 		private void editMixNamesButton_Click (object sender, RoutedEventArgs e) {
@@ -62,6 +78,5 @@ namespace TouchFaders_MIDI {
 			fileopener.StartInfo.Arguments = "\"config\\mixNames.txt\"";
 			fileopener.Start();
 		}
-
 	}
 }

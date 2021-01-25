@@ -17,6 +17,9 @@ namespace TouchFaders_MIDI {
 			public int sendsToMix_version { get; set; }
 			public int channelNames_version { get; set; }
 			public int channelFaders_version { get; set; }
+			public int mixNames_version { get; set; }
+			public int mixFaders_version { get; set; }
+			public int device_ID { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
 			public LinkedChannels linkedChannels { get; set; }
@@ -24,6 +27,23 @@ namespace TouchFaders_MIDI {
 			public override string ToString () {
 				return $"config_version: {config_version}";
 			}
+
+			public static appconfig defaultValues () {
+				return new appconfig() {
+					config_version = 3,
+					oscDevices_version = 1,
+					sendsToMix_version = 1,
+					channelNames_version = 1,
+					channelFaders_version = 1,
+					mixNames_version = 0,
+					mixFaders_version = 0,
+					device_ID = 1,
+					NUM_MIXES = 8,
+					NUM_CHANNELS = 32,
+					linkedChannels = new LinkedChannels() { links = new List<LinkedChannel>() { new LinkedChannel() { leftChannel = 4, rightChannel = 5 } } }
+				};
+			}
+
 		}
 
 		public static appconfig Load () {
@@ -32,17 +52,38 @@ namespace TouchFaders_MIDI {
 			if (File.Exists("config/config.txt")) {
 				string configFile = File.ReadAllText("config/config.txt");
 				config = JsonSerializer.Deserialize<appconfig>(configFile);
+				if (config.config_version == 0) {
+					config.config_version = appconfig.defaultValues().config_version;
+				}
+				if (config.oscDevices_version == 0) {
+					config.oscDevices_version = appconfig.defaultValues().config_version;
+				}
+				if (config.sendsToMix_version == 0) {
+					config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
+				}
+				if (config.channelNames_version == 0) {
+					config.channelNames_version = appconfig.defaultValues().channelNames_version;
+				}
+				if (config.channelFaders_version == 0) {
+					config.channelFaders_version = appconfig.defaultValues().channelFaders_version;
+				}
+				if (config.mixNames_version == 0) {
+					config.mixNames_version = appconfig.defaultValues().mixNames_version;
+				}
+				if (config.mixFaders_version == 0) {
+					config.mixFaders_version = appconfig.defaultValues().mixFaders_version;
+				}
+				if (config.device_ID == 0) {
+					config.device_ID = appconfig.defaultValues().device_ID;
+				}
+				if (config.NUM_MIXES == 0) {
+					config.NUM_MIXES = appconfig.defaultValues().NUM_MIXES;
+				}
+				if (config.NUM_CHANNELS == 0) {
+					config.NUM_CHANNELS = appconfig.defaultValues().NUM_CHANNELS;
+				}
 			} else {
-				config = new appconfig {
-					config_version = 1,
-					oscDevices_version = 1,
-					sendsToMix_version = 1,
-					channelNames_version = 1,
-					channelFaders_version = 1,
-					NUM_MIXES = 8,
-					NUM_CHANNELS = 32,
-					linkedChannels = new LinkedChannels() { links = new List<LinkedChannel>() { new LinkedChannel() { leftChannel = 4, rightChannel = 5 } } }
-				};
+				config = appconfig.defaultValues();
 			}
 			return config;
 		}

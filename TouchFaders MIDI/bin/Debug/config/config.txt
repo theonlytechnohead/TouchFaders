@@ -4,6 +4,9 @@
   "sendsToMix_version": 1,
   "channelNames_version": 1,
   "channelFaders_version": 1,
+  "mixNames_version": 0,
+  "mixFaders_version": 0,
+  "device_ID": 1,
   "NUM_CHANNELS": 64,
   "NUM_MIXES": 16,
   "linkedChannels": {
