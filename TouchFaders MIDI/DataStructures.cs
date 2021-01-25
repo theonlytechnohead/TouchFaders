@@ -73,13 +73,13 @@ namespace TouchFaders_MIDI {
 	}
 
 	public class ChannelNames {
-		private List<string> channelNames = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select $"CH {channel}").ToList();
-
 		public event EventHandler channelNamesChanged;
 
+		private List<string> channelNames = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select $"CH {channel}").ToList();
+
 		public string this[int index] {
-			get { return names[index]; }
-			set { names[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
+			get { return channelNames[index]; }
+			set { channelNames[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
 		}
 
 		public List<string> names {
@@ -93,16 +93,50 @@ namespace TouchFaders_MIDI {
 	public class ChannelFaders {
 		public event EventHandler channelFadersChanged;
 
+		private List<int> channelFaders = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 823).ToList();
+
 		public int this[int index] {
 			get { return channelFaders[index]; }
 			set { channelFaders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<int> channelFaders = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 823).ToList();
-
 		public List<int> faders {
 			get { return channelFaders; }
 			set { channelFaders = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
+		}
+	}
+
+	public class MixNames {
+		public event EventHandler mixNamesChanged;
+
+		private List<string> mixNames = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select $"MIX {mix}").ToList();
+
+		public string this[int index] {
+			get { return mixNames[index]; }
+			set { mixNames[index] = value; mixNamesChanged?.Invoke(this, new EventArgs()); }
+		}
+
+		public List<string> names {
+			get => mixNames; set {
+				mixNames = value;
+				mixNamesChanged?.Invoke(this, new EventArgs());
+			}
+		}
+	}
+
+	public class MixFaders {
+		public event EventHandler mixFadersChanged;
+
+		private List<int> mixFaders = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select 823).ToList();
+
+		public int this[int index] {
+			get { return mixFaders[index]; }
+			set { mixFaders[index] = value; mixFadersChanged?.Invoke(this, new EventArgs()); }
+		}
+
+		public List<int> faders {
+			get { return mixFaders; }
+			set { mixFaders = value; mixFadersChanged?.Invoke(this, new EventArgs()); }
 		}
 	}
 
@@ -116,13 +150,6 @@ namespace TouchFaders_MIDI {
 			}
 			return false;
 		}
-
-		/*
-		public LinkedChannel (int leftIndex, int rightIndex) {
-			this.leftChannel = leftIndex;
-			this.rightChannel = rightIndex;
-		}
-		*/
 	}
 
 	public class LinkedChannels {

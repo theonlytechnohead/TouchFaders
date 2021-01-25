@@ -33,13 +33,10 @@ namespace TouchFaders_MIDI {
 		public MainWindow () {
 			InitializeComponent();
 
-			//linkedChannels.links.Add(new LinkedChannel(10, 11)); //Click?
 			instance = this;
-			Title = "TouchFaders MIDI - MIDI not started";
+			Title = "TouchFaders MIDI | MIDI not started";
 
 			config = AppConfiguration.Load();
-			linkedChannels = config.linkedChannels;
-
 			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
 
 			this.KeyDown += MainWindow_KeyDown;
@@ -119,6 +116,7 @@ namespace TouchFaders_MIDI {
 
 		#region File I/O
 		void DataLoaded (HandleIO.FileData fileData) {
+			linkedChannels = config.linkedChannels;
 			Dispatcher.Invoke(() => {
 				oscDevices = fileData.oscDevices;
 				deviceListBox.ItemsSource = oscDevices;

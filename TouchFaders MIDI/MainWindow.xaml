@@ -118,7 +118,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Button x:Name="infoWindowButton" Content="View info" HorizontalAlignment="Center" VerticalAlignment="Center" Click="infoWindowButton_Click" Padding="1" Width="76"/>
-                    <Button x:Name="configWindowButton" Content="View config" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Click="configWindowButton_Click" Padding="1" Width="76"/>
+                    <Button x:Name="configWindowButton" Content="Edit config" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Click="configWindowButton_Click" Padding="1" Width="76"/>
 
                 </Grid>
             </GroupBox>

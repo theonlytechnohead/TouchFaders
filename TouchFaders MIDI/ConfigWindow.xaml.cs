@@ -26,7 +26,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {
-			//testLabel.Content = $"Config version: {config.config_version}";
+			if (config == null) return;
 			channelSlider.Value = config.NUM_CHANNELS;
 			mixSlider.Value = config.NUM_MIXES;
 		}
@@ -38,14 +38,14 @@ namespace TouchFaders_MIDI {
 
 		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider channelSlider = sender as Slider;
-			if (config != null)
-				config.NUM_CHANNELS = (int)channelSlider.Value;
+			if (config == null) return;
+			config.NUM_CHANNELS = (int)channelSlider.Value;
 		}
 
 		private void mixSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider mixSlider = sender as Slider;
-			if (config != null)
-				config.NUM_MIXES = (int)mixSlider.Value;
+			if (config == null) return;
+			config.NUM_MIXES = (int)mixSlider.Value;
 		}
 	}
 }
