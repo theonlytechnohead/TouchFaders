@@ -19,6 +19,7 @@ namespace TouchFaders_MIDI {
 			public int channelFaders_version { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
+			public LinkedChannels linkedChannels { get; set; }
 
 			public override string ToString () {
 				return $"config_version: {config_version}";
@@ -39,7 +40,8 @@ namespace TouchFaders_MIDI {
 					channelNames_version = 1,
 					channelFaders_version = 1,
 					NUM_MIXES = 16,
-					NUM_CHANNELS = 64
+					NUM_CHANNELS = 64,
+					linkedChannels = new LinkedChannels() { links = new List<LinkedChannel>() { new LinkedChannel() { leftChannel = 4, rightChannel = 5 } } }
 				};
 			}
 			return config;
@@ -105,7 +107,8 @@ namespace TouchFaders_MIDI {
 	}
 
 	public class LinkedChannel {
-		public int leftChannel, rightChannel;
+		public int leftChannel { get; set; }
+		public int rightChannel { get; set; }
 
 		public bool isLinked (int index) {
 			if (index == leftChannel || index == rightChannel) {
@@ -114,14 +117,16 @@ namespace TouchFaders_MIDI {
 			return false;
 		}
 
+		/*
 		public LinkedChannel (int leftIndex, int rightIndex) {
 			this.leftChannel = leftIndex;
 			this.rightChannel = rightIndex;
 		}
+		*/
 	}
 
 	public class LinkedChannels {
-		public List<LinkedChannel> links;
+		public List<LinkedChannel> links { get; set; }
 
 		public int getIndex (int index) {
 			foreach (LinkedChannel linkedChannel in links) {

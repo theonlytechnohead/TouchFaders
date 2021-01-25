@@ -5,5 +5,13 @@
   "channelNames_version": 1,
   "channelFaders_version": 1,
   "NUM_CHANNELS": 64,
-  "NUM_MIXES": 16
+  "NUM_MIXES": 16,
+  "linkedChannels": {
+    "links": [
+      {
+        "leftChannel": 4,
+        "rightChannel": 5
+      }
+    ]
+  }
 }
