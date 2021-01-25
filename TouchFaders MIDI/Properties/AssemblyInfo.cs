@@ -5,12 +5,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("YAMAHA MIDI")]
+[assembly: AssemblyTitle("TouchFaders MIDI")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("YAMAHA MIDI")]
-[assembly: AssemblyCopyright("Copyright ©Craig Anderson  2020")]
+[assembly: AssemblyProduct("TouchFaders MIDI")]
+[assembly: AssemblyCopyright("Copyright ©Craig Anderson 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
