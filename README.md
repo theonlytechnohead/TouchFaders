@@ -55,7 +55,7 @@ Maybe a story... soon.
 - ~~Add general config file for storing data about settings~~
 - ~~Implement 'versioning' and settings for other config files~~
 - Add UI to adjust settings
-- Update 'Add device' dialog UI to be scalable, rearrange vertically
+- ~~Update 'Add device' dialog UI to be scalable, rearrange vertically~~
 - Find the MIDI command for the 'selected channel' info
   - Implement 'selected channel' status into main window UI
 - User configurable MIDI channel
