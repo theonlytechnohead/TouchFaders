@@ -618,7 +618,11 @@ namespace TouchFaders_MIDI {
 
 		}
 
-		void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
+		private void deviceListBox_SelectionChanged (object sender, System.Windows.Controls.SelectionChangedEventArgs e) {
+			deleteDeviceButton.IsEnabled = true;
+		}
+
+		private void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
 			if (deviceListBox.SelectedItem != null) {
 				int index = deviceListBox.SelectedIndex;
 				oscDevice device = deviceListBox.SelectedItem as oscDevice;
@@ -654,9 +658,10 @@ namespace TouchFaders_MIDI {
 
 		private void deviceListBox_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
 			deviceListBox.UnselectAll();
+			deleteDeviceButton.IsEnabled = false;
 		}
 
-		void addDeviceButton_Click (object sender, RoutedEventArgs e) {
+		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
 			createOSCDevice.DataContext = this.DataContext;
@@ -670,6 +675,15 @@ namespace TouchFaders_MIDI {
 				device.InitializeIO(address, sendPort, listenPort);
 				oscDevices.Add(device);
 			}
+		}
+
+		void deleteDeviceButton_Click (object sender, RoutedEventArgs e) {
+			if (deviceListBox.SelectedIndex == -1) {
+				return;
+			}
+			oscDevices.RemoveAt(deviceListBox.SelectedIndex);
+			deviceListBox.UnselectAll();
+			deleteDeviceButton.IsEnabled = false;
 		}
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
