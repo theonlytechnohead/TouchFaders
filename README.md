@@ -54,14 +54,14 @@ Maybe a story... soon.
 ## Todo
 - ~~Add general config file for storing data about settings~~
 - ~~Implement 'versioning' and settings for other config files~~
-- Add UI to adjust settings
+- ~~Add UI to adjust settings~~
 - ~~Update 'Add device' dialog UI to be scalable, rearrange vertically~~
 - Find the MIDI command for the 'selected channel' info
   - Implement 'selected channel' status into main window UI
 - User configurable MIDI channel
-- User configurable mixes
-- User configurable channels
-- User configurable channel linking (or getting channel link groups from the console)
+- User configurable mixes (25%)
+- User configurable channels (25%)
+- User configurable channel linking, or getting channel link groups from the console
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
