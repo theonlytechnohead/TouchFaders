@@ -58,6 +58,10 @@ Maybe a story... soon.
 - Update 'Add device' dialog UI to be scalable, rearrange vertically
 - Find the MIDI command for the 'selected channel' info
   - Implement 'selected channel' status into main window UI
+- User configurable MIDI channel
+- User configurable mixes
+- User configurable channels
+- User configurable channel linking (or getting channel link groups from the console)
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
