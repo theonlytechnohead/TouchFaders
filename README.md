@@ -58,7 +58,7 @@ Maybe a story... soon.
 - ~~Update 'Add device' dialog UI to be scalable, rearrange vertically~~
 - Find the MIDI command for the 'selected channel' info
   - Implement 'selected channel' status into main window UI
-- User configurable MIDI channel
+- ~~User configurable device ID~~
 - User configurable mixes (25%)
 - User configurable channels (25%)
 - User configurable channel linking, or getting channel link groups from the console
