@@ -62,6 +62,7 @@ Maybe a story... soon.
 - User configurable mixes (25%)
 - User configurable channels (25%)
 - User configurable channel linking, or getting channel link groups from the console
+- Support LS9-16
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
