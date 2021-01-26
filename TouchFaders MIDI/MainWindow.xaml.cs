@@ -665,6 +665,9 @@ namespace TouchFaders_MIDI {
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
 			createOSCDevice.DataContext = this.DataContext;
+			if (WindowState == WindowState.Maximized) {
+				createOSCDevice.WindowState = WindowState.Maximized;
+			}
 			createOSCDevice.ShowDialog();
 			if (createOSCDevice.DialogResult.Value) {
 				string address = createOSCDevice.addressIPTextBox.Address;
@@ -690,6 +693,9 @@ namespace TouchFaders_MIDI {
 			InfoWindow infoWindow = new InfoWindow();
 			infoWindow.KeyDown += MainWindow_KeyDown;
 			infoWindow.DataContext = this.DataContext;
+			if (WindowState == WindowState.Maximized) {
+				infoWindow.WindowState = WindowState.Maximized;
+			}
 			infoWindow.Show();
 		}
 
@@ -698,6 +704,9 @@ namespace TouchFaders_MIDI {
 			configWindow.Owner = this;
 			configWindow.DataContext = this.DataContext;
 			configWindow.config = config;
+			if (WindowState == WindowState.Maximized) {
+				configWindow.WindowState = WindowState.Maximized;
+			}
 			configWindow.ShowDialog();
 		}
 

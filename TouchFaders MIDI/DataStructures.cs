@@ -17,6 +17,7 @@ namespace TouchFaders_MIDI {
 			public int sendsToMix_version { get; set; }
 			public int channelNames_version { get; set; }
 			public int channelFaders_version { get; set; }
+			public Mixer mixer { get; set; }
 			public int mixNames_version { get; set; }
 			public int mixFaders_version { get; set; }
 			public int device_ID { get; set; }
@@ -24,17 +25,14 @@ namespace TouchFaders_MIDI {
 			public int NUM_MIXES { get; set; }
 			public LinkedChannels linkedChannels { get; set; }
 
-			public override string ToString () {
-				return $"config_version: {config_version}";
-			}
-
 			public static appconfig defaultValues () {
 				return new appconfig() {
-					config_version = 3,
+					config_version = 4,
 					oscDevices_version = 1,
 					sendsToMix_version = 1,
 					channelNames_version = 1,
 					channelFaders_version = 1,
+					mixer = Mixer.LS932,
 					mixNames_version = 0,
 					mixFaders_version = 0,
 					device_ID = 1,
@@ -43,7 +41,6 @@ namespace TouchFaders_MIDI {
 					linkedChannels = new LinkedChannels() { links = new List<LinkedChannel>() { new LinkedChannel() { leftChannel = 4, rightChannel = 5 } } }
 				};
 			}
-
 		}
 
 		public static appconfig Load () {
@@ -55,32 +52,46 @@ namespace TouchFaders_MIDI {
 				if (config.config_version == 0) {
 					config.config_version = appconfig.defaultValues().config_version;
 				}
-				if (config.oscDevices_version == 0) {
-					config.oscDevices_version = appconfig.defaultValues().config_version;
+				if (config.config_version >= 1) {
+					if (config.oscDevices_version == 0) {
+						config.oscDevices_version = appconfig.defaultValues().config_version;
+					}
+					if (config.sendsToMix_version == 0) {
+						config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
+					}
+					if (config.channelNames_version == 0) {
+						config.channelNames_version = appconfig.defaultValues().channelNames_version;
+					}
+					if (config.channelFaders_version == 0) {
+						config.channelFaders_version = appconfig.defaultValues().channelFaders_version;
+					}
 				}
-				if (config.sendsToMix_version == 0) {
-					config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
+				if (config.config_version >= 2) {
+					if (config.NUM_MIXES == 0) {
+						config.NUM_MIXES = appconfig.defaultValues().NUM_MIXES;
+					}
+					if (config.NUM_CHANNELS == 0) {
+						config.NUM_CHANNELS = appconfig.defaultValues().NUM_CHANNELS;
+					}
 				}
-				if (config.channelNames_version == 0) {
-					config.channelNames_version = appconfig.defaultValues().channelNames_version;
+				if (config.config_version >= 3) {
+					if (config.device_ID == 0) {
+						config.device_ID = appconfig.defaultValues().device_ID;
+					}
 				}
-				if (config.channelFaders_version == 0) {
-					config.channelFaders_version = appconfig.defaultValues().channelFaders_version;
+				if (config.config_version >= 4) {
+
+					if (config.mixer == null) {
+						config.mixer = appconfig.defaultValues().mixer;
+					}
 				}
-				if (config.mixNames_version == 0) {
-					config.mixNames_version = appconfig.defaultValues().mixNames_version;
-				}
-				if (config.mixFaders_version == 0) {
-					config.mixFaders_version = appconfig.defaultValues().mixFaders_version;
-				}
-				if (config.device_ID == 0) {
-					config.device_ID = appconfig.defaultValues().device_ID;
-				}
-				if (config.NUM_MIXES == 0) {
-					config.NUM_MIXES = appconfig.defaultValues().NUM_MIXES;
-				}
-				if (config.NUM_CHANNELS == 0) {
-					config.NUM_CHANNELS = appconfig.defaultValues().NUM_CHANNELS;
+				if (config.config_version >= 5) {
+					if (config.mixNames_version == 0) {
+						config.mixNames_version = appconfig.defaultValues().mixNames_version;
+					}
+					if (config.mixFaders_version == 0) {
+						config.mixFaders_version = appconfig.defaultValues().mixFaders_version;
+					}
 				}
 			} else {
 				config = appconfig.defaultValues();
@@ -95,6 +106,32 @@ namespace TouchFaders_MIDI {
 				await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
 			}
 		}
+	}
+
+	public class Mixer {
+		public Mixer () { model = "NONE"; channelCount = 0; mixCount = 0; }
+		private Mixer (string value, int channels, int mixes) { model = value; channelCount = channels; mixCount = mixes; }
+
+		public string model { get; set; }
+		public int channelCount { get; set; }
+		public int mixCount { get; set; }
+
+		public override string ToString () {
+			return $"{model}, ch{channelCount}×{mixCount}";
+		}
+
+		public override bool Equals (object obj) {
+			if (obj.GetType() != typeof(Mixer)) return false;
+			Mixer other = obj as Mixer;
+			if (model != other.model) return false;
+			if (channelCount != other.channelCount) return false;
+			if (mixCount != other.mixCount) return false;
+			return true;
+		}
+
+		public static Mixer LS932 { get { return new Mixer("LS9-32", 64, 16); } }
+		public static Mixer LS916 { get { return new Mixer("LS9-16", 32, 16); } }
+
 	}
 
 	public class SendsToMix {

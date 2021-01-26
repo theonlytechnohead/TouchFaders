@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -20,6 +12,8 @@ namespace TouchFaders_MIDI {
 	public partial class ConfigWindow : Window {
 
 		public AppConfiguration.appconfig config;
+
+		ObservableCollection<Mixer> mixers = new ObservableCollection<Mixer>();
 
 		public ConfigWindow () {
 			InitializeComponent();
@@ -32,11 +26,21 @@ namespace TouchFaders_MIDI {
 			deviceGroupBox.Header = $"Device ID: {config.device_ID}";
 			deviceIDSlider.Value = config.device_ID;
 
+			Mixer dataObject = new Mixer();
+			PropertyInfo[] properties = typeof(Mixer).GetProperties(BindingFlags.Static | BindingFlags.Public);
+			foreach (PropertyInfo info in properties) {
+				mixers.Add(info.GetValue(dataObject) as Mixer);
+			}
+
+			mixerComboBox.ItemsSource = mixers;
+			mixerComboBox.SelectedItem = config.mixer;
+
 			channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
 			channelSlider.Value = config.NUM_CHANNELS;
 
 			mixGroupBox.Header = $"Mixes: {config.NUM_MIXES}";
 			mixSlider.Value = config.NUM_MIXES;
+
 		}
 
 		protected override void OnClosed (EventArgs e) {
@@ -108,6 +112,16 @@ namespace TouchFaders_MIDI {
 			deviceGroupBox.Header = $"Device ID: {config.device_ID}";
 		}
 
+		private void mixerComboBox_SelectionChanged (object sender, SelectionChangedEventArgs e) {
+			config.mixer = mixerComboBox.SelectedItem as Mixer;
+
+			if (channelSlider.Value >= config.mixer.channelCount) channelSlider.Value = config.mixer.channelCount;
+			channelSlider.Maximum = config.mixer.channelCount;
+
+			if (mixSlider.Value >= config.mixer.mixCount) mixSlider.Value = config.mixer.mixCount;
+			mixSlider.Maximum = config.mixer.mixCount;
+		}
+
 		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider slider = sender as Slider;
 			if (config == null) return;
@@ -135,5 +149,6 @@ namespace TouchFaders_MIDI {
 			fileopener.StartInfo.Arguments = "\"config\\mixNames.txt\"";
 			fileopener.Start();
 		}
+
 	}
 }
