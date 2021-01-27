@@ -136,6 +136,17 @@ namespace TouchFaders_MIDI {
 			fileopener.Start();
 		}
 
+		private void editChannelGroupsButton_Click (object sender, RoutedEventArgs e) {
+			ChannelConfigWindow channelConfigWindow = new ChannelConfigWindow();
+			channelConfigWindow.Owner = this;
+			channelConfigWindow.DataContext = this.DataContext;
+			channelConfigWindow.config = config;
+			if (WindowState == WindowState.Maximized) {
+				channelConfigWindow.WindowState = WindowState.Maximized;
+			}
+			channelConfigWindow.ShowDialog();
+		}
+
 		private void mixSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider slider = sender as Slider;
 			if (config == null) return;

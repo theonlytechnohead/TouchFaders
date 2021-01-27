@@ -119,6 +119,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <None Include="Win32.cs" />
+    <Page Include="ChannelConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -142,6 +146,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ChannelConfigWindow.xaml.cs">
+      <DependentUpon>ChannelConfigWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>

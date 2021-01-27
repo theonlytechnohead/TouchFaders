@@ -90,3 +90,5 @@ C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MI
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.g.cs
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.baml

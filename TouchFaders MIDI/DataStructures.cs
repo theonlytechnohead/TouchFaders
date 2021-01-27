@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace TouchFaders_MIDI {
 	class DataStructures {
@@ -247,6 +248,63 @@ namespace TouchFaders_MIDI {
 
 		public LinkedChannels () {
 			links = new List<LinkedChannel>();
+		}
+	}
+
+	public class ChannelConfig {
+		public List<int> channels { get; set; }
+
+		public static ObservableCollection<char> chGroupsChars = new ObservableCollection<char>() {
+			'\0',
+			'A',
+			'B',
+			'C',
+			'D',
+			'E',
+			'F',
+			'G',
+			'H',
+			'I',
+			'J',
+			'K',
+			'L',
+			'M',
+			'N',
+			'O',
+			'P',
+			'Q',
+			'R',
+			'S',
+			'T',
+			'U',
+			'V',
+			'W',
+			'X',
+			'Y',
+			'Z',
+			'a',
+			'b',
+			'c',
+			'd',
+			'e',
+			'f',
+			'g',
+			'h'
+		};
+
+		public static List<int> GetGroup (int channel, List<int> channels) {
+			List<int> channelList = channels;
+			channelList.Remove(channel);
+			return channelList;
+		}
+
+		public static List<int> GetFirstGroup (int channel, List<ChannelConfig> groups) {
+			foreach (ChannelConfig group in groups) {
+				if (group.channels.Contains(channel)) {
+					return group.channels;
+				}
+			}
+			return null;
 		}
 	}
 }
