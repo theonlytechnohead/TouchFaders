@@ -658,6 +658,8 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
+			deviceListBox.SelectedIndex = -1;
+			deleteDeviceButton.IsEnabled = false;
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
 			createOSCDevice.DataContext = this.DataContext;
