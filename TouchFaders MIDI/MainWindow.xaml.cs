@@ -21,13 +21,15 @@ namespace TouchFaders_MIDI {
 		OutputDevice LS9_in;
 		InputDevice LS9_out;
 		Timer queueTimer;
+		public Queue<NormalSysExEvent> queue = new Queue<NormalSysExEvent>();
 
 		public SendsToMix sendsToMix;
-		public ChannelNames channelNames;
-		public ChannelFaders channelFaders;
-		public LinkedChannels linkedChannels;
 
-		public Queue<NormalSysExEvent> queue = new Queue<NormalSysExEvent>();
+		//public ChannelNames channelNames; // Deprecated
+		//public ChannelFaders channelFaders; // Deprecated
+		//public LinkedChannels linkedChannels; // Removed
+		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
+
 
 		#region WindowEvents
 		public MainWindow () {
@@ -49,8 +51,7 @@ namespace TouchFaders_MIDI {
 			HandleIO.FileData fileData = new HandleIO.FileData() {
 				oscDevices = this.oscDevices,
 				sendsToMix = this.sendsToMix,
-				channelNames = this.channelNames,
-				channelFaders = this.channelFaders
+				channelConfig = this.channelConfig
 			};
 			await HandleIO.SaveAll(fileData);
 			base.OnClosed(e);
@@ -116,14 +117,12 @@ namespace TouchFaders_MIDI {
 
 		#region File I/O
 		void DataLoaded (HandleIO.FileData fileData) {
-			linkedChannels = config.linkedChannels;
 			Dispatcher.Invoke(() => {
 				oscDevices = fileData.oscDevices;
 				deviceListBox.ItemsSource = oscDevices;
 			});
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
-			Dispatcher.Invoke(() => { channelNames = fileData.channelNames; });
-			Dispatcher.Invoke(() => { channelFaders = fileData.channelFaders; });
+			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
 
 			Task.Run(async () => await RefreshOSCDevices());
 			Dispatcher.Invoke(() => displayMIDIDevices());
@@ -139,7 +138,7 @@ namespace TouchFaders_MIDI {
 					Thread.Sleep(5);
 					device.ResendAllFaders();
 					Thread.Sleep(5);
-					device.ResendAllNames(channelNames.names);
+					device.ResendAllNames(channelConfig.GetChannelNames());
 				}));
 			}
 			await Task.WhenAll(tasks);
@@ -347,20 +346,20 @@ namespace TouchFaders_MIDI {
 
 		void HandleMixSendMIDI (SysExEvent midiEvent) {
 			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-			int linkedIndex = linkedChannels.getIndex(channel - 1);
+			/*int linkedIndex = linkedChannels.getIndex(channel - 1); // TODO: fix this
 			if (linkedIndex != -1) {
 				sendsToMix[mix - 1, linkedIndex] = value;
-			}
+			}*/
 			sendsToMix[mix - 1, channel - 1] = value;
 			Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
 			foreach (oscDevice device in oscDevices) {
-				if (linkedIndex != -1) {
+				/*if (linkedIndex != -1) { // TODO: fix this
 					if (device.LegacyApp) {
 						device.sendOSCMessage(mix, linkedIndex + 1, value / 1023f);
 					} else {
 						device.sendOSCMessage(mix, linkedIndex + 1, value);
 					}
-				}
+				}*/
 				if (device.LegacyApp) {
 					device.sendOSCMessage(mix, channel, value / 1023f);
 				} else {
@@ -390,10 +389,10 @@ namespace TouchFaders_MIDI {
 
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
-					channelNames[channel] = BitConverter.ToString(data);
+					channelConfig.channels[channel].name = BitConverter.ToString(data);
 					break;
 				case 0x01: // kNameShort2
-					channelNames[channel] += " " + BitConverter.ToString(data);
+					channelConfig.channels[channel].name += " " + BitConverter.ToString(data);
 					break;
 			}
 		}
@@ -410,11 +409,8 @@ namespace TouchFaders_MIDI {
 			ushort level = (ushort)(data2 << 7);
 			level += data1;
 
-			int linkedIndex = linkedChannels.getIndex(channel);
-			if (linkedIndex != -1) {
-				channelFaders[linkedIndex] = level;
-			}
-			channelFaders[channel] = level;
+
+			channelConfig.channels[channel].level = level;
 		}
 		#endregion
 

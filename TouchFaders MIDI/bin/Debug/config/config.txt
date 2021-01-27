@@ -2,8 +2,7 @@
   "config_version": 4,
   "oscDevices_version": 1,
   "sendsToMix_version": 1,
-  "channelNames_version": 1,
-  "channelFaders_version": 1,
+  "channelConfig_version": 2,
   "mixer": {
     "model": "LS9-32",
     "channelCount": 64,

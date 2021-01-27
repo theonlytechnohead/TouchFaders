@@ -1,0 +1,324 @@
+{
+  "channels": [
+    {
+      "name": "Ch 1",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 2",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 3",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 4",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 5",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 6",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 7",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 8",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 9",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 10",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 11",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 12",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 13",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 14",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 15",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 16",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 17",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 18",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 19",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 20",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 21",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 22",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 23",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 24",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 25",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 26",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 27",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 28",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 29",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 30",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 31",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 32",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 33",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 34",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 35",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 36",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 37",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 38",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 39",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 40",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 41",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 42",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 43",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 44",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 45",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 46",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 47",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 48",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 49",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 50",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 51",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 52",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 53",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 54",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 55",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 56",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 57",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 58",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 59",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 60",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 61",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 62",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "Ch 63",
+      "level": 823,
+      "linkGroup": " "
+    },
+    {
+      "name": "CH 64",
+      "level": 823,
+      "linkGroup": " "
+    }
+  ]
+}

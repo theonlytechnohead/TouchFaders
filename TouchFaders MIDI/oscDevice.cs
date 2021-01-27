@@ -140,27 +140,27 @@ namespace TouchFaders_MIDI {
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
 					if (message.Arguments[0] is float) { // Legacy TouchOSC clients use floats for fader values
 						int value = Convert.ToInt32((float)message.Arguments[0] * 1023);
-						int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
+						/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
 						if (linkedIndex != -1) {
 							sendOSCMessage(mix, linkedIndex + 1, (float)message.Arguments[0]);
 							MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
-						}
+						}*/
 						MainWindow.instance.SendFaderValue(mix, channel, value, this);
 					}
 					if (message.Arguments[0] is int) { // TouchFaders OSC clients use 1:1 mapping ints for fader values (can be passed directly to the console)
 						int value = (int)message.Arguments[0];
-						int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1);
+						/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
 						if (linkedIndex != -1) {
 							sendOSCMessage(mix, linkedIndex + 1, value);
 							MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
-						}
+						}*/
 						MainWindow.instance.SendFaderValue(mix, channel, value, this);
 					}
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
 						ResendMixFaders(mix);
-						ResendMixNames(mix, MainWindow.instance.channelNames.names);
+						ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
 			}

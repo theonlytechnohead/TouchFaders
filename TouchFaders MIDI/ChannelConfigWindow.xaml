@@ -5,41 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TouchFaders_MIDI"
         mc:Ignorable="d"
-        Title="Channel configuration" Height="450" Width="800" WindowStartupLocation="CenterOwner" Loaded="channelConfigWindow_Loaded">
-    <Grid>
+        Title="Channel configuration" Height="450" Width="800" WindowStartupLocation="CenterOwner" ScrollViewer.IsDeferredScrollingEnabled="True" Loaded="channelConfigWindow_Loaded" MinWidth="800" MinHeight="450">
+    <Grid x:Name="channelConfigWindowGrid" SizeChanged="channelConfigWindowGrid_SizeChanged">
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="ApplicationScaleTransform"
+                        CenterX="0"
+                        CenterY="0"
+                        ScaleX="{Binding ScaleValue, ElementName=channelConfigWindow}"
+                        ScaleY="{Binding ScaleValue, ElementName=channelConfigWindow}" />
+        </Grid.LayoutTransform>
         <Grid>
-            <GroupBox Header="Channel settings" Margin="5,0,5,5">
-                <Grid>
-                    <DataGrid x:Name="channelDataGrid" AutoGenerateColumns="False" SelectionUnit="Cell" HorizontalGridLinesBrush="#FF666666" VerticalGridLinesBrush="#FFCCCCCC" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserAddRows="False" >
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Channel name">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{Binding Path=ChannelName}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                                <DataGridTemplateColumn.CellEditingTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{Binding Path=ChannelName}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellEditingTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Channel link group">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Path=ChannelGroups}" SelectedItem="{Binding Path=ChannelGroup}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                                <DataGridTemplateColumn.CellEditingTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Path=ChannelGroups}" SelectedItem="{Binding Path=ChannelGroup}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellEditingTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </GroupBox>
+            <DataGrid x:Name="channelDataGrid" AutoGenerateColumns="False" VirtualizingPanel.ScrollUnit="Pixel" MouseDown="channelDataGrid_MouseDown" LoadingRow="channelDataGrid_LoadingRow" SelectionUnit="Cell" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserAddRows="False" RowDetailsVisibilityMode="Visible" CanUserResizeRows="False" CanUserResizeColumns="False" GridLinesVisibility="None" Foreground="Black" BorderThickness="0" >
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Channel name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding ChannelName}" VerticalContentAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding ChannelName}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Channel link group">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding ChannelGroups}" SelectedItem="{Binding ChannelGroup}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding ChannelGroups}" SelectedItem="{Binding ChannelGroup}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
     </Grid>

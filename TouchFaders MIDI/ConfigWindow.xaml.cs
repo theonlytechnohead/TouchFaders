@@ -129,22 +129,16 @@ namespace TouchFaders_MIDI {
 			channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
 		}
 
-		private void editChannelNamesButton_Click (object sender, RoutedEventArgs e) {
-			Process fileopener = new Process();
-			fileopener.StartInfo.FileName = "explorer";
-			fileopener.StartInfo.Arguments = "\"config\\channelNames.txt\"";
-			fileopener.Start();
-		}
-
-		private void editChannelGroupsButton_Click (object sender, RoutedEventArgs e) {
+		private void editChannelsButton_Click (object sender, RoutedEventArgs e) {
 			ChannelConfigWindow channelConfigWindow = new ChannelConfigWindow();
 			channelConfigWindow.Owner = this;
 			channelConfigWindow.DataContext = this.DataContext;
-			channelConfigWindow.config = config;
+			channelConfigWindow.channelConfig = MainWindow.instance.channelConfig;
 			if (WindowState == WindowState.Maximized) {
 				channelConfigWindow.WindowState = WindowState.Maximized;
 			}
 			channelConfigWindow.ShowDialog();
+			//Close();
 		}
 
 		private void mixSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {

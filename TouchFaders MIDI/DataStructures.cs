@@ -13,33 +13,38 @@ namespace TouchFaders_MIDI {
 	public class AppConfiguration {
 		// Constants and stuff goes here
 		public class appconfig {
-			public int config_version { get; set; }
+			public int? config_version { get; set; }
 			public int oscDevices_version { get; set; }
 			public int sendsToMix_version { get; set; }
-			public int channelNames_version { get; set; }
-			public int channelFaders_version { get; set; }
+
+			public int? channelNames_version { get; set; } // Deprecated
+			public int? channelFaders_version { get; set; } // Deprecated
+			public int? channelConfig_version { get; set; } // Replaces channelNames_version and channelFaders_version
+
 			public Mixer mixer { get; set; }
 			public int mixNames_version { get; set; }
 			public int mixFaders_version { get; set; }
 			public int device_ID { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
-			public LinkedChannels linkedChannels { get; set; }
+			public LinkedChannels linkedChannels { get; set; } // For compatibility
 
 			public static appconfig defaultValues () {
 				return new appconfig() {
 					config_version = 4,
 					oscDevices_version = 1,
 					sendsToMix_version = 1,
-					channelNames_version = 1,
-					channelFaders_version = 1,
+
+					channelNames_version = null,
+					channelFaders_version = null,
+					channelConfig_version = 2,
+
 					mixer = Mixer.LS932,
 					mixNames_version = 0,
 					mixFaders_version = 0,
 					device_ID = 1,
 					NUM_MIXES = 8,
-					NUM_CHANNELS = 32,
-					linkedChannels = new LinkedChannels() { links = new List<LinkedChannel>() { new LinkedChannel() { leftChannel = 4, rightChannel = 5 } } }
+					NUM_CHANNELS = 32
 				};
 			}
 		}
@@ -50,21 +55,22 @@ namespace TouchFaders_MIDI {
 			if (File.Exists("config/config.txt")) {
 				string configFile = File.ReadAllText("config/config.txt");
 				config = JsonSerializer.Deserialize<appconfig>(configFile);
-				if (config.config_version == 0) {
+				if (config.config_version == null) {
 					config.config_version = appconfig.defaultValues().config_version;
 				}
 				if (config.config_version >= 1) {
 					if (config.oscDevices_version == 0) {
-						config.oscDevices_version = appconfig.defaultValues().config_version;
+						config.oscDevices_version = appconfig.defaultValues().config_version.Value;
 					}
 					if (config.sendsToMix_version == 0) {
 						config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
 					}
-					if (config.channelNames_version == 0) {
-						config.channelNames_version = appconfig.defaultValues().channelNames_version;
-					}
-					if (config.channelFaders_version == 0) {
-						config.channelFaders_version = appconfig.defaultValues().channelFaders_version;
+					if (config.channelConfig_version == null) {
+						if (config.channelNames_version == 1 && config.channelFaders_version == 1) {
+							config.channelConfig_version = 1;
+						} else {
+							config.channelConfig_version = appconfig.defaultValues().channelConfig_version;
+						}
 					}
 				}
 				if (config.config_version >= 2) {
@@ -151,6 +157,7 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
+	// Deprecated, replaced by ChannelConfig
 	public class ChannelNames {
 		public event EventHandler channelNamesChanged;
 
@@ -219,6 +226,7 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
+	// To be REMOVED
 	public class LinkedChannel {
 		public int leftChannel { get; set; }
 		public int rightChannel { get; set; }
@@ -230,7 +238,6 @@ namespace TouchFaders_MIDI {
 			return false;
 		}
 	}
-
 	public class LinkedChannels {
 		public List<LinkedChannel> links { get; set; }
 
@@ -252,10 +259,51 @@ namespace TouchFaders_MIDI {
 	}
 
 	public class ChannelConfig {
-		public List<int> channels { get; set; }
+		public class Channel {
+			public event EventHandler channelLevelChanged;
+			private int fader;
 
-		public static ObservableCollection<char> chGroupsChars = new ObservableCollection<char>() {
-			'\0',
+			public class ChannelLevelChangedEventArgs : EventArgs {
+				public char linkGroup;
+			}
+
+			public string name { get; set; }
+			public int level { get { return fader; } set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelChangedEventArgs() { linkGroup = linkGroup }); } }
+			public char linkGroup { get; set; }
+		}
+
+		public List<Channel> channels { get; set; }
+
+		public List<string> GetChannelNames () {
+			List<string> names = new List<string>();
+			foreach (Channel channel in channels) {
+				names.Add(channel.name);
+			}
+			return names;
+		}
+
+		public List<int> GetFaderLevels () {
+			List<int> levels = new List<int>();
+			foreach (Channel channel in channels) {
+				levels.Add(channel.level);
+			}
+			return levels;
+		}
+
+		/*
+		public void UpdateLinkedFaderLevels (object sender, EventArgs eventArgs) {
+			Channel senderChannel = sender as Channel;
+			Channel.ChannelLevelChangedEventArgs args = eventArgs as Channel.ChannelLevelChangedEventArgs;
+			List<Channel> groupChannels = GetGroup(senderChannel, args.linkGroup);
+			foreach (Channel channel in groupChannels) {
+				int index = MainWindow.instance.channelConfig.channels.IndexOf(channel);
+				MainWindow.instance.channelConfig.channels[index].level = channel.level;
+			}
+		}
+		*/
+
+		public static ObservableCollection<char> ChannelGroupChars = new ObservableCollection<char>() {
+			' ',
 			'A',
 			'B',
 			'C',
@@ -292,19 +340,21 @@ namespace TouchFaders_MIDI {
 			'h'
 		};
 
-		public static List<int> GetGroup (int channel, List<int> channels) {
-			List<int> channelList = channels;
-			channelList.Remove(channel);
-			return channelList;
+		public ChannelConfig () {
+			channels = new List<Channel>();
 		}
 
-		public static List<int> GetFirstGroup (int channel, List<ChannelConfig> groups) {
-			foreach (ChannelConfig group in groups) {
-				if (group.channels.Contains(channel)) {
-					return group.channels;
+
+		public List<Channel> GetGroup (Channel senderChannel, char group) {
+			List<Channel> channels = new List<Channel>();
+			foreach (Channel channel in this.channels) {
+				if (channel.linkGroup == group) {
+					channels.Add(channel);
 				}
 			}
-			return null;
+			channels.Remove(senderChannel);
+			return channels;
 		}
 	}
+
 }

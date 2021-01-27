@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -19,32 +10,119 @@ namespace TouchFaders_MIDI {
 	/// </summary>
 	public partial class ChannelConfigWindow : Window {
 
-		public AppConfiguration.appconfig config;
+		public ChannelConfig channelConfig;
 
-		public ObservableCollection<ChannelConfigUI> channelConfig;
+		public ObservableCollection<ChannelConfigUI> channelConfigUI;
 
 		public class ChannelConfigUI {
 			public string ChannelName { get; set; }
+			int ChannelLevel { get; set; }
 			public char ChannelGroup { get; set; }
 			public ObservableCollection<char> ChannelGroups { get; set; }
 
-			public ChannelConfigUI (string name, char group) {
-				ChannelName = name;
-				ChannelGroup = group;
-				ChannelGroups = ChannelConfig.chGroupsChars;
+			public ChannelConfigUI (ChannelConfig.Channel channel) {
+				ChannelName = channel.name;
+				ChannelLevel = channel.level;
+				ChannelGroup = channel.linkGroup;
+				ChannelGroups = ChannelConfig.ChannelGroupChars;
+			}
+
+			public ChannelConfig.Channel AsChannel () {
+				return new ChannelConfig.Channel() {
+					name = ChannelName,
+					level = ChannelLevel,
+					linkGroup = ChannelGroup
+				};
 			}
 		}
 
 		public ChannelConfigWindow () {
 			InitializeComponent();
-			channelConfig = new ObservableCollection<ChannelConfigUI>();
+			channelConfigUI = new ObservableCollection<ChannelConfigUI>();
 		}
 
 		private void channelConfigWindow_Loaded (object sender, RoutedEventArgs e) {
-			channelDataGrid.ItemsSource = channelConfig;
+			channelDataGrid.DataContext = this;
+			channelDataGrid.ItemsSource = channelConfigUI;
 			for (int i = 1; i <= 64; i++) {
-				channelConfig.Add(new ChannelConfigUI($"Ch {i}", ChannelConfig.chGroupsChars[1]));
+				ChannelConfigUI channel = new ChannelConfigUI(channelConfig.channels[i - 1]);
+				channelConfigUI.Add(channel);
 			}
 		}
+
+		protected override void OnClosed (EventArgs e) {
+			for (int i = 0; i < channelConfig.channels.Count; i++) {
+				channelConfig.channels[i] = channelConfigUI[i].AsChannel();
+			}
+			MainWindow.instance.channelConfig = channelConfig;
+			base.OnClosed(e);
+		}
+
+		private void channelDataGrid_LoadingRow (object sender, DataGridRowEventArgs e) {
+			e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+			e.Row.DataContext = this;
+		}
+
+		private void channelDataGrid_MouseDown (object sender, MouseButtonEventArgs e) {
+			channelDataGrid.SelectedCells.Clear();
+		}
+
+		#region Scaling
+		// This section smoothly scales everything within the mainGrid
+		public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
+			typeof(double),
+			typeof(ChannelConfigWindow),
+			new UIPropertyMetadata(1.0,
+				new PropertyChangedCallback(OnScaleValueChanged),
+				new CoerceValueCallback(OnCoerceScaleValue)));
+
+		private static object OnCoerceScaleValue (DependencyObject o, object value) {
+			ChannelConfigWindow channelConfigWindow = o as ChannelConfigWindow;
+			if (channelConfigWindow != null)
+				return channelConfigWindow.OnCoerceScaleValue((double)value);
+			else
+				return value;
+		}
+
+		private static void OnScaleValueChanged (DependencyObject o, DependencyPropertyChangedEventArgs e) {
+			ChannelConfigWindow channelConfigWindow = o as ChannelConfigWindow;
+			if (channelConfigWindow != null)
+				channelConfigWindow.OnScaleValueChanged((double)e.OldValue, (double)e.NewValue);
+		}
+
+		protected virtual double OnCoerceScaleValue (double value) {
+			if (double.IsNaN(value))
+				return 1.0f;
+
+			value = Math.Max(1f, value);
+			return value;
+		}
+
+		protected virtual void OnScaleValueChanged (double oldValue, double newValue) {
+			// Don't need to do anything
+		}
+
+		public double ScaleValue {
+			get {
+				return (double)GetValue(ScaleValueProperty);
+			}
+			set {
+				SetValue(ScaleValueProperty, value);
+			}
+		}
+
+		private void channelConfigWindowGrid_SizeChanged (object sender, RoutedEventArgs e) {
+			CalculateScale();
+		}
+
+		private void CalculateScale () {
+			double xScale = ActualWidth / 800f; // must be set to initial window sizing for proper scaling!!!
+			double yScale = ActualHeight / 450f; // must be set to initial window sizing for proper scaling!!!
+			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
+			ScaleValue = (double)OnCoerceScaleValue(channelConfigWindow, value); // Update the actual scale for the main window
+		}
+
+		#endregion
+
 	}
 }

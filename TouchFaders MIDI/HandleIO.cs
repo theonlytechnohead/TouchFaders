@@ -12,8 +12,12 @@ namespace TouchFaders_MIDI {
 		public class FileData {
 			public ObservableCollection<oscDevice> oscDevices = new ObservableCollection<oscDevice>();
 			public SendsToMix sendsToMix = new SendsToMix();
-			public ChannelNames channelNames = new ChannelNames();
+
+			//public ChannelNames channelNames = new ChannelNames();
+			public ChannelConfig channelConfig = new ChannelConfig();
+
 			public ChannelFaders channelFaders = new ChannelFaders();
+
 			public MixNames mixNames = new MixNames();
 			public MixFaders mixFaders = new MixFaders();
 		}
@@ -33,14 +37,38 @@ namespace TouchFaders_MIDI {
 					data.sendsToMix.sendLevel = JsonSerializer.Deserialize<List<List<int>>>(sendsToMixFile, jsonDeserializerOptions);
 				}
 
-				string channelNamesFile = File.ReadAllText("config/channelNames.txt");
-				if (MainWindow.instance.config.channelNames_version >= 1) {
-					data.channelNames.names = JsonSerializer.Deserialize<List<string>>(channelNamesFile, jsonDeserializerOptions);
+				if (MainWindow.instance.config.channelConfig_version >= 2) {
+					string channelConfigFile = File.ReadAllText("config/channelConfig.txt");
+					data.channelConfig = JsonSerializer.Deserialize<ChannelConfig>(channelConfigFile, jsonDeserializerOptions);
 				}
+				if (MainWindow.instance.config.channelNames_version == 1) {
+					string channelNamesFile = File.ReadAllText("config/channelNames.txt");
+					string channelFadersFile = File.ReadAllText("config/channelFaders.txt");
 
-				string channelFadersFile = File.ReadAllText("config/channelFaders.txt");
-				if (MainWindow.instance.config.channelFaders_version >= 1) {
-					data.channelFaders.faders = JsonSerializer.Deserialize<List<int>>(channelFadersFile, jsonDeserializerOptions);
+					ChannelNames channelNames = new ChannelNames();
+					channelNames.names = JsonSerializer.Deserialize<List<string>>(channelNamesFile, jsonDeserializerOptions);
+
+					ChannelFaders channelFaders = new ChannelFaders();
+					channelFaders.faders = JsonSerializer.Deserialize<List<int>>(channelFadersFile, jsonDeserializerOptions);
+
+					ChannelConfig channelConfig = new ChannelConfig();
+					for (int i = 0; i < channelNames.names.Count && i < channelFaders.faders.Count; i++) {
+						ChannelConfig.Channel channel = new ChannelConfig.Channel() {
+							name = channelNames.names[i],
+							level = channelFaders.faders[i],
+							linkGroup = ChannelConfig.ChannelGroupChars[0]
+						};
+						channelConfig.channels.Add(channel);
+					}
+
+					data.channelConfig = channelConfig;
+				}
+				if (MainWindow.instance.config.channelConfig_version == 1) {
+					MainWindow.instance.config.channelConfig_version = AppConfiguration.appconfig.defaultValues().channelConfig_version;
+					MainWindow.instance.config.channelNames_version = null;
+					MainWindow.instance.config.channelFaders_version = null;
+					File.Delete("config/channelNames.txt");
+					File.Delete("config/channelFaders.txt");
 				}
 
 				if (MainWindow.instance.config.mixNames_version >= 1) {
@@ -56,31 +84,27 @@ namespace TouchFaders_MIDI {
 				//await SaveAll(data);
 				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.Message));
 			} catch (Exception ex) {
-				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.Message));
+				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
 			}
 			return data;
 		}
 
 		public static async Task SaveAll (FileData data) {
+			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, };
 			_ = Directory.CreateDirectory("config");
 			if (data.oscDevices != null) {
 				using (FileStream fs = File.Create("config/oscDevices.txt")) {
-					await JsonSerializer.SerializeAsync(fs, data.oscDevices, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+					await JsonSerializer.SerializeAsync(fs, data.oscDevices, serializerOptions);
 				}
 			}
 			if (data.sendsToMix != null) {
 				using (FileStream fs = File.Create("config/sendsToMix.txt")) {
-					await JsonSerializer.SerializeAsync(fs, data.sendsToMix.sendLevel, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, });
+					await JsonSerializer.SerializeAsync(fs, data.sendsToMix.sendLevel, serializerOptions);
 				}
 			}
-			if (data.channelNames != null) {
-				using (FileStream fs = File.Create("config/channelNames.txt")) {
-					await JsonSerializer.SerializeAsync(fs, data.channelNames.names, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true });
-				}
-			}
-			if (data.channelFaders != null) {
-				using (FileStream fs = File.Create("config/channelFaders.txt")) {
-					await JsonSerializer.SerializeAsync(fs, data.channelFaders.faders, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true });
+			if (data.channelConfig != null) {
+				using (FileStream fs = File.Create("config/channelConfig.txt")) {
+					await JsonSerializer.SerializeAsync(fs, data.channelConfig, serializerOptions);
 				}
 			}
 		}
