@@ -616,6 +616,7 @@ namespace TouchFaders_MIDI {
 
 		private void deviceListBox_SelectionChanged (object sender, System.Windows.Controls.SelectionChangedEventArgs e) {
 			deleteDeviceButton.IsEnabled = true;
+			editDeviceButton.IsEnabled = true;
 		}
 
 		private void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -634,6 +635,9 @@ namespace TouchFaders_MIDI {
 				}
 				editOSCdevice.addButton.Content = "Save OSC device";
 				editOSCdevice.Title = "Edit OSC device";
+				if (WindowState == WindowState.Maximized) {
+					editOSCdevice.WindowState = WindowState.Maximized;
+				}
 				editOSCdevice.ShowDialog();
 				if (editOSCdevice.DialogResult.Value) {
 					string address = editOSCdevice.addressIPTextBox.Address;
@@ -654,12 +658,14 @@ namespace TouchFaders_MIDI {
 
 		private void deviceListBox_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
 			deviceListBox.UnselectAll();
+			editDeviceButton.IsEnabled = false;
 			deleteDeviceButton.IsEnabled = false;
 		}
 
 		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
 			deviceListBox.SelectedIndex = -1;
 			deleteDeviceButton.IsEnabled = false;
+			editDeviceButton.IsEnabled = false;
 			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
 			createOSCDevice.Owner = this;
 			createOSCDevice.DataContext = this.DataContext;
@@ -678,13 +684,18 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void deleteDeviceButton_Click (object sender, RoutedEventArgs e) {
+		private void editDeviceButton_Click (object sender, RoutedEventArgs e) {
+			deviceListBox_MouseDoubleClick(sender, null);
+		}
+
+		private void deleteDeviceButton_Click (object sender, RoutedEventArgs e) {
 			if (deviceListBox.SelectedIndex == -1) {
 				return;
 			}
 			oscDevices.RemoveAt(deviceListBox.SelectedIndex);
 			deviceListBox.UnselectAll();
 			deleteDeviceButton.IsEnabled = false;
+			editDeviceButton.IsEnabled = false;
 		}
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
