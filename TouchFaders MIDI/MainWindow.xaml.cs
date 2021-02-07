@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Devices;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
-using System.Windows;
-using Melanchall.DryWetMidi.Core;
-using Melanchall.DryWetMidi.Devices;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -29,6 +29,7 @@ namespace TouchFaders_MIDI {
 		//public ChannelFaders channelFaders; // Deprecated
 		//public LinkedChannels linkedChannels; // Removed
 		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
+		public ChannelConfig.SelectedChannel selectedChannel;
 
 
 		#region WindowEvents
@@ -42,6 +43,12 @@ namespace TouchFaders_MIDI {
 			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
 
 			this.KeyDown += MainWindow_KeyDown;
+		}
+
+		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
+			selectedChannel = new ChannelConfig.SelectedChannel();
+			selectedChannelName.Content = selectedChannel.name;
+			selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
 		}
 
 		protected override async void OnClosed (EventArgs e) {
@@ -260,16 +267,23 @@ namespace TouchFaders_MIDI {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
-				NormalSysExEvent kNameShort1 = new NormalSysExEvent();
-				byte[] data1 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
-				kNameShort1.Data = data1;
-				await SendSysEx(kNameShort1);
-				NormalSysExEvent kNameShort2 = new NormalSysExEvent();
-				byte[] data2 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
-				kNameShort2.Data = data2;
-				await SendSysEx(kNameShort2);
+				await GetChannelName(channel);
 			}
 		}
+
+		async Task GetChannelName (int channel) {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+			NormalSysExEvent kNameShort1 = new NormalSysExEvent();
+			byte[] data1 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+			kNameShort1.Data = data1;
+			await SendSysEx(kNameShort1);
+			NormalSysExEvent kNameShort2 = new NormalSysExEvent();
+			byte[] data2 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
+			kNameShort2.Data = data2;
+			await SendSysEx(kNameShort2);
+		}
+
 		#endregion
 
 		#region SysExMIDIHelpers
@@ -390,9 +404,11 @@ namespace TouchFaders_MIDI {
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
 					channelConfig.channels[channel].name = BitConverter.ToString(data);
+					if (channel == selectedChannel.channel) { selectedChannel.kNameShort1 = data; }
 					break;
 				case 0x01: // kNameShort2
 					channelConfig.channels[channel].name += " " + BitConverter.ToString(data);
+					if (channel == selectedChannel.channel) { selectedChannel.kNameShort2 = data; }
 					break;
 			}
 		}
@@ -411,6 +427,14 @@ namespace TouchFaders_MIDI {
 
 
 			channelConfig.channels[channel].level = level;
+
+			if (channel == selectedChannel.channel) {
+				selectedChannel.level = level;
+			} else {
+				selectedChannel.channel = channel;
+				selectedChannel.channel = level;
+				_ = GetChannelName(channel);
+			}
 		}
 		#endregion
 

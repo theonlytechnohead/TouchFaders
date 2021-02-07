@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
+using System.Windows.Media;
 
 namespace TouchFaders_MIDI {
 	class DataStructures {
@@ -136,6 +137,14 @@ namespace TouchFaders_MIDI {
 			return true;
 		}
 
+		public override int GetHashCode () {
+			int hashCode = -316074491;
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(model);
+			hashCode = hashCode * -1521134295 + channelCount.GetHashCode();
+			hashCode = hashCode * -1521134295 + mixCount.GetHashCode();
+			return hashCode;
+		}
+
 		public static Mixer LS932 { get { return new Mixer("LS9-32", 64, 16); } }
 		public static Mixer LS916 { get { return new Mixer("LS9-16", 32, 16); } }
 
@@ -176,6 +185,7 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
+	// Deprecated, replaced by ChannelConfig
 	public class ChannelFaders {
 		public event EventHandler channelFadersChanged;
 
@@ -226,7 +236,7 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
-	// To be REMOVED
+	// Deprecated, replaced by ChannelConfig (and can be removed)
 	public class LinkedChannel {
 		public int leftChannel { get; set; }
 		public int rightChannel { get; set; }
@@ -270,6 +280,40 @@ namespace TouchFaders_MIDI {
 			public string name { get; set; }
 			public int level { get { return fader; } set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelChangedEventArgs() { linkGroup = linkGroup }); } }
 			public char linkGroup { get; set; }
+		}
+
+		public class SelectedChannel {
+			private Channel currentChannel { get; set; }
+
+			public int channel { get; set; }
+			public string name { get { return currentChannel.name; } set { currentChannel.name = value; } }
+			public byte[] kNameShort1 { get; set; }
+			public byte[] kNameShort2 { get; set; }
+
+			public int iconID { get; set; }
+			public int bgColourID { get; set; }
+			public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {
+				new SolidColorBrush(Color.FromRgb(1, 1, 253)), // blue, default
+				new SolidColorBrush(Color.FromRgb(255, 102, 1)), // orange
+				new SolidColorBrush(Color.FromRgb(153, 102, 1)), // brown
+				new SolidColorBrush(Color.FromRgb(102, 1, 153)), // purple
+				new SolidColorBrush(Color.FromRgb(1, 153, 255)), // cyan
+				new SolidColorBrush(Color.FromRgb(255, 102, 153)), // pink
+				new SolidColorBrush(Color.FromRgb(102, 1, 1)), // bergundy
+				new SolidColorBrush(Color.FromRgb(1, 102, 51)) // green
+			};
+
+			public int level { get { return currentChannel.level; } set { currentChannel.level = value; } }
+
+			public SelectedChannel () {
+				currentChannel = new Channel();
+				channel = 0;
+				name = "Ch 1";
+				level = 823;
+				iconID = 22;
+				bgColourID = 0;
+			}
+
 		}
 
 		public List<Channel> channels { get; set; }
