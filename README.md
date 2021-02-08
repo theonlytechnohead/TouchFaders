@@ -56,8 +56,8 @@ Maybe a story... soon.
 - ~~Implement 'versioning' and settings for other config files~~
 - ~~Add UI to adjust settings~~
 - ~~Update 'Add device' dialog UI to be scalable, rearrange vertically~~
-- Find the MIDI command for the 'selected channel' info
-  - Implement 'selected channel' status into main window UI
+- ~~Find the MIDI command for the 'selected channel' info~~ Does not exist 😢
+  ~~- Implement 'selected channel' status into main window UI~~
 - ~~User configurable device ID~~
 - User configurable mixes (25%)
 - User configurable channels (25%)
