@@ -89,6 +89,16 @@ namespace TouchFaders_MIDI {
 			// send MIDI messages
 		}
 
+		public void UpdateSession (int sessionIndex, float newVolume) {
+			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
+			UpdateSession(sessionIndex, newVolume, sessionUI.session.SimpleAudioVolume.Mute);
+		}
+
+		public void UpdateSession (int sessionIndex, bool newMute) {
+			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
+			UpdateSession(sessionIndex, sessionUI.session.SimpleAudioVolume.MasterVolume, newMute);
+		}
+
 		public void UpdateSession (int sessionIndex, float newVolume, bool newMute) {
 			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
 			sessionUI.UpdateSession(this, newVolume, newMute);

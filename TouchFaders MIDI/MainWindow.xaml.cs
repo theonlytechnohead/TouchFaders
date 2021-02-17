@@ -452,7 +452,8 @@ namespace TouchFaders_MIDI {
 					_ = GetChannelName(channel);
 				}
 			} else { // Now it's for the application audio mixer stuff
-
+				int index = config.mixer.channelCount - channel;
+				audioMixerWindow.UpdateSession(index, level);
 			}
 		}
 		#endregion
