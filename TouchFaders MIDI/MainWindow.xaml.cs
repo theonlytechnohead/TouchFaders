@@ -18,8 +18,8 @@ namespace TouchFaders_MIDI {
 
 		ObservableCollection<oscDevice> oscDevices;
 
-		OutputDevice LS9_in;
-		InputDevice LS9_out;
+		OutputDevice Console_in;
+		InputDevice Console_out;
 		Timer queueTimer;
 		public Queue<NormalSysExEvent> queue = new Queue<NormalSysExEvent>();
 
@@ -30,6 +30,9 @@ namespace TouchFaders_MIDI {
 		//public LinkedChannels linkedChannels; // Removed
 		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
 		public ChannelConfig.SelectedChannel selectedChannel;
+
+		public InfoWindow infoWindow;
+		public AudioMixerWindow audioMixerWindow;
 
 
 		#region WindowEvents
@@ -43,6 +46,7 @@ namespace TouchFaders_MIDI {
 			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
 
 			this.KeyDown += MainWindow_KeyDown;
+
 		}
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
@@ -53,6 +57,8 @@ namespace TouchFaders_MIDI {
 
 		protected override async void OnClosed (EventArgs e) {
 			Console.WriteLine("Closing...");
+			infoWindow.Close();
+			audioMixerWindow.Close();
 			stopMIDIButton_Click(null, null);
 			await AppConfiguration.Save(config);
 			HandleIO.FileData fileData = new HandleIO.FileData() {
@@ -133,6 +139,16 @@ namespace TouchFaders_MIDI {
 
 			Task.Run(async () => await RefreshOSCDevices());
 			Dispatcher.Invoke(() => displayMIDIDevices());
+
+			// Supplementary windows...
+			Dispatcher.Invoke(() => {
+				infoWindow = new InfoWindow();
+				infoWindow.DataContext = this.DataContext;
+				audioMixerWindow = new AudioMixerWindow();
+
+				infoWindow.KeyDown += MainWindow_KeyDown;
+				audioMixerWindow.KeyDown += MainWindow_KeyDown;
+			});
 		}
 		#endregion
 
@@ -174,23 +190,23 @@ namespace TouchFaders_MIDI {
 		#region MIDI management
 		public async Task InitializeMIDI () {
 			try {
-				Dispatcher.Invoke(() => { LS9_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString()); });
-				Dispatcher.Invoke(() => { LS9_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString()); });
+				Dispatcher.Invoke(() => { Console_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString()); });
+				Dispatcher.Invoke(() => { Console_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString()); });
 			} catch (ArgumentException ex) {
 				MessageBox.Show($"Can't initialize {inputMIDIComboBox.SelectedItem} and {outputMIDIComboBox.SelectedItem} MIDI ports!\n{ex.Message}");
 				Console.WriteLine(ex.Message);
 				return;
 			}
-			LS9_in.EventSent += LS9_in_EventSent;
-			LS9_out.EventReceived += LS9_out_EventReceived;
+			Console_in.EventSent += Console_in_EventSent;
+			Console_out.EventReceived += Console_out_EventReceived;
 			try {
-				LS9_out.StartEventsListening();
+				Console_out.StartEventsListening();
 			} catch (MidiDeviceException ex) {
 				Console.WriteLine($"Couldn't start listening to {outputMIDIComboBox.SelectedItem}");
 				Console.WriteLine(ex.Message);
 				return;
 			}
-			if (LS9_out.IsListeningForEvents) {
+			if (Console_out.IsListeningForEvents) {
 				Dispatcher.Invoke(() => {
 					inputMIDIComboBox.IsEnabled = false;
 					outputMIDIComboBox.IsEnabled = false;
@@ -207,13 +223,13 @@ namespace TouchFaders_MIDI {
 		void sendQueueItem (object state) {
 			if (queue.Count > 0) {
 				try {
-					LS9_in.SendEvent(queue.Dequeue());
+					Console_in.SendEvent(queue.Dequeue());
 				} catch (MidiDeviceException ex) {
-					Console.WriteLine($"Well shucks, {LS9_in.Name} don't work no more...");
+					Console.WriteLine($"Well shucks, {Console_in.Name} don't work no more...");
 					Console.WriteLine(ex.Message);
 					MessageBox.Show(ex.Message);
 				} catch (ObjectDisposedException) {
-					Console.WriteLine($"Tried to use {LS9_in.Name} without initializing MIDI!");
+					Console.WriteLine($"Tried to use {Console_in.Name} without initializing MIDI!");
 					MessageBox.Show("Initialize MIDI first!");
 				} catch (NullReferenceException) {
 					Console.WriteLine($"Tried to use MIDI device without initializing MIDI!");
@@ -425,28 +441,31 @@ namespace TouchFaders_MIDI {
 			ushort level = (ushort)(data2 << 7);
 			level += data1;
 
+			if (channel < config.mixer.channelCount - 8) { // TODO: make this proper and UI and stuff
+				channelConfig.channels[channel].level = level;
 
-			channelConfig.channels[channel].level = level;
+				if (channel == selectedChannel.channel) {
+					selectedChannel.level = level;
+				} else {
+					selectedChannel.channel = channel;
+					selectedChannel.channel = level;
+					_ = GetChannelName(channel);
+				}
+			} else { // Now it's for the application audio mixer stuff
 
-			if (channel == selectedChannel.channel) {
-				selectedChannel.level = level;
-			} else {
-				selectedChannel.channel = channel;
-				selectedChannel.channel = level;
-				_ = GetChannelName(channel);
 			}
 		}
 		#endregion
 
 		#region MIDI I/O
-		void LS9_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
-			var LS9_device = (MidiDevice)sender;
+		void Console_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
+			var console = (MidiDevice)sender;
 			if (e.Event.EventType != MidiEventType.NormalSysEx)
 				return;
 			SysExEvent midiEvent = (SysExEvent)e.Event;
 			byte[] bytes = midiEvent.Data;
 			//string byte_string = BitConverter.ToString(bytes).Replace("-", ", ");
-			//Console.WriteLine($"Event received from '{LS9_device.Name}' date: {byte_string}");
+			//Console.WriteLine($"Event received from '{console.Name}' date: {byte_string}");
 			if (CheckSysEx(bytes)) {
 				byte dataCategory = bytes[4];   // kInputToMix is in 0x01
 				byte elementMSB = bytes[5];     // kInputToMix has MSB 0x00
@@ -538,13 +557,13 @@ namespace TouchFaders_MIDI {
 				16 => 0x32,
 				_ => throw new NotImplementedException()
 			};
-			channel--; // LS9 channels are 0-indexed, OSC is 1-indexed
+			channel--; // Console channels are 0-indexed, OSC is 1-indexed
 			ushort channel_int = Convert.ToUInt16(channel);
 			byte channelLSB = (byte)(channel_int & 0x7Fu);
 			ushort shiftedChannel = (ushort)(channel_int >> 7);
 			byte channelMSB = (byte)(shiftedChannel & 0x7Fu);
 
-			ushort value_int = Convert.ToUInt16(value); // There are 1023 fader levels as per the LS9 manual
+			ushort value_int = Convert.ToUInt16(value); // There are 1023 fader levels as per the manual
 			byte valueLSB = (byte)(value_int & 0x7Fu);
 			ushort shiftedValue = (ushort)(value_int >> 7);
 			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
@@ -581,8 +600,8 @@ namespace TouchFaders_MIDI {
 			});
 		}
 
-		void LS9_in_EventSent (object sender, MidiEventSentEventArgs e) {
-			var LS9_device = (MidiDevice)sender;
+		void Console_in_EventSent (object sender, MidiEventSentEventArgs e) {
+			var console = (MidiDevice)sender;
 			NormalSysExEvent sysExEvent = e.Event as NormalSysExEvent;
 			//string byte_string = BitConverter.ToString(sysExEvent.Data).Replace("-", ", ");
 			//Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent with data: {byte_string}");
@@ -614,8 +633,8 @@ namespace TouchFaders_MIDI {
 				startMIDIButton.IsEnabled = true;
 				stopMIDIButton.IsEnabled = false;
 			});
-			(LS9_in as IDisposable)?.Dispose();
-			(LS9_out as IDisposable)?.Dispose();
+			(Console_in as IDisposable)?.Dispose();
+			(Console_out as IDisposable)?.Dispose();
 			displayMIDIDevices();
 		}
 
@@ -723,13 +742,19 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
-			InfoWindow infoWindow = new InfoWindow();
-			infoWindow.KeyDown += MainWindow_KeyDown;
-			infoWindow.DataContext = this.DataContext;
-			if (WindowState == WindowState.Maximized) {
-				infoWindow.WindowState = WindowState.Maximized;
+			if (infoWindow.Visibility == Visibility.Visible) {
+				if (infoWindow.IsActive) {
+					infoWindow.Hide();
+				} else {
+					infoWindow.Activate();
+				}
+				return;
+			} else {
+				if (WindowState == WindowState.Maximized) {
+					infoWindow.WindowState = WindowState.Maximized;
+				}
+				infoWindow.Show();
 			}
-			infoWindow.Show();
 		}
 
 		private void configWindowButton_Click (object sender, RoutedEventArgs e) {
@@ -763,24 +788,20 @@ namespace TouchFaders_MIDI {
 						stopMIDIButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.A:
-					if (sender is AudioMixerWindow) {
-						AudioMixerWindow audioMixerWindow = sender as AudioMixerWindow;
-						audioMixerWindow.Close();
+					if (audioMixerWindow.Visibility == Visibility.Visible) {
+						if (audioMixerWindow.IsActive) {
+							audioMixerWindow.Hide();
+						} else {
+							audioMixerWindow.Activate();
+						}
 						break;
 					} else {
-						AudioMixerWindow audioMixerWindow = new AudioMixerWindow();
 						audioMixerWindow.Show();
 						break;
 					}
 				case System.Windows.Input.Key.I:
-					if (sender is InfoWindow) {
-						InfoWindow infoWindow = sender as InfoWindow;
-						infoWindow.Close();
-						break;
-					} else {
-						infoWindowButton_Click(this, new RoutedEventArgs());
-						break;
-					}
+					infoWindowButton_Click(this, new RoutedEventArgs());
+					break;
 				case System.Windows.Input.Key.T:
 					if (stopMIDIButton.IsEnabled) {
 						if (sendsToMix[0, 0] != 0f) {
@@ -796,6 +817,7 @@ namespace TouchFaders_MIDI {
 					this.Close();
 					break;
 			}
+			e.Handled = true;
 		}
 		#endregion
 

@@ -68,6 +68,7 @@ namespace TouchFaders_MIDI {
 				if (session.State != AudioSessionState.AudioSessionStateExpired) {
 					SessionUI sessionUI = new SessionUI();
 					sessionUI.SetSession(session);
+					sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 					sessionStackPanel.Children.Add(sessionUI);
 				}
 			}
@@ -79,8 +80,19 @@ namespace TouchFaders_MIDI {
 				ConstructorInfo contructor = typeof(AudioSessionControl2).GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)[0];
 				AudioSessionControl2 session = contructor.Invoke(new object[] { newSession }) as AudioSessionControl2;
 				sessionUI.SetSession(session);
+				sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 				sessionStackPanel.Children.Add(sessionUI);
 			});
 		}
+
+		private void Session_OnSimpleVolumeChanged (object sender, float newVolume, bool newMute) {
+			// send MIDI messages
+		}
+
+		public void UpdateSession (int sessionIndex, float newVolume, bool newMute) {
+			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
+			sessionUI.UpdateSession(this, newVolume, newMute);
+		}
+
 	}
 }

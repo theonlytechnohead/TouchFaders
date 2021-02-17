@@ -14,7 +14,7 @@ namespace TouchFaders_MIDI {
 	/// Interaction logic for SessionUI.xaml
 	/// </summary>
 	public partial class SessionUI : UserControl {
-		private AudioSessionControl2 session;
+		public AudioSessionControl2 session;
 		private ConcurrentQueue<float> volPeakHistory = new ConcurrentQueue<float>();
 		private int historySize = 8;
 		private bool allowUpdateUI = true;
@@ -103,7 +103,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void UpdateVolume () {
-			session.SimpleAudioVolume.MasterVolume = (float)(sessionSlider.Value);
+			session.SimpleAudioVolume.MasterVolume = (float)sessionSlider.Value;
 		}
 
 		private void UpdateMuted () {
@@ -133,6 +133,12 @@ namespace TouchFaders_MIDI {
 				sessionSlider.Value = newVolume;
 				sessionCheckBox.IsChecked = newMute;
 			}
+		}
+
+		public void UpdateSession (object sender, float newVolume, bool newMute) {
+			UpdateUI(sender, newVolume, newMute);
+			UpdateVolume();
+			UpdateMuted();
 		}
 
 		private string ParseLabel (string text) {
