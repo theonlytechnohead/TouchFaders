@@ -61,6 +61,10 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoreAudio, Version=2020.11.2.36, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\CoreAudio.dll</HintPath>
+    </Reference>
     <Reference Include="Melanchall.DryWetMidi, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Melanchall.DryWetMidi.5.1.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
@@ -118,7 +122,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SessionUI.xaml.cs">
+      <DependentUpon>SessionUI.xaml</DependentUpon>
+    </Compile>
     <None Include="Win32.cs" />
+    <Page Include="AudioMixerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ChannelConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -147,6 +158,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AudioMixerWindow.xaml.cs">
+      <DependentUpon>AudioMixerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ChannelConfigWindow.xaml.cs">
       <DependentUpon>ChannelConfigWindow.xaml</DependentUpon>
     </Compile>
@@ -168,6 +182,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SessionUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="oscDevice.cs" />
@@ -219,6 +237,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="libs\CoreAudio.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

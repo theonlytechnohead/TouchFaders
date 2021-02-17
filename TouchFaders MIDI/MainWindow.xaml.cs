@@ -762,6 +762,16 @@ namespace TouchFaders_MIDI {
 					if (stopMIDIButton.IsEnabled)
 						stopMIDIButton_Click(this, new RoutedEventArgs());
 					break;
+				case System.Windows.Input.Key.A:
+					if (sender is AudioMixerWindow) {
+						AudioMixerWindow audioMixerWindow = sender as AudioMixerWindow;
+						audioMixerWindow.Close();
+						break;
+					} else {
+						AudioMixerWindow audioMixerWindow = new AudioMixerWindow();
+						audioMixerWindow.Show();
+						break;
+					}
 				case System.Windows.Input.Key.I:
 					if (sender is InfoWindow) {
 						InfoWindow infoWindow = sender as InfoWindow;

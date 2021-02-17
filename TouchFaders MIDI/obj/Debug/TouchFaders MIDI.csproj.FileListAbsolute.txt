@@ -44,9 +44,12 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MID
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\TouchFaders MIDI.exe.config
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\TouchFaders MIDI.exe
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\TouchFaders MIDI.pdb
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\CoreAudio.dll
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\Melanchall.DryWetMidi.dll
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\SharpOSC.dll
@@ -69,18 +72,25 @@ C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Text.Js
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Threading.Tasks.Extensions.xml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.ValueTuple.xml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csprojAssemblyReference.cache
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\AudioMixerWindow.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\InfoWindow.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\IPTextBox.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\MainWindow.baml
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\SessionUI.baml
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\AudioMixerWindow.g.cs
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ConfigWindow.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\CreateOSCDevice.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\InfoWindow.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\IPTextBox.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\MainWindow.g.cs
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\SessionUI.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\App.g.cs
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI_Content.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI_MarkupCompile.cache
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI_MarkupCompile.lref
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ConfigWindow.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\CreateOSCDevice.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.g.resources
@@ -90,7 +100,3 @@ C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MI
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.g.cs
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.baml
-D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.g.cs
-D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\ChannelConfigWindow.baml
