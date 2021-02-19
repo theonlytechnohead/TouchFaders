@@ -3,6 +3,9 @@ using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -140,6 +143,8 @@ namespace TouchFaders_MIDI {
 			Task.Run(async () => await RefreshOSCDevices());
 			Dispatcher.Invoke(() => displayMIDIDevices());
 
+			Task.Run(() => TCPListener());
+
 			// Supplementary windows...
 			Dispatcher.Invoke(() => {
 				infoWindow = new InfoWindow();
@@ -149,6 +154,29 @@ namespace TouchFaders_MIDI {
 				infoWindow.KeyDown += MainWindow_KeyDown;
 				audioMixerWindow.KeyDown += MainWindow_KeyDown;
 			});
+		}
+
+		private void TCPListener () {
+			IPAddress anAddress = IPAddress.Any;
+			TcpListener listener = new TcpListener(anAddress, 8873);
+			listener.Start();
+
+			while (true) {
+				TcpClient client = listener.AcceptTcpClient();
+
+				NetworkStream networkStream = client.GetStream();
+				byte[] buffer = new byte[client.ReceiveBufferSize];
+
+				int bytesRead = networkStream.Read(buffer, 0, client.ReceiveBufferSize);
+
+				//string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+				string dataReceived = BitConverter.ToString(buffer, 0, bytesRead);
+				Console.WriteLine($"Data received: {dataReceived}");
+				Console.WriteLine($"Name: {Encoding.ASCII.GetString(buffer, 4, bytesRead - 4)}");
+
+				networkStream.Write(buffer, 0, bytesRead);
+				client.Close();
+			}
 		}
 		#endregion
 
