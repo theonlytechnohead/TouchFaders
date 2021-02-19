@@ -98,18 +98,23 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void UpdateSession (int sessionIndex, float newVolume) {
+			if (sessionIndex >= sessions.Count) return;
 			SessionUI sessionUI = sessions[sessionIndex];
 			if (sessionUI == null) return;
 			UpdateSession(sessionIndex, newVolume, sessionUI.session.SimpleAudioVolume.Mute);
 		}
 
 		public void UpdateSession (int sessionIndex, bool newMute) {
+			if (sessionIndex >= sessions.Count) return;
 			SessionUI sessionUI = sessions[sessionIndex];
+			if (sessionUI == null) return;
 			UpdateSession(sessionIndex, sessionUI.session.SimpleAudioVolume.MasterVolume, newMute);
 		}
 
 		public void UpdateSession (int sessionIndex, float newVolume, bool newMute) {
+			if (sessionIndex >= sessions.Count) return;
 			SessionUI sessionUI = sessions[sessionIndex];
+			if (sessionUI == null) return;
 			sessionUI.UpdateSession(this, newVolume, newMute);
 		}
 
