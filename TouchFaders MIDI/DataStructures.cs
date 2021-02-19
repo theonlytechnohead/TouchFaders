@@ -286,7 +286,18 @@ namespace TouchFaders_MIDI {
 			private Channel currentChannel { get; set; }
 
 			public int channel { get; set; }
-			public string name { get { return currentChannel.name; } set { currentChannel.name = value; } }
+			public string name {
+				get {
+					if (kNameShort1 != null && kNameShort2 != null) {
+						return BitConverter.ToString(kNameShort1).Replace("-", "") + "\n" + BitConverter.ToString(kNameShort2).Replace("-", "");
+					} else {
+						return currentChannel.name;
+					}
+				}
+				set {
+					currentChannel.name = value;
+				}
+			}
 			public byte[] kNameShort1 { get; set; }
 			public byte[] kNameShort2 { get; set; }
 

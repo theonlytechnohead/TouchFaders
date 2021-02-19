@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows;
 using CoreAudio;
@@ -29,6 +31,8 @@ namespace TouchFaders_MIDI {
 		MMDevice selectedDevice;
 		AudioSessionManager2 audioSessionManager2;
 
+		List<SessionUI> sessions = new List<SessionUI>();
+
 		public AudioMixerWindow () {
 			InitializeComponent();
 
@@ -39,6 +43,8 @@ namespace TouchFaders_MIDI {
 			deviceComboBox.SelectionChanged += (_, __) => EnumerateSessions();
 
 			ListDevices();
+
+			Console.WriteLine((sessionStackPanel.Children[0] as SessionUI).sessionLabel);
 		}
 
 		private void ListDevices () {
@@ -70,6 +76,7 @@ namespace TouchFaders_MIDI {
 					sessionUI.SetSession(session);
 					sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 					sessionStackPanel.Children.Add(sessionUI);
+					this.sessions.Add(sessionUI);
 				}
 			}
 		}
@@ -82,6 +89,7 @@ namespace TouchFaders_MIDI {
 				sessionUI.SetSession(session);
 				sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 				sessionStackPanel.Children.Add(sessionUI);
+				this.sessions.Add(sessionUI);
 			});
 		}
 
@@ -90,17 +98,18 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void UpdateSession (int sessionIndex, float newVolume) {
-			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
+			SessionUI sessionUI = sessions[sessionIndex];
+			if (sessionUI == null) return;
 			UpdateSession(sessionIndex, newVolume, sessionUI.session.SimpleAudioVolume.Mute);
 		}
 
 		public void UpdateSession (int sessionIndex, bool newMute) {
-			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
+			SessionUI sessionUI = sessions[sessionIndex];
 			UpdateSession(sessionIndex, sessionUI.session.SimpleAudioVolume.MasterVolume, newMute);
 		}
 
 		public void UpdateSession (int sessionIndex, float newVolume, bool newMute) {
-			SessionUI sessionUI = sessionStackPanel.Children[sessionIndex] as SessionUI;
+			SessionUI sessionUI = sessions[sessionIndex];
 			sessionUI.UpdateSession(this, newVolume, newMute);
 		}
 

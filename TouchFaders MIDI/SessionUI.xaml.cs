@@ -60,7 +60,7 @@ namespace TouchFaders_MIDI {
 			sessionLabel.Content = ParseLabel(sessionLabel.Content.ToString());
 
 			session.OnSimpleVolumeChanged += new SimpleVolumeChangedDelegate(UpdateUI);
-			sessionSlider.ValueChanged += (_, __) => UpdateVolume();
+			//sessionSlider.ValueChanged += (_, __) => UpdateVolume();
 			sessionCheckBox.Checked += (_, __) => UpdateMuted();
 			sessionCheckBox.Unchecked += (_, __) => UpdateMuted();
 
@@ -137,8 +137,10 @@ namespace TouchFaders_MIDI {
 
 		public void UpdateSession (object sender, float newVolume, bool newMute) {
 			UpdateUI(sender, newVolume, newMute);
-			UpdateVolume();
-			UpdateMuted();
+			Dispatcher.Invoke(() => {
+				UpdateVolume();
+				UpdateMuted();
+			});
 		}
 
 		private string ParseLabel (string text) {

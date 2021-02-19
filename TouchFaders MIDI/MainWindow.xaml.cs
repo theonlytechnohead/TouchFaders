@@ -213,17 +213,21 @@ namespace TouchFaders_MIDI {
 					Title = "TouchFaders MIDI | MIDI started";
 					Console.WriteLine("Started MIDI");
 				});
-				queueTimer = new Timer(sendQueueItem, null, 0, 20);
-				await GetAllFaderValues();
-				await GetChannelFaders();         // Channel faders to STEREO
-												  //await GetChannelNames();
+				queueTimer = new Timer(sendQueueItem, null, 50, 20);
+				//await GetAllFaderValues();
+				//await GetChannelFaders();         // Channel faders to STEREO
+				//await GetChannelName(0);
+				//await GetChannelNames();
 			}
 		}
 
 		void sendQueueItem (object state) {
 			if (queue.Count > 0) {
 				try {
-					Console_in.SendEvent(queue.Dequeue());
+					NormalSysExEvent sysExEvent = queue.Dequeue();
+					if (sysExEvent != null) {
+						Console_in.SendEvent(sysExEvent);
+					}
 				} catch (MidiDeviceException ex) {
 					Console.WriteLine($"Well shucks, {Console_in.Name} don't work no more...");
 					Console.WriteLine(ex.Message);
@@ -419,24 +423,24 @@ namespace TouchFaders_MIDI {
 
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
-					channelConfig.channels[channel].name = BitConverter.ToString(data);
+					channelConfig.channels[channel].name = BitConverter.ToString(data).Replace("-", "");
 					if (channel == selectedChannel.channel) { selectedChannel.kNameShort1 = data; }
 					break;
 				case 0x01: // kNameShort2
-					channelConfig.channels[channel].name += " " + BitConverter.ToString(data);
+					channelConfig.channels[channel].name += " " + BitConverter.ToString(data).Replace("-", "");
 					if (channel == selectedChannel.channel) { selectedChannel.kNameShort2 = data; }
 					break;
 			}
 		}
 
 		void HandleChannelFader (byte[] bytes) {
-			byte channelMSB = bytes[9];     // Channel MSB per channel
-			byte channelLSB = bytes[10];    // Channel LSB with a 0 in the 8th bit
+			byte channelMSB = bytes[9];    // channel number MSB
+			byte channelLSB = bytes[10];    // channel number LSB
+			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
+			channel += channelLSB;          // Add LSB
+
 			byte data2 = bytes[14];
 			byte data1 = bytes[15];
-
-			ushort channel = (ushort)(channelMSB << 7);
-			channel += channelLSB;
 
 			ushort level = (ushort)(data2 << 7);
 			level += data1;
@@ -448,12 +452,15 @@ namespace TouchFaders_MIDI {
 					selectedChannel.level = level;
 				} else {
 					selectedChannel.channel = channel;
-					selectedChannel.channel = level;
+					selectedChannel.level = level;
 					_ = GetChannelName(channel);
 				}
+				UpdateSelectedChannel();
 			} else { // Now it's for the application audio mixer stuff
-				int index = config.mixer.channelCount - channel;
-				audioMixerWindow.UpdateSession(index, level);
+				int index = config.mixer.channelCount - channel - 1;
+				float volume = level / 1023f;
+				audioMixerWindow.UpdateSession(index, volume);
+				//Console.WriteLine($"Updating audio session (index): {index}");
 			}
 		}
 		#endregion
@@ -767,6 +774,15 @@ namespace TouchFaders_MIDI {
 				configWindow.WindowState = WindowState.Maximized;
 			}
 			configWindow.ShowDialog();
+		}
+
+		private void UpdateSelectedChannel () {
+			if (!Dispatcher.CheckAccess()) {
+				Dispatcher.Invoke(() => UpdateSelectedChannel());
+			} else {
+				selectedChannelFader.Value = selectedChannel.level;
+				selectedChannelName.Content = selectedChannel.name;
+			}
 		}
 
 		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
