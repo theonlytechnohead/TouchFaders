@@ -304,6 +304,15 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kNameShort2);
 		}
 
+		async Task GetMixesMetering () {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+			NormalSysExEvent mixesMeteringPost = new NormalSysExEvent();
+			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x21, 0x01, 0x03, 0x7F, 0x00, 0x00, 0xF7 };
+			mixesMeteringPost.Data = data;
+			await SendSysEx(mixesMeteringPost);
+		}
+
 		#endregion
 
 		#region SysExMIDIHelpers

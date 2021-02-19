@@ -100,3 +100,9 @@ C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MI
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\CoreAudio.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\AudioMixerWindow.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\SessionUI.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\AudioMixerWindow.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\SessionUI.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI_Content.g.cs
