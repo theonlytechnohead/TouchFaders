@@ -704,8 +704,10 @@ namespace TouchFaders_MIDI {
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
-			StopMetering();
-			Thread.Sleep(1000);
+			if (stopMIDIButton.IsEnabled) {
+				_ = StopMetering();
+				Thread.Sleep(1000);
+			}
 			(queueTimer as IDisposable)?.Dispose();
 			Console.WriteLine("Stopped MIDI");
 			Dispatcher.Invoke(() => {
