@@ -167,15 +167,22 @@ namespace TouchFaders_MIDI {
 
 				NetworkStream networkStream = client.GetStream();
 				byte[] buffer = new byte[client.ReceiveBufferSize];
+				byte[] ipBuffer = new byte[4];
 
 				int bytesRead = networkStream.Read(buffer, 0, client.ReceiveBufferSize);
+				Array.Copy(buffer, ipBuffer, 4);
 
 				//string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 				string dataReceived = BitConverter.ToString(buffer, 0, bytesRead);
 				Console.WriteLine($"Data received: {dataReceived}");
-				Console.WriteLine($"Name: {Encoding.ASCII.GetString(buffer, 4, bytesRead - 4)}");
+				Console.WriteLine($"Device {Encoding.ASCII.GetString(buffer, 4, bytesRead - 4)} connected from {new IPAddress(ipBuffer)}");
 
-				networkStream.Write(buffer, 0, bytesRead);
+				byte oscSend = 1; // starting at 9000
+				byte oscReceive = 1; // starting at 8000
+
+				byte[] sendBuffer = new byte[] { oscSend, oscReceive, Convert.ToByte(config.NUM_CHANNELS), Convert.ToByte(config.NUM_MIXES) };
+
+				networkStream.Write(sendBuffer, 0, sendBuffer.Length);
 				client.Close();
 			}
 		}
@@ -249,12 +256,11 @@ namespace TouchFaders_MIDI {
 					Title = "TouchFaders MIDI | MIDI started";
 					Console.WriteLine("Started MIDI");
 				});
-				queueTimer = new Timer(sendQueueItem, null, 50, 20);
+				queueTimer = new Timer(sendQueueItem, null, 0, 20);
+				meteringTimer = new Timer(GetMixesMetering, null, 100, 1000);
 				//await GetAllFaderValues();
 				//await GetChannelFaders();         // Channel faders to STEREO
-				//await GetChannelName(0);
 				//await GetChannelNames();
-				meteringTimer = new Timer(GetMixesMetering, null, 0, 1000);
 			}
 		}
 
@@ -341,13 +347,13 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kNameShort2);
 		}
 
-		void GetMixesMetering (object state) {
+		async void GetMixesMetering (object state) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent mixesMeteringPost = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x21, 0x01, 0x03, 0x7F, 0x00, 0x00, 0xF7 };
 			mixesMeteringPost.Data = data;
-			SendSysEx(mixesMeteringPost);
+			await SendSysEx(mixesMeteringPost);
 		}
 
 		async Task StopMetering () {
@@ -590,8 +596,8 @@ namespace TouchFaders_MIDI {
 					UL == 0x01 &&
 					LU == 0x03 &&
 					LL == 0x00) {
-					byte[] meteringData = new byte[16];
-					for (int i = 0; i < 16; i++) {
+					byte[] meteringData = new byte[config.mixer.mixCount];
+					for (int i = 0; i < config.mixer.mixCount; i++) {
 						meteringData[i] = bytes[i + 8];
 					}
 					//Console.WriteLine("Got metering data!");
@@ -704,6 +710,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
+			(meteringTimer as IDisposable)?.Dispose();
 			if (stopMIDIButton.IsEnabled) {
 				_ = StopMetering();
 				Thread.Sleep(1000);
