@@ -270,6 +270,7 @@ namespace TouchFaders_MIDI {
 					NormalSysExEvent sysExEvent = queue.Dequeue();
 					if (sysExEvent != null) {
 						Console_in.SendEvent(sysExEvent);
+						Dispatcher.Invoke(() => midiProgressBar.Value += 1);
 					}
 				} catch (MidiDeviceException ex) {
 					Console.WriteLine($"Well shucks, {Console_in.Name} don't work no more...");
@@ -696,6 +697,7 @@ namespace TouchFaders_MIDI {
 		#region UIEvents
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
+				CalculateSysExCommands();
 				Dispatcher.Invoke(() => { startMIDIButton.IsEnabled = false; });
 				Task.Run(async () => {
 					await InitializeMIDI();
@@ -707,6 +709,13 @@ namespace TouchFaders_MIDI {
 			} else {
 				MessageBox.Show("Please select a MIDI input and output first!");
 			}
+		}
+
+		void CalculateSysExCommands () {
+			int total = config.NUM_CHANNELS * config.NUM_MIXES; // sends to mix levels
+			total += config.NUM_CHANNELS; // channel levels
+										  //total += config.NUM_CHANNELS; // channel names?
+			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
 		}
 
 		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
@@ -722,6 +731,7 @@ namespace TouchFaders_MIDI {
 				refreshMIDIButton.IsEnabled = false;
 				startMIDIButton.IsEnabled = true;
 				stopMIDIButton.IsEnabled = false;
+				midiProgressBar.Value = 0;
 			});
 			(Console_in as IDisposable)?.Dispose();
 			(Console_out as IDisposable)?.Dispose();
@@ -736,11 +746,12 @@ namespace TouchFaders_MIDI {
 		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
 			Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = false; }));
 			bool enabled = stopMIDIButton.IsEnabled;
+			CalculateSysExCommands();
 			Task.Run(async () => {
 				if (enabled) {
 					await GetAllFaderValues();
 					await GetChannelFaders();
-					await GetChannelNames();
+					//await GetChannelNames();
 				}
 				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
 			});
