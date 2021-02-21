@@ -257,10 +257,10 @@ namespace TouchFaders_MIDI {
 					Console.WriteLine("Started MIDI");
 				});
 				queueTimer = new Timer(sendQueueItem, null, 0, 20);
-				meteringTimer = new Timer(GetMixesMetering, null, 100, 1000);
-				//await GetAllFaderValues();
-				//await GetChannelFaders();         // Channel faders to STEREO
-				//await GetChannelNames();
+				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000);
+				await GetAllFaderValues();
+				await GetChannelFaders();         // Channel faders to STEREO
+												  //await GetChannelNames();
 			}
 		}
 
@@ -349,6 +349,11 @@ namespace TouchFaders_MIDI {
 		}
 
 		async void GetMixesMetering (object state) {
+			bool get = true;
+			Dispatcher.Invoke(() => {
+				get = midiProgressBar.Value >= midiProgressBar.Maximum;
+			});
+			if (!get) return;
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent mixesMeteringPost = new NormalSysExEvent();
@@ -607,20 +612,6 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void TestMixerOutputHigh () {
-			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix1		Ch 1					0 db  0 dB
-			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x37, 0xF7 };
-			sysExEvent.Data = data;
-			_ = SendSysEx(sysExEvent);
-		}
-
-		void TestMixerOutputLow () {
-			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix1		Ch 1					-inf dB
-			byte[] data = { 0x43, 0x10, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF7 };
-			sysExEvent.Data = data;
-			_ = SendSysEx(sysExEvent);
-		}
-
 		public void SendFaderValue (int mix, int channel, int value, oscDevice sender) {
 			sendsToMix[mix - 1, channel - 1] = value;
 			SendOSCValue(mix, channel, value, sender);
@@ -698,7 +689,10 @@ namespace TouchFaders_MIDI {
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
 				CalculateSysExCommands();
-				Dispatcher.Invoke(() => { startMIDIButton.IsEnabled = false; });
+				Dispatcher.Invoke(() => {
+					startMIDIButton.IsEnabled = false;
+					midiProgressBar.Value = 0;
+				});
 				Task.Run(async () => {
 					await InitializeMIDI();
 					Dispatcher.Invoke(() => {
@@ -744,7 +738,10 @@ namespace TouchFaders_MIDI {
 		}
 
 		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
-			Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = false; }));
+			Dispatcher.Invoke(new Action(() => {
+				refreshMIDIButton.IsEnabled = false;
+				midiProgressBar.Value = 0;
+			}));
 			bool enabled = stopMIDIButton.IsEnabled;
 			CalculateSysExCommands();
 			Task.Run(async () => {
@@ -880,10 +877,10 @@ namespace TouchFaders_MIDI {
 
 		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
 			switch (e.Key) {
-				case System.Windows.Input.Key.R:
+				case System.Windows.Input.Key.D:
 					displayMIDIDevices();
 					break;
-				case System.Windows.Input.Key.M:
+				case System.Windows.Input.Key.R:
 					if (refreshMIDIButton.IsEnabled)
 						refreshMIDIButton_Click(this, new RoutedEventArgs());
 					break;
@@ -914,11 +911,11 @@ namespace TouchFaders_MIDI {
 					break;
 				case System.Windows.Input.Key.T:
 					if (stopMIDIButton.IsEnabled) {
-						if (sendsToMix[0, 0] != 0f) {
-							TestMixerOutputHigh();
+						if (sendsToMix[0, 0] != 0) {
+							SendFaderValue(1, 1, 0, null);
 							break;
 						} else {
-							TestMixerOutputLow();
+							SendFaderValue(1, 1, 823, null);
 							break;
 						}
 					}

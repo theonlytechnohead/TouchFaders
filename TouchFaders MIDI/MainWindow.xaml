@@ -178,10 +178,10 @@
                     <Button x:Name="startMIDIButton" Content="Start MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startMIDIButton_Click" Padding="5,1" Width="76" Margin="0" IsEnabled="False"/>
                     <Button x:Name="refreshMIDIButton" Content="Refresh MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshMIDIButton_Click" Padding="1" Width="76" IsEnabled="False" Grid.RowSpan="3"/>
                     <Button x:Name="stopMIDIButton" Content="Stop MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopMIDIButton_Click" Padding="1" Width="76" Grid.Row="2" IsEnabled="False"/>
-                    <ComboBox x:Name="inputMIDIComboBox" Grid.Column="1" VerticalAlignment="Bottom" IsEnabled="False"/>
-                    <ComboBox x:Name="outputMIDIComboBox" Grid.Column="1" VerticalAlignment="Bottom" IsEnabled="False" Grid.Row="2"/>
-                    <Label Content="MIDI input device" Grid.Column="1" VerticalAlignment="Top" Height="22" VerticalContentAlignment="Center" Padding="0"/>
-                    <Label Content="MIDI output device" Grid.Column="1" VerticalAlignment="Top" Height="24" VerticalContentAlignment="Center" Padding="0" Grid.Row="2"/>
+                    <ComboBox x:Name="inputMIDIComboBox" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Margin="0,22,0,0"/>
+                    <ComboBox x:Name="outputMIDIComboBox" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Grid.Row="2" Margin="0,22,0,0"/>
+                    <Label Content="MIDI input device" Grid.Column="1" VerticalAlignment="Center" Height="22" VerticalContentAlignment="Center" Padding="0" Margin="0,0,0,22"/>
+                    <Label Content="MIDI output device" Grid.Column="1" VerticalAlignment="Center" Height="24" VerticalContentAlignment="Center" Padding="0" Grid.Row="2" Margin="0,0,0,22"/>
                     <ProgressBar x:Name="midiProgressBar" Grid.Column="1" Grid.Row="1" Height="6" SmallChange="1" Maximum="1"/>
 
                 </Grid>

@@ -1,13 +1,13 @@
 {
   "channels": [
     {
-      "name": "0309486661 0770000000",
+      "name": "0309486661 0771000000",
       "level": 0,
       "linkGroup": " "
     },
     {
       "name": "0201004020 0201440000",
-      "level": 23,
+      "level": 0,
       "linkGroup": " "
     },
     {
@@ -131,7 +131,7 @@
       "linkGroup": " "
     },
     {
-      "name": "061B206437 0000000000",
+      "name": "061B206437",
       "level": 0,
       "linkGroup": " "
     },
@@ -161,122 +161,122 @@
       "linkGroup": " "
     },
     {
-      "name": "06-1B-20-66-33 00-00-00-00-00",
-      "level": 11,
-      "linkGroup": " "
-    },
-    {
-      "name": "CH 34",
+      "name": "061B206633 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 35",
+      "name": "061B206634 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 36",
+      "name": "061B206635 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 37",
+      "name": "061B206636 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 38",
+      "name": "061B206637 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 39",
+      "name": "061B206638 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 40",
+      "name": "061B206639 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 41",
+      "name": "061B206830 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 42",
+      "name": "061B206831 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 43",
+      "name": "061B206832 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "Ch 44",
+      "name": "061B206833 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "Ch 45",
+      "name": "061B206834 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 46",
+      "name": "061B206835 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 47",
+      "name": "061B206836 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "Ch 48",
+      "name": "061B206837 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 49",
+      "name": "061B206838 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 50",
+      "name": "061B206839 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 51",
+      "name": "061B206A30 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "Ch 52",
+      "name": "061B206A31 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 53",
+      "name": "061B206A32 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "CH 54",
+      "name": "061B206A33 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "Ch 55",
+      "name": "061B206A34 0000000000",
       "level": 0,
       "linkGroup": " "
     },
     {
-      "name": "Ch 56",
+      "name": "061B206A35 0000000000",
+      "level": 0,
+      "linkGroup": " "
+    },
+    {
+      "name": "061B206A36 0000000000",
       "level": 0,
       "linkGroup": " "
     },
