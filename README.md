@@ -52,17 +52,32 @@ A lot of research and frustration.
 Maybe a story... soon.
 
 ## Todo
-- ~~Add general config file for storing data about settings~~
-- ~~Implement 'versioning' and settings for other config files~~
-- ~~Add UI to adjust settings~~
-- ~~Update 'Add device' dialog UI to be scalable, rearrange vertically~~
-- ~~Find the MIDI command for the 'selected channel' info~~ Does not exist 😢
-  ~~- Implement 'selected channel' status into main window UI~~
-- ~~User configurable device ID~~
-- User configurable mixes (25%)
-- User configurable channels (25%)
-- User configurable channel linking, or getting channel link groups from the console
-- ~~Support LS9-16~~
+- [x] Add general config file for storing data about settings
+- [x] Implement 'versioning' and settings for other config files
+- [x] Add UI to adjust settings
+- [x] Update 'Add device' dialog UI to be scalable, rearrange vertically
+- [x] ~~Find the MIDI command for the 'selected channel' info~~ Does not exist 😢
+  - [x] ~~Implement 'selected channel' status into main window UI~~
+- [x] User configurable device ID
+- [ ] User configurable mixes (50%, still untested)
+- [ ] User configurable channels (50%, still untested)
+- [ ] User configurable channel linking, or getting channel link groups from the console
+- [x] Support LS9-16
+- [x] Channel configuration editor
+ - [x] Channel names
+ - [x] Channel link group
+- [ ] Selected channel information, take two (50%)
+  - [x] Channel level
+  - [ ] Channel name (in progress, decoding)
+  - [ ] Channel colour (I've got the colours, but I'm not requesting them yet)
+  - [ ] Channel icon (I've got the icons, just need editing and displaying)
+- [ ] WinAPI audio session control via MIDI! (50%)
+  - [ ] Console -> PC (volume yes, mute no)
+  - [ ] PC -> Console
+- [x] zerOSConf implementation!
+- [x] Mix metering data
+  - [x] Get detailed data
+  - [x] Broadcast detailed data
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
