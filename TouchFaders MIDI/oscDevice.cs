@@ -167,7 +167,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		void ResendMixFaders (int mix) {
-			for (int channel = 1; channel < MainWindow.instance.config.NUM_CHANNELS; channel++) {
+			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
 				int level = MainWindow.instance.sendsToMix[mix - 1, channel - 1];
 				if (LegacyApp) {
 					sendOSCMessage(mix, channel, level / 1023f);

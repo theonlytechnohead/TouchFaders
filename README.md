@@ -59,8 +59,8 @@ Maybe a story... soon.
 - [x] ~~Find the MIDI command for the 'selected channel' info~~ Does not exist 😢
   - [x] ~~Implement 'selected channel' status into main window UI~~
 - [x] User configurable device ID
-- [ ] User configurable mixes (50%, still untested)
-- [ ] User configurable channels (50%, still untested)
+- [X] User configurable mixes (you need reconnect devices to update changes)
+- [x] User configurable channels (as above)
 - [ ] User configurable channel linking, or getting channel link groups from the console
 - [x] Support LS9-16
 - [x] Channel configuration editor

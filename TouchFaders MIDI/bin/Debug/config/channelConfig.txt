@@ -2,7 +2,7 @@
   "channels": [
     {
       "name": "0309486661 0771000000",
-      "level": 0,
+      "level": 823,
       "linkGroup": " "
     },
     {

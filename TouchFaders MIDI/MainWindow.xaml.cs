@@ -452,7 +452,7 @@ namespace TouchFaders_MIDI {
 				sendsToMix[mix - 1, linkedIndex] = value;
 			}*/
 			sendsToMix[mix - 1, channel - 1] = value;
-			Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
+			//Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
 			foreach (oscDevice device in oscDevices) {
 				/*if (linkedIndex != -1) { // TODO: fix this
 					if (device.LegacyApp) {
