@@ -74,10 +74,19 @@ Maybe a story... soon.
 - [x] WinAPI audio session control via MIDI! (no name though, as pending above)
   - [x] Console -> PC (volume yes, mute no)
   - [x] PC -> Console
+  - [ ] (maybe?) fix the callback's to avoid feedback loops etc., so that the SessionUI slider actually works properly
 - [x] zerOSConf implementation!
 - [x] Mix metering data
   - [x] Get detailed data
   - [x] Broadcast detailed data
+- [ ] update zerOSConf implementation for truly zeroconf operation
+  - [ ] rework and gut out the OSC device handling for more dynamic connections
+  - [ ] remove support for legacy clients
+- [ ] rework all the MIDI code
+  - [ ] QL5 support
+    - [ ] QL1 support?
+  - [ ] CL series?
+    - [ ] Rivage?
 
 ## I'm interested in the code, how does it work? Can I re-use it?
 It's fully open-source, look all you like.
