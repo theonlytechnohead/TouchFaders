@@ -49,6 +49,8 @@ namespace TouchFaders_MIDI {
 			config = AppConfiguration.Load();
 			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
 
+			selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("Resources/01_snare.png", UriKind.Relative));
+
 			this.KeyDown += MainWindow_KeyDown;
 
 		}
