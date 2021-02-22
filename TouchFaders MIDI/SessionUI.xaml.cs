@@ -98,6 +98,7 @@ namespace TouchFaders_MIDI {
 		private void SessionStateChanged (object sender, AudioSessionState newState) {
 			if (newState == AudioSessionState.AudioSessionStateExpired) {
 				session.Dispose();
+				AudioMixerWindow.instance.Session_OnSimpleVolumeChanged(session, 0f, true);
 				Dispatcher.Invoke(() => { AudioMixerWindow.instance.sessionStackPanel.Children.Remove(this); });
 			}
 		}

@@ -225,7 +225,7 @@ namespace TouchFaders_MIDI {
 		int SendMixMeteringBroadcast (byte[] data) {
 			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8874);
 			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
-			Console.WriteLine($"Sent metering bytes: {BitConverter.ToString(data)}");
+			//Console.WriteLine($"Sent metering bytes: {BitConverter.ToString(data)}");
 			return sendUdpClient.Send(data, data.Length, targetEndPoint);
 		}
 		#endregion
@@ -346,6 +346,24 @@ namespace TouchFaders_MIDI {
 			byte[] data2 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
 			kNameShort2.Data = data2;
 			await SendSysEx(kNameShort2);
+		}
+
+		async Task GetChannelIcon (int channel) {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+			NormalSysExEvent kIconID = new NormalSysExEvent();
+			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x15, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+			kIconID.Data = data;
+			await SendSysEx(kIconID);
+		}
+
+		async Task GetChannelColour (int channel) {
+			byte device_byte = 0x30;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+			NormalSysExEvent kIconBgColour = new NormalSysExEvent();
+			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x15, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
+			kIconBgColour.Data = data;
+			await SendSysEx(kIconBgColour);
 		}
 
 		async void GetMixesMetering (object state) {
@@ -500,6 +518,26 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		void HandleChannelOn (byte[] bytes) {
+			byte channelMSB = bytes[9];    // channel number MSB
+			byte channelLSB = bytes[10];    // channel number LSB
+			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
+			channel += channelLSB;          // Add LSB
+
+			byte on = bytes[15];
+
+			if (channel >= config.mixer.channelCount - 8) {
+				int index = config.mixer.channelCount - channel - 1;
+				bool mute;
+				if (on == 0) {
+					mute = true;
+				} else {
+					mute = false;
+				}
+				audioMixerWindow.UpdateSession(index, mute);
+			}
+		}
+
 		void HandleChannelFader (byte[] bytes) {
 			byte channelMSB = bytes[9];    // channel number MSB
 			byte channelLSB = bytes[10];    // channel number LSB
@@ -515,14 +553,20 @@ namespace TouchFaders_MIDI {
 			if (channel < config.mixer.channelCount - 8) { // TODO: make this proper and UI and stuff
 				channelConfig.channels[channel].level = level;
 
-				if (channel == selectedChannel.channel) {
-					selectedChannel.level = level;
-				} else {
-					selectedChannel.channel = channel;
-					selectedChannel.level = level;
-					_ = GetChannelName(channel);
-				}
-				UpdateSelectedChannel();
+				Dispatcher.Invoke(() => {
+					if (midiProgressBar.Value >= midiProgressBar.Maximum) {
+						if (channel == selectedChannel.channel) {
+							selectedChannel.level = level;
+						} else {
+							selectedChannel.channel = channel;
+							selectedChannel.level = level;
+							_ = GetChannelName(channel);
+							_ = GetChannelIcon(channel);
+							_ = GetChannelColour(channel);
+						}
+						UpdateSelectedChannel();
+					}
+				});
 			} else { // Now it's for the application audio mixer stuff
 				int index = config.mixer.channelCount - channel - 1;
 				float volume = level / 1023f;
@@ -540,7 +584,7 @@ namespace TouchFaders_MIDI {
 			SysExEvent midiEvent = (SysExEvent)e.Event;
 			byte[] bytes = midiEvent.Data;
 			//string byte_string = BitConverter.ToString(bytes).Replace("-", ", ");
-			//Console.WriteLine($"Event received from '{console.Name}' date: {byte_string}");
+			//Console.WriteLine($"Event received from '{console.Name}' data: {byte_string}");
 			if (CheckSysEx(bytes)) {
 				byte dataCategory = bytes[4];   // kInputToMix is in 0x01
 				byte elementMSB = bytes[5];     // kInputToMix has MSB 0x00
@@ -586,12 +630,34 @@ namespace TouchFaders_MIDI {
 						   0 <= channel &&
 						   channel < config.NUM_CHANNELS) {
 					HandleChannelName(bytes);
+				} else if (dataCategory == 0x01 &&
+						   elementMSB == 0x00 &&
+						   elementLSB == 0x31) {
+					HandleChannelOn(bytes);
 				} else if (dataCategory == 0x01 &&  // kInput
-						   elementMSB == 0x00 &&    // kFader
-						   elementLSB == 0x33 &&    // kFader
-						   0 <= channel &&
-						   channel < config.NUM_CHANNELS) {
+							elementMSB == 0x00 &&    // kFader
+							elementLSB == 0x33 &&    // kFader
+							0 <= channel &&
+							channel < config.NUM_CHANNELS) {
 					HandleChannelFader(bytes);
+				} else if (dataCategory == 0x01 &&  // kIconInputChannel
+						   elementMSB == 0x01 &&
+						   elementLSB == 0x15 &&
+						   indexMSB == 0x00 &&
+						   indexLSB == 0x00) {    // kIconID
+					if (channel == selectedChannel.channel) {
+						selectedChannel.iconID = bytes[15];
+						UpdateSelectedChannel();
+					}
+				} else if (dataCategory == 0x01 &&  // kIconInputChannel
+						   elementMSB == 0x01 &&
+						   elementLSB == 0x15 &&
+						   indexMSB == 0x00 &&
+						   indexLSB == 0x01) {    // KIconBgColor
+					if (channel == selectedChannel.channel) {
+						selectedChannel.bgColourID = bytes[15];
+						UpdateSelectedChannel();
+					}
 				}
 			} else {
 				byte dataCategory = bytes[4];
@@ -654,6 +720,45 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
 			if (enabled)
 				_ = SendSysEx(sysExEvent);
+		}
+
+		public void SendAudioSession (int index, float volume, bool mute) {
+			byte device_byte = 0x10;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+
+			int channel = config.mixer.channelCount - index - 1;
+			ushort channel_int = Convert.ToUInt16(channel);
+			byte channelLSB = (byte)(channel_int & 0x7Fu);
+			ushort shiftedChannel = (ushort)(channel_int >> 7);
+			byte channelMSB = (byte)(shiftedChannel & 0x7Fu);
+
+			int value = Convert.ToInt32(volume * 1023);
+			ushort value_int = Convert.ToUInt16(value); // There are 1023 fader levels as per the manual
+			byte valueLSB = (byte)(value_int & 0x7Fu);
+			ushort shiftedValue = (ushort)(value_int >> 7);
+			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
+
+			NormalSysExEvent sessionVolume = new NormalSysExEvent();
+			byte[] dataVolume = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
+			sessionVolume.Data = dataVolume;
+
+			byte on;
+			if (mute) {
+				on = 0x00;
+			} else {
+				on = 0x01;
+			}
+			NormalSysExEvent sessionOn = new NormalSysExEvent();
+			byte[] dataOn = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x31, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, on, 0xF7 };
+			sessionOn.Data = dataOn;
+
+			bool enabled = false;
+			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
+			if (enabled) {
+				//Console.WriteLine(BitConverter.ToString(dataOn));
+				_ = SendSysEx(sessionVolume);
+				_ = SendSysEx(sessionOn);
+			}
 		}
 
 		private void SendOSCValue (int mix, int channel, int value, oscDevice sender) {
@@ -872,6 +977,8 @@ namespace TouchFaders_MIDI {
 			} else {
 				selectedChannelFader.Value = selectedChannel.level;
 				selectedChannelName.Content = selectedChannel.name;
+				// TODO: update icon
+				selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
 			}
 		}
 

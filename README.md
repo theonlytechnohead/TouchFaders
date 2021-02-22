@@ -66,14 +66,14 @@ Maybe a story... soon.
 - [x] Channel configuration editor
  - [x] Channel names
  - [x] Channel link group
-- [ ] Selected channel information, take two (50%)
+- [ ] Selected channel information, take two
   - [x] Channel level
-  - [ ] Channel name (in progress, decoding)
-  - [ ] Channel colour (I've got the colours, but I'm not requesting them yet)
-  - [ ] Channel icon (I've got the icons, just need editing and displaying)
-- [ ] WinAPI audio session control via MIDI! (50%)
-  - [ ] Console -> PC (volume yes, mute no)
-  - [ ] PC -> Console
+  - [ ] Channel name (50%, I've emailed about decoding the data)
+  - [x] Channel colour
+  - [ ] Channel icon (25%, I've got screenshots of the icons, just need editing and displaying)
+- [x] WinAPI audio session control via MIDI! (no name though, as pending above)
+  - [x] Console -> PC (volume yes, mute no)
+  - [x] PC -> Console
 - [x] zerOSConf implementation!
 - [x] Mix metering data
   - [x] Get detailed data
