@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,8 +18,19 @@ namespace TouchFaders_MIDI {
 		public class ChannelConfigUI {
 			public string ChannelName { get; set; }
 			int ChannelLevel { get; set; }
-			public char ChannelGroup { get; set; }
+			private char group;
+			public char ChannelGroup {
+				get {
+					return group;
+				}
+				set {
+					group = value;
+					PropertyChanged?.Invoke(this, new EventArgs());
+				}
+			}
 			public ObservableCollection<char> ChannelGroups { get; set; }
+
+			public EventHandler PropertyChanged;
 
 			public ChannelConfigUI (ChannelConfig.Channel channel) {
 				ChannelName = channel.name;
@@ -44,10 +56,33 @@ namespace TouchFaders_MIDI {
 		private void channelConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			channelDataGrid.DataContext = this;
 			channelDataGrid.ItemsSource = channelConfigUI;
+			channelConfigUI.CollectionChanged += ChannelConfigUI_CollectionChanged;
 			for (int i = 1; i <= 64; i++) {
 				ChannelConfigUI channel = new ChannelConfigUI(channelConfig.channels[i - 1]);
 				channelConfigUI.Add(channel);
 			}
+		}
+
+		private void ChannelConfigUI_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e) {
+			if (e.Action == NotifyCollectionChangedAction.Remove) {
+				foreach (ChannelConfigUI item in e.OldItems) {
+					//Removed items
+					item.PropertyChanged -= ChannelConfigUIPropertyChanged;
+				}
+			} else if (e.Action == NotifyCollectionChangedAction.Add) {
+				foreach (ChannelConfigUI item in e.NewItems) {
+					//Added items
+					item.PropertyChanged += ChannelConfigUIPropertyChanged;
+				}
+			}
+		}
+
+		private void ChannelConfigUIPropertyChanged (object sender, EventArgs e) {
+			ChannelConfigUI configUI = sender as ChannelConfigUI;
+			int index = channelConfigUI.IndexOf(configUI);
+			char group = configUI.ChannelGroup;
+			//Console.WriteLine($"{channelConfigUI.IndexOf(configUI)}:{configUI.ChannelGroup}");
+			MainWindow.instance.SendChannelLinkGroup(index, group);
 		}
 
 		protected override void OnClosed (EventArgs e) {

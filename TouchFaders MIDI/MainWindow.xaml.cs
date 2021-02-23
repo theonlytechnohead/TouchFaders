@@ -761,6 +761,27 @@ namespace TouchFaders_MIDI {
 				_ = SendSysEx(sysExEvent);
 		}
 
+		public void SendChannelLinkGroup (int channel, char linkGroup) {
+			byte device_byte = 0x10;
+			device_byte |= Convert.ToByte(config.device_ID - 1);
+
+			ushort channel_int = Convert.ToUInt16(channel);
+			byte channelLSB = (byte)(channel_int & 0x7Fu);
+			ushort shiftedChannel = (ushort)(channel_int >> 7);
+			byte channelMSB = (byte)(shiftedChannel & 0x7Fu);
+
+
+			byte group = Convert.ToByte(ChannelConfig.ChannelGroupChars.IndexOf(linkGroup));
+
+			NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
+			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x06, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, group, 0xF7 };
+			kGroupID_Input.Data = data;
+			bool enabled = false;
+			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
+			if (enabled)
+				_ = SendSysEx(kGroupID_Input);
+		}
+
 		public void SendAudioSession (int index, float volume, bool mute) {
 			byte device_byte = 0x10;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
