@@ -109,7 +109,7 @@ namespace TouchFaders_MIDI {
 		private void SessionSlider_ValueChanged (object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e) {
 			session.OnSimpleVolumeChanged -= SessionVolumeChanged;
 			session.SimpleAudioVolume.MasterVolume = (float)sessionSlider.Value;
-			AudioMixerWindow.instance.SessionVolumeChanged(sender, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+			AudioMixerWindow.instance.SessionVolumeChanged(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
 			session.OnSimpleVolumeChanged += SessionVolumeChanged;
 		}
 
