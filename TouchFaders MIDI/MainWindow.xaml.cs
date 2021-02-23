@@ -770,8 +770,8 @@ namespace TouchFaders_MIDI {
 			ushort shiftedChannel = (ushort)(channel_int >> 7);
 			byte channelMSB = (byte)(shiftedChannel & 0x7Fu);
 
-
 			byte group = Convert.ToByte(ChannelConfig.ChannelGroupChars.IndexOf(linkGroup));
+			Console.WriteLine($"Setting channel {channel + 1} link group to {linkGroup}");
 
 			NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x06, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, group, 0xF7 };

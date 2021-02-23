@@ -81,7 +81,7 @@ namespace TouchFaders_MIDI {
 			ChannelConfigUI configUI = sender as ChannelConfigUI;
 			int index = channelConfigUI.IndexOf(configUI);
 			char group = configUI.ChannelGroup;
-			//Console.WriteLine($"{channelConfigUI.IndexOf(configUI)}:{configUI.ChannelGroup}");
+			Console.WriteLine($"{channelConfigUI.IndexOf(configUI)}:{configUI.ChannelGroup}");
 			MainWindow.instance.SendChannelLinkGroup(index, group);
 		}
 
