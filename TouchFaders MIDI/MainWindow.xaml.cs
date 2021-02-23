@@ -319,9 +319,9 @@ namespace TouchFaders_MIDI {
 		}
 
 		async Task GetSelectedChannelInfo () {
-			_ = GetChannelName(selectedChannel.channel);
-			_ = GetChannelIcon(selectedChannel.channel);
-			_ = GetChannelColour(selectedChannel.channel);
+			await GetChannelName(selectedChannel.channel);
+			await GetChannelIcon(selectedChannel.channel);
+			await GetChannelColour(selectedChannel.channel);
 		}
 
 		async Task GetChannelFaders () {
