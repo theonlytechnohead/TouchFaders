@@ -74,7 +74,7 @@ namespace TouchFaders_MIDI {
 				if (session.State != AudioSessionState.AudioSessionStateExpired) {
 					SessionUI sessionUI = new SessionUI();
 					sessionUI.SetSession(session);
-					sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
+					//sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 					sessionStackPanel.Children.Add(sessionUI);
 					this.sessions.Add(sessionUI);
 				}
@@ -89,12 +89,13 @@ namespace TouchFaders_MIDI {
 				sessionUI.SetSession(session);
 				sessionStackPanel.Children.Add(sessionUI);
 				this.sessions.Add(sessionUI);
-				Session_OnSimpleVolumeChanged(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
-				sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
+				//Session_OnSimpleVolumeChanged(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+				SessionVolumeChanged(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+				//sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 			});
 		}
 
-		public void Session_OnSimpleVolumeChanged (object sender, float newVolume, bool newMute) {
+		public void SessionVolumeChanged (object sender, float newVolume, bool newMute) {
 			AudioSessionControl2 target = sender as AudioSessionControl2;
 
 			int index = 0;
@@ -126,7 +127,9 @@ namespace TouchFaders_MIDI {
 			if (sessionIndex >= sessions.Count) return;
 			SessionUI sessionUI = sessions[sessionIndex];
 			if (sessionUI == null) return;
+			//sessionUI.session.OnSimpleVolumeChanged -= Session_OnSimpleVolumeChanged;
 			sessionUI.UpdateSession(this, newVolume, newMute);
+			//sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;
 		}
 
 	}

@@ -59,10 +59,16 @@ namespace TouchFaders_MIDI {
 
 			sessionLabel.Content = ParseLabel(sessionLabel.Content.ToString());
 
-			session.OnSimpleVolumeChanged += new SimpleVolumeChangedDelegate(UpdateUI);
-			//sessionSlider.ValueChanged += (_, __) => UpdateVolume();
-			sessionCheckBox.Checked += (_, __) => UpdateMuted();
-			sessionCheckBox.Unchecked += (_, __) => UpdateMuted();
+			session.OnSimpleVolumeChanged += SessionVolumeChanged;
+			sessionSlider.ValueChanged += SessionSlider_ValueChanged;
+			sessionCheckBox.Checked += (_, __) => {
+				session.SimpleAudioVolume.Mute = true;
+				UpdateMuted();
+			};
+			sessionCheckBox.Unchecked += (_, __) => {
+				session.SimpleAudioVolume.Mute = false;
+				UpdateMuted();
+			};
 
 			Loaded += (_, __) => {
 				float newValue = 0;
@@ -92,24 +98,31 @@ namespace TouchFaders_MIDI {
 				});
 			};
 
-			UpdateUI(null, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+			UpdateUI(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+		}
+
+		private void SessionVolumeChanged (object sender, float newVolume, bool newMute) {
+			UpdateUI(sender, newVolume, newMute);
+			AudioMixerWindow.instance.SessionVolumeChanged(sender, newVolume, newMute);
+		}
+
+		private void SessionSlider_ValueChanged (object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e) {
+			session.OnSimpleVolumeChanged -= SessionVolumeChanged;
+			session.SimpleAudioVolume.MasterVolume = (float)sessionSlider.Value;
+			AudioMixerWindow.instance.SessionVolumeChanged(sender, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+			session.OnSimpleVolumeChanged += SessionVolumeChanged;
 		}
 
 		private void SessionStateChanged (object sender, AudioSessionState newState) {
 			if (newState == AudioSessionState.AudioSessionStateExpired) {
 				session.Dispose();
-				AudioMixerWindow.instance.Session_OnSimpleVolumeChanged(session, 0f, true);
+				AudioMixerWindow.instance.SessionVolumeChanged(session, 0f, true);
 				Dispatcher.Invoke(() => { AudioMixerWindow.instance.sessionStackPanel.Children.Remove(this); });
 			}
 		}
 
-		private void UpdateVolume () {
-			session.SimpleAudioVolume.MasterVolume = (float)sessionSlider.Value;
-		}
-
 		private void UpdateMuted () {
-			session.SimpleAudioVolume.Mute = sessionCheckBox.IsChecked.Value;
-			if (session.SimpleAudioVolume.Mute) {
+			if (sessionCheckBox.IsChecked.Value) {
 				SolidColorBrush backgroundBrush = new SolidColorBrush();
 				backgroundBrush.Color = System.Windows.Media.Color.FromRgb(240, 240, 240);
 				Background = backgroundBrush;
@@ -129,19 +142,24 @@ namespace TouchFaders_MIDI {
 		private void UpdateUI (object sender, float newVolume, bool newMute) {
 			if (!allowUpdateUI) return;
 			if (!Dispatcher.CheckAccess()) {
-				Dispatcher.Invoke(new SimpleVolumeChangedDelegate(UpdateUI), new object[] { sender, newVolume, newMute });
+				Dispatcher.Invoke(() => UpdateUI(sender, newVolume, newMute));
 			} else {
+				sessionSlider.ValueChanged -= SessionSlider_ValueChanged;
 				sessionSlider.Value = newVolume;
 				sessionCheckBox.IsChecked = newMute;
+				sessionSlider.ValueChanged += SessionSlider_ValueChanged;
 			}
 		}
 
 		public void UpdateSession (object sender, float newVolume, bool newMute) {
+			session.OnSimpleVolumeChanged -= SessionVolumeChanged;
 			UpdateUI(sender, newVolume, newMute);
+			session.SimpleAudioVolume.MasterVolume = newVolume;
+			session.SimpleAudioVolume.Mute = newMute;
 			Dispatcher.Invoke(() => {
-				UpdateVolume();
 				UpdateMuted();
 			});
+			session.OnSimpleVolumeChanged += SessionVolumeChanged;
 		}
 
 		private string ParseLabel (string text) {

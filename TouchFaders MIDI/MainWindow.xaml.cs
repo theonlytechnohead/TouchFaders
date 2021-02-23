@@ -597,7 +597,7 @@ namespace TouchFaders_MIDI {
 						} else {
 							selectedChannel.channel = channel;
 							selectedChannel.level = level;
-							_ = GetSelectedChannelInfo();
+							//_ = GetSelectedChannelInfo(); // TODO: if too many channels are moved in quick succession, overload occurs
 						}
 						UpdateSelectedChannel();
 					}

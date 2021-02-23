@@ -123,37 +123,37 @@
     {
       "name": "061B206435 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "A"
     },
     {
       "name": "061B206436 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "A"
     },
     {
       "name": "061B206437 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "B"
     },
     {
       "name": "061B206438 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "B"
     },
     {
       "name": "061B206439 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "C"
     },
     {
       "name": "061B206630 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "C"
     },
     {
       "name": "061B206631 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": "C"
     },
     {
       "name": "061B206632 0000000000",
@@ -202,7 +202,7 @@
     },
     {
       "name": "061B206831 0000000000",
-      "level": 125,
+      "level": 0,
       "linkGroup": " "
     },
     {
