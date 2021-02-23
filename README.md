@@ -61,7 +61,8 @@ Maybe a story... soon.
 - [x] User configurable device ID
 - [X] User configurable mixes (you need reconnect devices to update changes)
 - [x] User configurable channels (as above)
-- [ ] User configurable channel linking, or getting channel link groups from the console
+- [x] User configurable channel linking, or getting channel link groups from the console
+  - [ ] Communicate linked channel volumes on to remove devices, etc...
 - [x] Support LS9-16
 - [x] Channel configuration editor
  - [x] Channel names
@@ -70,11 +71,11 @@ Maybe a story... soon.
   - [x] Channel level
   - [ ] Channel name (50%, I've emailed about decoding the data)
   - [x] Channel colour
-  - [ ] Channel icon (25%, I've got screenshots of the icons, just need editing and displaying)
+  - [x] Channel icon
 - [x] WinAPI audio session control via MIDI! (no name though, as pending above)
   - [x] Console -> PC
   - [x] PC -> Console
-  - [ ] (maybe?) fix stuff to avoid feedback loop, so that the SessionUI slider actually works properly
+  - [x] fix stuff to avoid feedback loop, so that the SessionUI slider actually works properly (there were multiple levels of feedback, yikes)
 - [x] zerOSConf implementation!
   - [ ] update zerOSConf implementation for truly zeroconf operation
     - [ ] rework and gut out the OSC device handling for more dynamic connections
