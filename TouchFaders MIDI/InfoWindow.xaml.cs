@@ -50,9 +50,19 @@ namespace TouchFaders_MIDI {
 				faderChannel16
 			};
 			//MainWindow.instance.channelNames.channelNamesChanged += channelNamesChanged;// TODO: fix this
-			//MainWindow.instance.channelFaders.channelFadersChanged += channelFadersChanged; // TODO: fix this
+			for (int i = 0; i < 16; i++) {
+				MainWindow.instance.channelConfig.channels[i].channelLevelChanged += channelLevelChanged;
+			}
 			SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
 			SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
+		}
+
+		private void channelLevelChanged (object sender, EventArgs e) {
+			ChannelConfig.Channel channel = sender as ChannelConfig.Channel;
+			int index = MainWindow.instance.channelConfig.channels.IndexOf(channel);
+			Dispatcher.Invoke(() => {
+				faderBars[index].Value = channel.level;
+			});
 		}
 
 		private void channelNamesChanged (object sender, EventArgs e) {
