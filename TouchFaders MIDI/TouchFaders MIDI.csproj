@@ -241,6 +241,45 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="libs\CoreAudio.dll" />
+    <Resource Include="Resources\02_hi-hat.png" />
+    <Resource Include="Resources\03_tom.png" />
+    <Resource Include="Resources\04_drumkit.png" />
+    <Resource Include="Resources\05_perc.png" />
+    <Resource Include="Resources\06_a.bass.png" />
+    <Resource Include="Resources\07_strings.png" />
+    <Resource Include="Resources\08_e.bass.png" />
+    <Resource Include="Resources\09_a.guitar.png" />
+    <Resource Include="Resources\10_e.guitar.png" />
+    <Resource Include="Resources\11_bassamp.png" />
+    <Resource Include="Resources\12_guitaramp.png" />
+    <Resource Include="Resources\13_trumpet.png" />
+    <Resource Include="Resources\14_trombone.png" />
+    <Resource Include="Resources\15_saxophone.png" />
+    <Resource Include="Resources\16_piano.png" />
+    <Resource Include="Resources\17_organ.png" />
+    <Resource Include="Resources\18_keyboard.png" />
+    <Resource Include="Resources\19_male.png" />
+    <Resource Include="Resources\20_female.png" />
+    <Resource Include="Resources\21_choir.png" />
+    <Resource Include="Resources\22_dynamic.png" />
+    <Resource Include="Resources\23_condenser.png" />
+    <Resource Include="Resources\24_wireless.png" />
+    <Resource Include="Resources\25_podium.png" />
+    <Resource Include="Resources\26_wedge.png" />
+    <Resource Include="Resources\27_2way.png" />
+    <Resource Include="Resources\28_in-ear.png" />
+    <Resource Include="Resources\29_effector.png" />
+    <Resource Include="Resources\30_media1.png" />
+    <Resource Include="Resources\31_media2.png" />
+    <Resource Include="Resources\32_vtr.png" />
+    <Resource Include="Resources\33_mixer.png" />
+    <Resource Include="Resources\34_pc.png" />
+    <Resource Include="Resources\35_processor.png" />
+    <Resource Include="Resources\36_audience.png" />
+    <Resource Include="Resources\37_star1.png" />
+    <Resource Include="Resources\38_star2.png" />
+    <Resource Include="Resources\39_blank.png" />
+    <Resource Include="Resources\00_kick.png" />
     <Resource Include="Resources\01_snare.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

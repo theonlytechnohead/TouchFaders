@@ -49,7 +49,6 @@ namespace TouchFaders_MIDI {
 			config = AppConfiguration.Load();
 			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
 
-			selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("Resources/01_snare.png", UriKind.Relative));
 
 			this.KeyDown += MainWindow_KeyDown;
 
@@ -57,8 +56,8 @@ namespace TouchFaders_MIDI {
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
 			selectedChannel = new ChannelConfig.SelectedChannel();
-			selectedChannelName.Content = selectedChannel.name;
-			selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
+			selectedChannelName.Content = "Selected\nchannel";
+			//selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
 		}
 
 		protected override async void OnClosed (EventArgs e) {
@@ -261,8 +260,9 @@ namespace TouchFaders_MIDI {
 				queueTimer = new Timer(sendQueueItem, null, 0, 20);
 				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000);
 				await GetAllFaderValues();
-				await GetChannelFaders();         // Channel faders to STEREO
-												  //await GetChannelNames();
+				await GetChannelFaders();
+				await GetSelectedChannelInfo();
+				//await GetChannelNames();
 			}
 		}
 
@@ -316,6 +316,12 @@ namespace TouchFaders_MIDI {
 				sysExEvent.Data = data;
 				await SendSysEx(sysExEvent);
 			}
+		}
+
+		async Task GetSelectedChannelInfo () {
+			_ = GetChannelName(selectedChannel.channel);
+			_ = GetChannelIcon(selectedChannel.channel);
+			_ = GetChannelColour(selectedChannel.channel);
 		}
 
 		async Task GetChannelFaders () {
@@ -562,9 +568,7 @@ namespace TouchFaders_MIDI {
 						} else {
 							selectedChannel.channel = channel;
 							selectedChannel.level = level;
-							_ = GetChannelName(channel);
-							_ = GetChannelIcon(channel);
-							_ = GetChannelColour(channel);
+							_ = GetSelectedChannelInfo();
 						}
 						UpdateSelectedChannel();
 					}
@@ -979,7 +983,7 @@ namespace TouchFaders_MIDI {
 			} else {
 				selectedChannelFader.Value = selectedChannel.level;
 				selectedChannelName.Content = selectedChannel.name;
-				// TODO: update icon
+				selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(ChannelConfig.SelectedChannel.iconURIs[selectedChannel.channel]);
 				selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
 			}
 		}

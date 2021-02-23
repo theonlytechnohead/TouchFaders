@@ -202,7 +202,7 @@
                     <Grid Grid.Column="1" Grid.RowSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
-                            <RowDefinition Height="1.5*"/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*"/>
@@ -211,7 +211,7 @@
                         <Label x:Name="selectedChannelName" Content="Name" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,0,0,0" Padding="2"/>
                         <ProgressBar x:Name="selectedChannelFader" Maximum="1023" Orientation="Vertical" Grid.Column="1"  Style="{DynamicResource ProgressBarNarrowStyle}" Grid.RowSpan="2" Value="823" />
                         <Rectangle x:Name="selectedChannelColour" Fill="#FFF4F4F5" Grid.Row="1" Stroke="Black" StrokeThickness="0" Margin="5,5,5,0"/>
-                        <Image x:Name="selectedChannelImage" Grid.Row="1" Opacity="1.56" SnapsToDevicePixels="True"/>
+                        <Image x:Name="selectedChannelImage" Grid.Row="1" Opacity="1.56" SnapsToDevicePixels="True" Margin="0,5,5,0"/>
                     </Grid>
 
                 </Grid>

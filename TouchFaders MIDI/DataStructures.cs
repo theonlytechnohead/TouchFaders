@@ -302,6 +302,48 @@ namespace TouchFaders_MIDI {
 			public byte[] kNameShort2 { get; set; }
 
 			public int iconID { get; set; }
+			public static List<Uri> iconURIs = new List<Uri>() {
+				new Uri("Resources/00_kick.png", UriKind.Relative),
+				new Uri("Resources/01_snare.png", UriKind.Relative),
+				new Uri("Resources/02_hi-hat.png", UriKind.Relative),
+				new Uri("Resources/03_tom.png", UriKind.Relative),
+				new Uri("Resources/04_drumkit.png", UriKind.Relative),
+				new Uri("Resources/05_perc.png", UriKind.Relative),
+				new Uri("Resources/06_a.bass.png", UriKind.Relative),
+				new Uri("Resources/07_strings.png", UriKind.Relative),
+				new Uri("Resources/08_e.bass.png", UriKind.Relative),
+				new Uri("Resources/09_a.guitar.png", UriKind.Relative),
+				new Uri("Resources/10_e.guitar.png", UriKind.Relative),
+				new Uri("Resources/11_bassamp.png", UriKind.Relative),
+				new Uri("Resources/12_guitaramp.png", UriKind.Relative),
+				new Uri("Resources/13_trumpet.png", UriKind.Relative),
+				new Uri("Resources/14_trombone.png", UriKind.Relative),
+				new Uri("Resources/15_saxophone.png", UriKind.Relative),
+				new Uri("Resources/16_piano.png", UriKind.Relative),
+				new Uri("Resources/17_organ.png", UriKind.Relative),
+				new Uri("Resources/18_keyboard.png", UriKind.Relative),
+				new Uri("Resources/19_male.png", UriKind.Relative),
+				new Uri("Resources/20_female.png", UriKind.Relative),
+				new Uri("Resources/21_choir.png", UriKind.Relative),
+				new Uri("Resources/22_dynamic.png", UriKind.Relative),
+				new Uri("Resources/23_condenser.png", UriKind.Relative),
+				new Uri("Resources/24_wireless.png", UriKind.Relative),
+				new Uri("Resources/25_podium.png", UriKind.Relative),
+				new Uri("Resources/26_wedge.png", UriKind.Relative),
+				new Uri("Resources/27_2way.png", UriKind.Relative),
+				new Uri("Resources/28_in-ear.png", UriKind.Relative),
+				new Uri("Resources/29_effector.png", UriKind.Relative),
+				new Uri("Resources/30_media1.png", UriKind.Relative),
+				new Uri("Resources/31_media2.png", UriKind.Relative),
+				new Uri("Resources/32_vtr.png", UriKind.Relative),
+				new Uri("Resources/33_mixer.png", UriKind.Relative),
+				new Uri("Resources/34_pc.png", UriKind.Relative),
+				new Uri("Resources/35_processor.png", UriKind.Relative),
+				new Uri("Resources/36_audience.png", UriKind.Relative),
+				new Uri("Resources/37_star1.png", UriKind.Relative),
+				new Uri("Resources/38_star2.png", UriKind.Relative),
+				new Uri("Resources/39_blank.png", UriKind.Relative)
+			};
 			public int bgColourID { get; set; }
 			public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {
 				new SolidColorBrush(Color.FromRgb(1, 1, 253)), // blue, default
