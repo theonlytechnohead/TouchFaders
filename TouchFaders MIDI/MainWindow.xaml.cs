@@ -983,7 +983,7 @@ namespace TouchFaders_MIDI {
 			} else {
 				selectedChannelFader.Value = selectedChannel.level;
 				selectedChannelName.Content = selectedChannel.name;
-				selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(ChannelConfig.SelectedChannel.iconURIs[selectedChannel.channel]);
+				selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(ChannelConfig.SelectedChannel.iconURIs[selectedChannel.iconID]);
 				selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
 			}
 		}
