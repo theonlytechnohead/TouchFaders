@@ -24,6 +24,7 @@ namespace TouchFaders_MIDI {
 		OutputDevice Console_in;
 		InputDevice Console_out;
 		Timer queueTimer;
+		Timer advertisingTimer;
 		Timer meteringTimer;
 		public Queue<NormalSysExEvent> queue = new Queue<NormalSysExEvent>();
 
@@ -65,6 +66,7 @@ namespace TouchFaders_MIDI {
 			infoWindow.Close();
 			audioMixerWindow.Close();
 			stopMIDIButton_Click(null, null);
+			advertisingTimer?.Dispose();
 			await AppConfiguration.Save(config);
 			HandleIO.FileData fileData = new HandleIO.FileData() {
 				oscDevices = this.oscDevices,
@@ -145,6 +147,7 @@ namespace TouchFaders_MIDI {
 			Task.Run(async () => await RefreshOSCDevices());
 			Dispatcher.Invoke(() => displayMIDIDevices());
 
+			advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
 			Task.Run(() => TCPListener());
 
 			// Supplementary windows...
@@ -158,9 +161,32 @@ namespace TouchFaders_MIDI {
 			});
 		}
 
+		private void UDPAdvertiser (object state) {
+			IPAddress localIP;
+			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0)) {
+				socket.Connect("8.8.8.8", 65530);
+				IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+				localIP = endPoint.Address;
+			}
+
+			string name = Dns.GetHostName();
+
+			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8879);
+			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
+			byte[] ipArray = localIP.GetAddressBytes();
+			byte[] nameArray = Encoding.UTF8.GetBytes(name);
+			byte[] data = new byte[ipArray.Length + nameArray.Length];
+
+			ipArray.CopyTo(data, 0);
+			nameArray.CopyTo(data, ipArray.Length - 1);
+
+			//Console.WriteLine($"Sent advertisement: {BitConverter.ToString(data)}");
+			sendUdpClient.Send(data, data.Length, targetEndPoint);
+		}
+
 		private void TCPListener () {
 			IPAddress anAddress = IPAddress.Any;
-			TcpListener listener = new TcpListener(anAddress, 8873);
+			TcpListener listener = new TcpListener(anAddress, 8878);
 			listener.Start();
 
 			while (true) {
@@ -224,7 +250,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		int SendMixMeteringBroadcast (byte[] data) {
-			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8874);
+			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8879);
 			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
 			//Console.WriteLine($"Sent metering bytes: {BitConverter.ToString(data)}");
 			return sendUdpClient.Send(data, data.Length, targetEndPoint);

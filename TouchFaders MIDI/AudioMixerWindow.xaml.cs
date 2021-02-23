@@ -44,7 +44,7 @@ namespace TouchFaders_MIDI {
 
 			ListDevices();
 
-			Console.WriteLine((sessionStackPanel.Children[0] as SessionUI).sessionLabel);
+			//Console.WriteLine((sessionStackPanel.Children[0] as SessionUI).sessionLabel);
 		}
 
 		private void ListDevices () {
