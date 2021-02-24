@@ -19,7 +19,6 @@ namespace TouchFaders_MIDI {
 		public static MainWindow instance;
 		public AppConfiguration.appconfig config;
 
-		ObservableCollection<oscDevice> oscDevices;
 		List<oscDevice> devices = new List<oscDevice>();
 
 		OutputDevice Console_in;
@@ -70,7 +69,6 @@ namespace TouchFaders_MIDI {
 			advertisingTimer?.Dispose();
 			await AppConfiguration.Save(config);
 			HandleIO.FileData fileData = new HandleIO.FileData() {
-				oscDevices = this.oscDevices,
 				sendsToMix = this.sendsToMix,
 				channelConfig = this.channelConfig
 			};
@@ -138,10 +136,6 @@ namespace TouchFaders_MIDI {
 
 		#region File I/O
 		void DataLoaded (HandleIO.FileData fileData) {
-			Dispatcher.Invoke(() => {
-				//oscDevices = fileData.oscDevices;
-				deviceListBox.ItemsSource = oscDevices;
-			});
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
 			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
 
@@ -258,7 +252,7 @@ namespace TouchFaders_MIDI {
 
 		async Task RefreshOSCDevices () {
 			List<Task> tasks = new List<Task>();
-			foreach (oscDevice device in oscDevices) {
+			foreach (oscDevice device in devices) {
 				tasks.Add(Task.Run(() => {
 					device.Refresh();
 					Thread.Sleep(5);
@@ -268,9 +262,6 @@ namespace TouchFaders_MIDI {
 				}));
 			}
 			await Task.WhenAll(tasks);
-			Dispatcher.Invoke(() => {
-				refreshOSCButton.IsEnabled = true;
-			});
 		}
 
 		void displayMIDIDevices () {
@@ -563,7 +554,7 @@ namespace TouchFaders_MIDI {
 			}*/
 			sendsToMix[mix - 1, channel - 1] = value;
 			//Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
-			foreach (oscDevice device in oscDevices) {
+			foreach (oscDevice device in devices) {
 				/*if (linkedIndex != -1) { // TODO: fix this
 					if (device.LegacyApp) {
 						device.sendOSCMessage(mix, linkedIndex + 1, value / 1023f);
@@ -889,7 +880,7 @@ namespace TouchFaders_MIDI {
 
 		private void SendOSCValue (int mix, int channel, int value, oscDevice sender) {
 			Task.Run(() => {
-				foreach (oscDevice device in oscDevices) {
+				foreach (oscDevice device in devices) {
 					if (device != sender) { // Avoid feedback loop!
 						if (device.LegacyApp) {
 							device.sendOSCMessage(mix, channel, value / 1023f);
@@ -965,11 +956,6 @@ namespace TouchFaders_MIDI {
 			displayMIDIDevices();
 		}
 
-		void refreshOSCButton_Click (object sender, RoutedEventArgs e) {
-			Dispatcher.Invoke(() => { refreshOSCButton.IsEnabled = false; });
-			_ = RefreshOSCDevices();
-		}
-
 		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
 			Dispatcher.Invoke(new Action(() => {
 				refreshMIDIButton.IsEnabled = false;
@@ -988,91 +974,6 @@ namespace TouchFaders_MIDI {
 				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
 			});
 
-		}
-
-		private void deviceListBox_SelectionChanged (object sender, System.Windows.Controls.SelectionChangedEventArgs e) {
-			deleteDeviceButton.IsEnabled = true;
-			editDeviceButton.IsEnabled = true;
-		}
-
-		private void deviceListBox_MouseDoubleClick (object sender, System.Windows.Input.MouseButtonEventArgs e) {
-			if (deviceListBox.SelectedItem != null) {
-				int index = deviceListBox.SelectedIndex;
-				oscDevice device = deviceListBox.SelectedItem as oscDevice;
-				CreateOSCDevice editOSCdevice = new CreateOSCDevice();
-				editOSCdevice.Owner = this;
-				editOSCdevice.DataContext = DataContext;
-				editOSCdevice.name.Text = device.name;
-				if (device.input != null)
-					editOSCdevice.listenPort.Text = device.input.Port.ToString();
-				if (device.output != null) {
-					editOSCdevice.addressIPTextBox.Address = device.output.Address.ToString();
-					editOSCdevice.sendPort.Text = device.output.Port.ToString();
-				}
-				editOSCdevice.addButton.Content = "Save OSC device";
-				editOSCdevice.Title = "Edit OSC device";
-				if (WindowState == WindowState.Maximized) {
-					editOSCdevice.WindowState = WindowState.Maximized;
-				}
-				editOSCdevice.ShowDialog();
-				if (editOSCdevice.DialogResult.Value) {
-					string address = editOSCdevice.addressIPTextBox.Address;
-					int sendPort = int.Parse(editOSCdevice.sendPort.Text);
-					int listenPort = int.Parse(editOSCdevice.listenPort.Text);
-					oscDevices[index].SetDeviceName(editOSCdevice.name.Text);
-					oscDevices[index].InitializeIO(address, sendPort, listenPort);
-				}
-			}
-		}
-
-		private void MenuItem_Click (object sender, RoutedEventArgs e) {
-			if (deviceListBox.SelectedIndex == -1) {
-				return;
-			}
-			devices.RemoveAt(deviceListBox.SelectedIndex);
-		}
-
-		private void deviceListBox_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
-			deviceListBox.UnselectAll();
-			editDeviceButton.IsEnabled = false;
-			deleteDeviceButton.IsEnabled = false;
-		}
-
-		private void addDeviceButton_Click (object sender, RoutedEventArgs e) {
-			deviceListBox.SelectedIndex = -1;
-			deleteDeviceButton.IsEnabled = false;
-			editDeviceButton.IsEnabled = false;
-			CreateOSCDevice createOSCDevice = new CreateOSCDevice();
-			createOSCDevice.Owner = this;
-			createOSCDevice.DataContext = this.DataContext;
-			if (WindowState == WindowState.Maximized) {
-				createOSCDevice.WindowState = WindowState.Maximized;
-			}
-			createOSCDevice.ShowDialog();
-			if (createOSCDevice.DialogResult.Value) {
-				string address = createOSCDevice.addressIPTextBox.Address;
-				int sendPort = int.Parse(createOSCDevice.sendPort.Text);
-				int listenPort = int.Parse(createOSCDevice.listenPort.Text);
-				oscDevice device = new oscDevice();
-				device.name = createOSCDevice.name.Text;
-				device.InitializeIO(address, sendPort, listenPort);
-				devices.Add(device);
-			}
-		}
-
-		private void editDeviceButton_Click (object sender, RoutedEventArgs e) {
-			deviceListBox_MouseDoubleClick(sender, null);
-		}
-
-		private void deleteDeviceButton_Click (object sender, RoutedEventArgs e) {
-			if (deviceListBox.SelectedIndex == -1) {
-				return;
-			}
-			//oscDevices[deviceListBox.SelectedIndex].Close();
-			devices.RemoveAt(deviceListBox.SelectedIndex);
-			deviceListBox.UnselectAll();
-			deleteDeviceButton.IsEnabled = false;
-			editDeviceButton.IsEnabled = false;
 		}
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
@@ -1123,8 +1024,7 @@ namespace TouchFaders_MIDI {
 						refreshMIDIButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.O:
-					if (refreshOSCButton.IsEnabled)
-						refreshOSCButton_Click(this, new RoutedEventArgs());
+					Task.Run(async () => await RefreshOSCDevices());
 					break;
 				case System.Windows.Input.Key.S:
 					if (startMIDIButton.IsEnabled)

@@ -154,7 +154,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		void handleOSCMessage (OscMessage message) {
-			Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
+			//Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
 			if (message.Address.Contains("/mix")) {
 				string[] address = message.Address.Split('/');
 				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
