@@ -77,7 +77,7 @@ Maybe a story... soon.
   - [x] PC -> Console
   - [x] fix stuff to avoid feedback loop, so that the SessionUI slider actually works properly (there were multiple levels of feedback, yikes)
 - [x] zerOSConf implementation!
-  - [ ] update zerOSConf implementation for truly zeroconf operation
+  - [x] update zerOSConf implementation for truly zeroconf operation
     - [ ] rework and gut out the OSC device handling for more dynamic connections
     - [ ] remove support for legacy clients
 - [x] Mix metering data
