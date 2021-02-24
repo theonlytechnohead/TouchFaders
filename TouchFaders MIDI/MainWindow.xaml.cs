@@ -2,13 +2,14 @@
 using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using Windows.UI.ViewManagement;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -50,6 +51,11 @@ namespace TouchFaders_MIDI {
 			config = AppConfiguration.Load();
 			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
 
+			UISettings settings = new UISettings();
+			Windows.UI.Color foreground = settings.GetColorValue(UIColorType.Foreground);
+			Windows.UI.Color background = settings.GetColorValue(UIColorType.Background);
+			Foreground = new SolidColorBrush(Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B));
+			Background = new SolidColorBrush(Color.FromArgb(background.A, background.R, background.G, background.B));
 
 			this.KeyDown += MainWindow_KeyDown;
 
