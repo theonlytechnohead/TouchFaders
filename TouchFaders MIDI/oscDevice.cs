@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Threading;
 
 namespace TouchFaders_MIDI {
@@ -91,6 +92,28 @@ namespace TouchFaders_MIDI {
 			Name = "Unnamed device";
 		}
 
+		public oscDevice (string name, IPAddress address, int sendPort, int receivePort) {
+			Name = name;
+			Address = address.ToString();
+			SendPort = sendPort;
+			ListenPort = receivePort;
+			(input as IDisposable)?.Dispose(); // TODO: I don't need to do this, right?
+			(output as IDisposable)?.Dispose();
+			input = new UDPListener(receivePort, parseOSCMessage);
+			output = new UDPSender(address.ToString(), sendPort);
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
+		}
+
+		~oscDevice () {
+			(input as IDisposable)?.Dispose();
+			(output as IDisposable)?.Dispose();
+		}
+
+		public void Close () {
+			(input as IDisposable)?.Dispose();
+			(output as IDisposable)?.Dispose();
+		}
+
 		public void Refresh () {
 			if (DeviceName != null)
 				SetDeviceName(DeviceName);
@@ -131,7 +154,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		void handleOSCMessage (OscMessage message) {
-			//Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
+			Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
 			if (message.Address.Contains("/mix")) {
 				string[] address = message.Address.Split('/');
 				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
@@ -160,7 +183,7 @@ namespace TouchFaders_MIDI {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
 						ResendMixFaders(mix);
-						ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
+						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
 			}

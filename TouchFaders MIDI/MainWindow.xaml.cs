@@ -20,6 +20,7 @@ namespace TouchFaders_MIDI {
 		public AppConfiguration.appconfig config;
 
 		ObservableCollection<oscDevice> oscDevices;
+		List<oscDevice> devices = new List<oscDevice>();
 
 		OutputDevice Console_in;
 		InputDevice Console_out;
@@ -138,7 +139,7 @@ namespace TouchFaders_MIDI {
 		#region File I/O
 		void DataLoaded (HandleIO.FileData fileData) {
 			Dispatcher.Invoke(() => {
-				oscDevices = fileData.oscDevices;
+				//oscDevices = fileData.oscDevices;
 				deviceListBox.ItemsSource = oscDevices;
 			});
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
@@ -148,6 +149,7 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => displayMIDIDevices());
 
 			advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
+			Task.Run(() => UDPListener());
 			Task.Run(() => TCPListener());
 
 			// Supplementary windows...
@@ -171,7 +173,7 @@ namespace TouchFaders_MIDI {
 
 			string name = Dns.GetHostName();
 
-			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8879);
+			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8877);
 			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
 			byte[] ipArray = localIP.GetAddressBytes();
 			byte[] nameArray = Encoding.UTF8.GetBytes(name);
@@ -182,6 +184,33 @@ namespace TouchFaders_MIDI {
 
 			//Console.WriteLine($"Sent advertisement: {BitConverter.ToString(data)}");
 			sendUdpClient.Send(data, data.Length, targetEndPoint);
+		}
+
+		private void UDPListener () {
+			IPAddress anAddress = IPAddress.Any;
+			UdpClient listener = new UdpClient();
+			IPEndPoint endPoint = new IPEndPoint(anAddress, 8878);
+			listener.Client.Bind(endPoint);
+
+			var from = new IPEndPoint(0, 0);
+			while (true) {
+				byte[] buffer = listener.Receive(ref from);
+				//Console.WriteLine(BitConverter.ToString(buffer));
+				string name = Encoding.ASCII.GetString(buffer);
+
+				oscDevice deviceToRemove = null;
+				foreach (oscDevice device in devices) {
+					if (device.DeviceName == name) {
+						deviceToRemove = device;
+						break;
+					}
+				}
+				if (deviceToRemove != null) {
+					deviceToRemove.Close();
+					devices.Remove(deviceToRemove);
+					Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
+				}
+			}
 		}
 
 		private void TCPListener () {
@@ -199,13 +228,17 @@ namespace TouchFaders_MIDI {
 				int bytesRead = networkStream.Read(buffer, 0, client.ReceiveBufferSize);
 				Array.Copy(buffer, ipBuffer, 4);
 
-				//string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 				string dataReceived = BitConverter.ToString(buffer, 0, bytesRead);
-				Console.WriteLine($"Data received: {dataReceived}");
+				//Console.WriteLine($"Data received: {dataReceived}");
 				Console.WriteLine($"Device {Encoding.ASCII.GetString(buffer, 4, bytesRead - 4)} connected from {new IPAddress(ipBuffer)}");
 
-				byte oscSend = 1; // starting at 9000
-				byte oscReceive = 1; // starting at 8000
+				int ports = devices.Count + 1;
+
+				AddOSCDevice(new IPAddress(ipBuffer), Encoding.ASCII.GetString(buffer, 4, bytesRead - 4), ports);
+
+
+				byte oscSend = Convert.ToByte(ports); // offset from 9000
+				byte oscReceive = Convert.ToByte(ports); // offset from 8000
 
 				byte[] sendBuffer = new byte[] { oscSend, oscReceive, Convert.ToByte(config.NUM_CHANNELS), Convert.ToByte(config.NUM_MIXES) };
 
@@ -216,6 +249,13 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region Device UI management
+		void AddOSCDevice (IPAddress ipAddress, string name, int ports) {
+			int sendPort = 9000 + ports;
+			int listenPort = 8000 + ports;
+			oscDevice device = new oscDevice(name, ipAddress, sendPort, listenPort);
+			Dispatcher.Invoke(() => devices.Add(device));
+		}
+
 		async Task RefreshOSCDevices () {
 			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in oscDevices) {
@@ -989,7 +1029,7 @@ namespace TouchFaders_MIDI {
 			if (deviceListBox.SelectedIndex == -1) {
 				return;
 			}
-			oscDevices.RemoveAt(deviceListBox.SelectedIndex);
+			devices.RemoveAt(deviceListBox.SelectedIndex);
 		}
 
 		private void deviceListBox_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -1016,7 +1056,7 @@ namespace TouchFaders_MIDI {
 				oscDevice device = new oscDevice();
 				device.name = createOSCDevice.name.Text;
 				device.InitializeIO(address, sendPort, listenPort);
-				oscDevices.Add(device);
+				devices.Add(device);
 			}
 		}
 
@@ -1028,7 +1068,8 @@ namespace TouchFaders_MIDI {
 			if (deviceListBox.SelectedIndex == -1) {
 				return;
 			}
-			oscDevices.RemoveAt(deviceListBox.SelectedIndex);
+			//oscDevices[deviceListBox.SelectedIndex].Close();
+			devices.RemoveAt(deviceListBox.SelectedIndex);
 			deviceListBox.UnselectAll();
 			deleteDeviceButton.IsEnabled = false;
 			editDeviceButton.IsEnabled = false;

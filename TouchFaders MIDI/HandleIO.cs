@@ -27,10 +27,12 @@ namespace TouchFaders_MIDI {
 			try {
 				JsonSerializerOptions jsonDeserializerOptions = new JsonSerializerOptions { IgnoreNullValues = true, };
 
+				/*
 				string oscDevicesFile = File.ReadAllText("config/oscDevices.txt");
 				if (MainWindow.instance.config.oscDevices_version >= 1) {
 					data.oscDevices = JsonSerializer.Deserialize<ObservableCollection<oscDevice>>(oscDevicesFile, jsonDeserializerOptions);
 				}
+				*/
 
 				string sendsToMixFile = File.ReadAllText("config/sendsToMix.txt");
 				if (MainWindow.instance.config.sendsToMix_version >= 1) {
@@ -92,11 +94,13 @@ namespace TouchFaders_MIDI {
 		public static async Task SaveAll (FileData data) {
 			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, };
 			_ = Directory.CreateDirectory("config");
+			/*
 			if (data.oscDevices != null) {
 				using (FileStream fs = File.Create("config/oscDevices.txt")) {
 					await JsonSerializer.SerializeAsync(fs, data.oscDevices, serializerOptions);
 				}
 			}
+			*/
 			if (data.sendsToMix != null) {
 				using (FileStream fs = File.Create("config/sendsToMix.txt")) {
 					await JsonSerializer.SerializeAsync(fs, data.sendsToMix.sendLevel, serializerOptions);

@@ -105,4 +105,3 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MID
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
-D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csprojAssemblyReference.cache
