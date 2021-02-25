@@ -7,134 +7,27 @@ using System.Net;
 using System.Threading;
 
 namespace TouchFaders_MIDI {
-	public class oscDevice : INotifyPropertyChanged {
-		public string name;
-		[System.Text.Json.Serialization.JsonIgnore]
-		public string Name { // Display name for ObservableCollection in UI
-			get {
-				if (input == null && output == null) {
-					return DeviceName + " is not configured";
-				} else {
-					return DeviceName + " at " + Address + ":" + SendPort + ", " + ListenPort;
-				}
-			}
-			set {
-				DeviceName = value;
-			}
-		}
+	public class oscDevice {
+		public string deviceName;
 
-		#region JsonProperties
-		public string DeviceName { get { return name; } set { name = value; } }
-
-		public bool LegacyApp { get; set; } = false;
-
-		string address;
-		public string Address {
-			get {
-				if (output != null)
-					return output.Address;
-				else
-					return address;
-			}
-			set {
-				address = value;
-			}
-		}
-
-		int sendPort;
-		public int? SendPort {
-			get {
-				if (output != null)
-					return output.Port;
-				else
-					return sendPort;
-			}
-			set {
-				sendPort = value.Value;
-			}
-		}
-
-		int listenPort;
-		public int? ListenPort {
-			get {
-				if (input != null)
-					return input.Port;
-				else
-					return listenPort;
-			}
-			set {
-				listenPort = value.Value;
-			}
-		}
-
-		/*
-		List<float> faders;
-		public List<float> Faders {
-			get {
-				if (faders != null)
-					return faders;
-				else
-					return null;
-			}
-			set {
-				faders = value;
-			}
-		}
-		*/
-		#endregion
-
-		public UDPListener input = null;
-		public UDPSender output = null;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public oscDevice () {
-			Name = "Unnamed device";
-		}
+		private UDPListener input = null;
+		private UDPSender output = null;
 
 		public oscDevice (string name, IPAddress address, int sendPort, int receivePort) {
-			Name = name;
-			Address = address.ToString();
-			SendPort = sendPort;
-			ListenPort = receivePort;
+			deviceName = name;
 			(input as IDisposable)?.Dispose(); // TODO: I don't need to do this, right?
 			(output as IDisposable)?.Dispose();
 			input = new UDPListener(receivePort, parseOSCMessage);
 			output = new UDPSender(address.ToString(), sendPort);
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
 		}
 
 		~oscDevice () {
-			(input as IDisposable)?.Dispose();
-			(output as IDisposable)?.Dispose();
+			Close();
 		}
 
 		public void Close () {
 			(input as IDisposable)?.Dispose();
 			(output as IDisposable)?.Dispose();
-		}
-
-		public void Refresh () {
-			if (DeviceName != null)
-				SetDeviceName(DeviceName);
-			if (Address != null && ListenPort != null && SendPort != null)
-				InitializeIO(Address, SendPort.Value, ListenPort.Value);
-		}
-
-		public void SetDeviceName (string value) {
-			Name = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
-		}
-
-		public void InitializeIO (string address, int port, int localPort) {
-			Address = address;
-			SendPort = port;
-			ListenPort = localPort;
-			(input as IDisposable)?.Dispose();
-			(output as IDisposable)?.Dispose();
-			input = new UDPListener(localPort, parseOSCMessage);
-			output = new UDPSender(address, port);
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("name"));
 		}
 
 		void parseOSCMessage (OscPacket packet) {
@@ -161,15 +54,6 @@ namespace TouchFaders_MIDI {
 				if (address.Length > 1) {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
-					if (message.Arguments[0] is float) { // Legacy TouchOSC clients use floats for fader values
-						int value = Convert.ToInt32((float)message.Arguments[0] * 1023);
-						/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
-						if (linkedIndex != -1) {
-							sendOSCMessage(mix, linkedIndex + 1, (float)message.Arguments[0]);
-							MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
-						}*/
-						MainWindow.instance.SendFaderValue(mix, channel, value, this);
-					}
 					if (message.Arguments[0] is int) { // TouchFaders OSC clients use 1:1 mapping ints for fader values (can be passed directly to the console)
 						int value = (int)message.Arguments[0];
 						/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
@@ -192,11 +76,7 @@ namespace TouchFaders_MIDI {
 		void ResendMixFaders (int mix) {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
 				int level = MainWindow.instance.sendsToMix[mix - 1, channel - 1];
-				if (LegacyApp) {
-					sendOSCMessage(mix, channel, level / 1023f);
-				} else {
-					sendOSCMessage(mix, channel, level);
-				}
+				sendOSCMessage(mix, channel, level);
 				Thread.Sleep(3);
 			}
 		}
@@ -219,12 +99,6 @@ namespace TouchFaders_MIDI {
 				ResendMixNames(mix, channelNames);
 				Thread.Sleep(3);
 			}
-		}
-
-		public void sendOSCMessage (int mix, int channel, float value) {
-			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");
-			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
-			output.Send(message);
 		}
 
 		public void sendOSCMessage (int mix, int channel, int value) {

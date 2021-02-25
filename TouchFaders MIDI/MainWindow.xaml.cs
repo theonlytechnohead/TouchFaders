@@ -209,7 +209,7 @@ namespace TouchFaders_MIDI {
 
 				oscDevice deviceToRemove = null;
 				foreach (oscDevice device in devices) {
-					if (device.DeviceName == name) {
+					if (device.deviceName == name) {
 						deviceToRemove = device;
 						break;
 					}
@@ -269,8 +269,6 @@ namespace TouchFaders_MIDI {
 			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in devices) {
 				tasks.Add(Task.Run(() => {
-					device.Refresh();
-					Thread.Sleep(5);
 					device.ResendAllFaders();
 					Thread.Sleep(5);
 					device.ResendAllNames(channelConfig.GetChannelNames());
@@ -577,11 +575,7 @@ namespace TouchFaders_MIDI {
 						device.sendOSCMessage(mix, linkedIndex + 1, value);
 					}
 				}*/
-				if (device.LegacyApp) {
-					device.sendOSCMessage(mix, channel, value / 1023f);
-				} else {
-					device.sendOSCMessage(mix, channel, value);
-				}
+				device.sendOSCMessage(mix, channel, value);
 			}
 		}
 
@@ -897,11 +891,7 @@ namespace TouchFaders_MIDI {
 			Task.Run(() => {
 				foreach (oscDevice device in devices) {
 					if (device != sender) { // Avoid feedback loop!
-						if (device.LegacyApp) {
-							device.sendOSCMessage(mix, channel, value / 1023f);
-						} else {
-							device.sendOSCMessage(mix, channel, value);
-						}
+						device.sendOSCMessage(mix, channel, value);
 					}
 				}
 			});
