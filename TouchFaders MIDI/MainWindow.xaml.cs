@@ -76,7 +76,9 @@ namespace TouchFaders_MIDI {
 
 		protected override async void OnClosed (EventArgs e) {
 			Console.WriteLine("Closing...");
+			infoWindow.Visibility = Visibility.Hidden;
 			infoWindow.Close();
+			audioMixerWindow.Visibility = Visibility.Hidden;
 			audioMixerWindow.Close();
 			stopMIDIButton_Click(null, null);
 			advertisingTimer?.Dispose();

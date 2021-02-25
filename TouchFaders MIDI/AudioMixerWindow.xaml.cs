@@ -36,7 +36,9 @@ namespace TouchFaders_MIDI {
 
 		public AudioMixerWindow () {
 			InitializeComponent();
+
 			instance = this;
+
 			Foreground = MainWindow.instance.Foreground;
 			Background = MainWindow.instance.Background;
 
@@ -47,6 +49,14 @@ namespace TouchFaders_MIDI {
 			ListDevices();
 
 			//Console.WriteLine((sessionStackPanel.Children[0] as SessionUI).sessionLabel);
+		}
+
+		protected override void OnClosing (System.ComponentModel.CancelEventArgs e) {
+			if (Visibility == Visibility.Visible) {
+				e.Cancel = true;
+			} else {
+				base.OnClosing(e);
+			}
 		}
 
 		private void ListDevices () {

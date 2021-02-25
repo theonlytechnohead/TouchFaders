@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -57,6 +58,14 @@ namespace TouchFaders_MIDI {
 			}
 			SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
 			SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
+		}
+
+		protected override void OnClosing (CancelEventArgs e) {
+			if (Visibility == Visibility.Visible) {
+				e.Cancel = true;
+			} else {
+				base.OnClosing(e);
+			}
 		}
 
 		private void channelLevelChanged (object sender, EventArgs e) {
