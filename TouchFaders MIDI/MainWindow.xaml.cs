@@ -269,7 +269,7 @@ namespace TouchFaders_MIDI {
 			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in devices) {
 				tasks.Add(Task.Run(() => {
-					device.ResendAllFaders();
+					device.ResendMixFaders();
 					Thread.Sleep(5);
 					device.ResendAllNames(channelConfig.GetChannelNames());
 				}));

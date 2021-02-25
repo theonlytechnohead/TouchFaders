@@ -9,6 +9,7 @@ using System.Threading;
 namespace TouchFaders_MIDI {
 	public class oscDevice {
 		public string deviceName;
+		private int currentMix;
 
 		private UDPListener input = null;
 		private UDPSender output = null;
@@ -66,35 +67,30 @@ namespace TouchFaders_MIDI {
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
-						ResendMixFaders(mix);
+						currentMix = mix;
+						ResendMixFaders();
 						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
 			}
 		}
 
-		void ResendMixFaders (int mix) {
+		public void ResendMixFaders () {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
-				int level = MainWindow.instance.sendsToMix[mix - 1, channel - 1];
-				sendOSCMessage(mix, channel, level);
+				int level = MainWindow.instance.sendsToMix[currentMix - 1, channel - 1];
+				sendOSCMessage(currentMix, channel, level);
 				Thread.Sleep(3);
 			}
 		}
 
-		public void ResendAllFaders () {
-			for (int mix = 1; mix <= MainWindow.instance.config.NUM_MIXES; mix++) {
-				ResendMixFaders(mix);
-			}
-		}
-
-		public void ResendMixNames (int mix, List<string> channelNames) {
+		public void ResendMixNames (int mix, List<string> channelNames) { // TODO: rework
 			for (int label = 1; label <= MainWindow.instance.config.NUM_CHANNELS; label++) {
 				OscMessage message = new OscMessage($"/mix{mix}/label{label}", channelNames[label - 1]);
 				output.Send(message);
 			}
 		}
 
-		public void ResendAllNames (List<string> channelNames) {
+		public void ResendAllNames (List<string> channelNames) { // TODO: remove
 			for (int mix = 1; mix <= MainWindow.instance.config.NUM_MIXES; mix++) {
 				ResendMixNames(mix, channelNames);
 				Thread.Sleep(3);
