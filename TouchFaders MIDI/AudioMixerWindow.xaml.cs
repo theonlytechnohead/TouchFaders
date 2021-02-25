@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Media;
 using CoreAudio;
 
 namespace TouchFaders_MIDI {
@@ -35,8 +36,9 @@ namespace TouchFaders_MIDI {
 
 		public AudioMixerWindow () {
 			InitializeComponent();
-
 			instance = this;
+			Foreground = MainWindow.instance.Foreground;
+			Background = MainWindow.instance.Background;
 
 			deviceComboBox.DataContext = this;
 			deviceComboBox.ItemsSource = devices;

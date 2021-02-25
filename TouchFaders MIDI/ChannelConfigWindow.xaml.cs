@@ -51,6 +51,10 @@ namespace TouchFaders_MIDI {
 		public ChannelConfigWindow () {
 			InitializeComponent();
 			channelConfigUI = new ObservableCollection<ChannelConfigUI>();
+			Foreground = MainWindow.instance.Foreground;
+			Background = MainWindow.instance.Background;
+			channelDataGrid.Foreground = MainWindow.instance.Foreground;
+			channelDataGrid.Background = MainWindow.instance.Background;
 		}
 
 		private void channelConfigWindow_Loaded (object sender, RoutedEventArgs e) {

@@ -18,6 +18,8 @@ namespace TouchFaders_MIDI {
 		public ConfigWindow () {
 			InitializeComponent();
 			this.Loaded += ConfigWindow_Loaded;
+			Foreground = MainWindow.instance.Foreground;
+			Background = MainWindow.instance.Background;
 		}
 
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {

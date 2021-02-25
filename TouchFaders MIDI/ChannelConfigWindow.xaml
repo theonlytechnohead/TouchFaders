@@ -26,12 +26,12 @@
                     <DataGridTemplateColumn Header="Channel name">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding ChannelName}" VerticalContentAlignment="Center" />
+                                <TextBox Text="{Binding ChannelName}" VerticalContentAlignment="Center" Style="{StaticResource DataGridTextBox}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding ChannelName}" />
+                                <TextBox Text="{Binding ChannelName}" Style="{StaticResource DataGridTextBox}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>

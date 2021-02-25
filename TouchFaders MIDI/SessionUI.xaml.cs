@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using CoreAudio;
-using static CoreAudio.AudioSessionControl2;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -25,6 +24,10 @@ namespace TouchFaders_MIDI {
 
 		public SessionUI () {
 			InitializeComponent();
+
+			Foreground = MainWindow.instance.Foreground;
+			Background = MainWindow.instance.Background;
+
 			for (int i = 0; i < historySize; i++) {
 				volPeakHistory.Enqueue(0);
 			}
@@ -88,10 +91,14 @@ namespace TouchFaders_MIDI {
 						newValue = volPeakHistory.Average();
 
 						if (newValue != lastValue) {
-							Dispatcher.Invoke(() => {
-								sessionProgressBar.Value = newValue;
-								lastValue = newValue;
-							});
+							try {
+								Dispatcher.Invoke(() => {
+									sessionProgressBar.Value = newValue;
+									lastValue = newValue;
+								});
+							} catch (TaskCanceledException) {
+								// Eh, who cares?
+							}
 						}
 						Thread.Sleep(16);
 					}
@@ -124,17 +131,19 @@ namespace TouchFaders_MIDI {
 		private void UpdateMuted () {
 			if (sessionCheckBox.IsChecked.Value) {
 				SolidColorBrush backgroundBrush = new SolidColorBrush();
-				backgroundBrush.Color = System.Windows.Media.Color.FromRgb(240, 240, 240);
+				backgroundBrush.Color = System.Windows.Media.Color.FromArgb(100, 240, 240, 240);
 				Background = backgroundBrush;
 				SolidColorBrush borderBrush = new SolidColorBrush();
-				borderBrush.Color = System.Windows.Media.Color.FromRgb(200, 200, 200);
+				borderBrush.Color = System.Windows.Media.Color.FromArgb(100, 200, 200, 200);
 				BorderBrush = borderBrush;
 			} else {
 				SolidColorBrush backgroundBrush = new SolidColorBrush();
-				backgroundBrush.Color = System.Windows.Media.Color.FromRgb(255, 255, 255);
+				Color bgColour = System.Windows.Media.Color.FromArgb(100, 255, 255, 255);
+				bgColour = Color.Multiply(bgColour, ((SolidColorBrush)MainWindow.instance.Background).Color.R);
+				backgroundBrush.Color = bgColour;
 				Background = backgroundBrush;
 				SolidColorBrush borderBrush = new SolidColorBrush();
-				borderBrush.Color = System.Windows.Media.Color.FromRgb(255, 255, 255);
+				borderBrush.Color = bgColour;
 				BorderBrush = borderBrush;
 			}
 		}

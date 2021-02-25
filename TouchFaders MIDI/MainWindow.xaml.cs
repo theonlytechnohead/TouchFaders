@@ -57,6 +57,13 @@ namespace TouchFaders_MIDI {
 			Foreground = new SolidColorBrush(Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B));
 			Background = new SolidColorBrush(Color.FromArgb(background.A, background.R, background.G, background.B));
 
+			if (Application.Current.Resources.Contains("textColour")) {
+				Application.Current.Resources["textColour"] = new SolidColorBrush(Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B));
+			}
+			if (Application.Current.Resources.Contains("textBackground")) {
+				Application.Current.Resources["textBackground"] = new SolidColorBrush(Color.FromArgb(0, background.R, background.G, background.B));
+			}
+
 			this.KeyDown += MainWindow_KeyDown;
 
 		}

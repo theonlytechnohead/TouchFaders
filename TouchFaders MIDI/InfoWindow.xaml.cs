@@ -13,6 +13,8 @@ namespace TouchFaders_MIDI {
 
 		public InfoWindow () {
 			InitializeComponent();
+			Foreground = MainWindow.instance.Foreground;
+			Background = MainWindow.instance.Background;
 			labels = new List<Label> {
 				labelChannel1,
 				labelChannel2,
