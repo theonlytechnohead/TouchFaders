@@ -13,16 +13,6 @@ C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Text.En
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Text.Json.dll
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Threading.Tasks.Extensions.dll
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.ValueTuple.dll
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\Melanchall.DryWetMidi.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Buffers.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Memory.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Numerics.Vectors.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Text.Encodings.Web.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Text.Json.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Threading.Tasks.Extensions.xml
-C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.ValueTuple.xml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csprojAssemblyReference.cache
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\AudioMixerWindow.baml
 C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\InfoWindow.baml
@@ -98,3 +88,5 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MID
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\App.baml
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe.config
+C:\Users\HP\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\App.baml

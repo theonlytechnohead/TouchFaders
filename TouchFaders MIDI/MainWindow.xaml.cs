@@ -337,7 +337,7 @@ namespace TouchFaders_MIDI {
 				await GetAllFaderValues();
 				await GetChannelFaders();
 				await GetAllChannelsLinkGroup();
-				GetSelectedChannelInfo(null);
+				selectedChannelIndexToGet.Push(0);
 				//await GetChannelNames();
 			}
 		}
@@ -395,12 +395,11 @@ namespace TouchFaders_MIDI {
 		}
 
 		void GetSelectedChannelInfo (object state) {
+			bool canContinue = false;
+			Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
+			if (!canContinue) return;
 			if (selectedChannelIndexToGet.Count == 0) {
-				Task.Run(async () => {
-					await GetChannelName(selectedChannel.channelIndex);
-					await GetChannelIcon(selectedChannel.channelIndex);
-					await GetChannelColour(selectedChannel.channelIndex);
-				});
+				return;
 			} else {
 				int channel = selectedChannelIndexToGet.Pop();
 				Task.Run(async () => {
@@ -961,7 +960,6 @@ namespace TouchFaders_MIDI {
 			total += config.NUM_CHANNELS; // channel levels
 			total += config.NUM_CHANNELS; // channel link groups
 										  //total += config.NUM_CHANNELS; // channel names?
-			total += 4; // selected channel name, level, icon, colour
 			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
 		}
 
@@ -997,7 +995,7 @@ namespace TouchFaders_MIDI {
 					await GetAllFaderValues();
 					await GetChannelFaders();
 					await GetAllChannelsLinkGroup();
-					await GetSelectedChannelInfo();
+					selectedChannelIndexToGet.Push(0);
 					//await GetChannelNames();
 				}
 				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
