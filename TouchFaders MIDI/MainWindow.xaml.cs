@@ -31,12 +31,11 @@ namespace TouchFaders_MIDI {
 
 		public SendsToMix sendsToMix;
 
-		//public ChannelNames channelNames; // Deprecated
-		//public ChannelFaders channelFaders; // Deprecated
-		//public LinkedChannels linkedChannels; // Removed
 		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
 		public ChannelConfig.SelectedChannel selectedChannel;
-		public List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
+		List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
+		Stack<int> selectedChannelIndexToGet = new Stack<int>();
+		Timer selectedChannelTimer;
 
 		public InfoWindow infoWindow;
 		public AudioMixerWindow audioMixerWindow;
@@ -149,7 +148,7 @@ namespace TouchFaders_MIDI {
 
 		#endregion
 
-		#region File I/O
+		#region File & network I/O (and setup)
 		void DataLoaded (HandleIO.FileData fileData) {
 			// Lists and config
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
@@ -334,10 +333,11 @@ namespace TouchFaders_MIDI {
 				});
 				queueTimer = new Timer(sendQueueItem, null, 0, 20);
 				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000);
+				selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
 				await GetAllFaderValues();
 				await GetChannelFaders();
 				await GetAllChannelsLinkGroup();
-				await GetSelectedChannelInfo();
+				GetSelectedChannelInfo(null);
 				//await GetChannelNames();
 			}
 		}
@@ -394,10 +394,22 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		async Task GetSelectedChannelInfo () {
-			await GetChannelName(selectedChannel.channelIndex);
-			await GetChannelIcon(selectedChannel.channelIndex);
-			await GetChannelColour(selectedChannel.channelIndex);
+		void GetSelectedChannelInfo (object state) {
+			if (selectedChannelIndexToGet.Count == 0) {
+				Task.Run(async () => {
+					await GetChannelName(selectedChannel.channelIndex);
+					await GetChannelIcon(selectedChannel.channelIndex);
+					await GetChannelColour(selectedChannel.channelIndex);
+				});
+			} else {
+				int channel = selectedChannelIndexToGet.Pop();
+				Task.Run(async () => {
+					await GetChannelName(channel);
+					await GetChannelIcon(channel);
+					await GetChannelColour(channel);
+				});
+				selectedChannelIndexToGet.Clear();
+			}
 		}
 
 		async Task GetChannelFaders () {
@@ -672,7 +684,8 @@ namespace TouchFaders_MIDI {
 							selectedChannel = selectedChannelCache[channel];
 							selectedChannel.channelIndex = channel;
 							selectedChannel.level = level;
-							//_ = GetSelectedChannelInfo(); // TODO: if too many channels are moved in quick succession, overload occurs
+							//_ = GetSelectedChannelInfo(); // if too many channels are moved in quick succession, overload occurs
+							selectedChannelIndexToGet.Push(channel);
 						}
 					}
 					UpdateSelectedChannel();
