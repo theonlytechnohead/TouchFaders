@@ -27,7 +27,7 @@ namespace TouchFaders_MIDI {
 		Timer queueTimer;
 		Timer advertisingTimer;
 		Timer meteringTimer;
-		public Queue<NormalSysExEvent> queue = new Queue<NormalSysExEvent>();
+		public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
 		public SendsToMix sendsToMix;
 
@@ -36,6 +36,7 @@ namespace TouchFaders_MIDI {
 		//public LinkedChannels linkedChannels; // Removed
 		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
 		public ChannelConfig.SelectedChannel selectedChannel;
+		public List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
 
 		public InfoWindow infoWindow;
 		public AudioMixerWindow audioMixerWindow;
@@ -70,8 +71,7 @@ namespace TouchFaders_MIDI {
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
 			selectedChannel = new ChannelConfig.SelectedChannel();
-			selectedChannelName.Content = "Selected\nchannel";
-			//selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
+			UpdateSelectedChannel();
 		}
 
 		protected override async void OnClosed (EventArgs e) {
@@ -151,12 +151,17 @@ namespace TouchFaders_MIDI {
 
 		#region File I/O
 		void DataLoaded (HandleIO.FileData fileData) {
+			// Lists and config
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
 			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
+			for (int i = 0; i < config.mixer.channelCount; i++) {
+				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
+			}
 
-			Task.Run(async () => await RefreshOSCDevices());
+			// MIDI
 			Dispatcher.Invoke(() => displayMIDIDevices());
 
+			// Networking
 			advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
 			Task.Run(() => UDPListener());
 			Task.Run(() => TCPListener());
@@ -338,9 +343,9 @@ namespace TouchFaders_MIDI {
 		}
 
 		void sendQueueItem (object state) {
-			if (queue.Count > 0) {
+			if (midiQueue.Count > 0) {
 				try {
-					NormalSysExEvent sysExEvent = queue.Dequeue();
+					NormalSysExEvent sysExEvent = midiQueue.Dequeue();
 					if (sysExEvent != null) {
 						Console_in.SendEvent(sysExEvent);
 						Dispatcher.Invoke(() => midiProgressBar.Value += 1);
@@ -390,9 +395,9 @@ namespace TouchFaders_MIDI {
 		}
 
 		async Task GetSelectedChannelInfo () {
-			await GetChannelName(selectedChannel.channel);
-			await GetChannelIcon(selectedChannel.channel);
-			await GetChannelColour(selectedChannel.channel);
+			await GetChannelName(selectedChannel.channelIndex);
+			await GetChannelIcon(selectedChannel.channelIndex);
+			await GetChannelColour(selectedChannel.channelIndex);
 		}
 
 		async Task GetChannelFaders () {
@@ -601,11 +606,13 @@ namespace TouchFaders_MIDI {
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
 					channelConfig.channels[channel].name = BitConverter.ToString(data).Replace("-", "");
-					if (channel == selectedChannel.channel) { selectedChannel.kNameShort1 = data; }
+					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort1 = data; }
+					selectedChannelCache[channel].kNameShort1 = data;
 					break;
 				case 0x01: // kNameShort2
 					channelConfig.channels[channel].name += " " + BitConverter.ToString(data).Replace("-", "");
-					if (channel == selectedChannel.channel) { selectedChannel.kNameShort2 = data; }
+					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort2 = data; }
+					selectedChannelCache[channel].kNameShort2 = data;
 					break;
 			}
 		}
@@ -656,17 +663,19 @@ namespace TouchFaders_MIDI {
 			if (channel < config.mixer.channelCount - 8) { // TODO: make this proper and UI and stuff
 				channelConfig.channels[channel].level = level;
 
+				selectedChannelCache[channel].level = level;
 				Dispatcher.Invoke(() => {
 					if (midiProgressBar.Value >= midiProgressBar.Maximum) {
-						if (channel == selectedChannel.channel) {
+						if (channel == selectedChannel.channelIndex) {
 							selectedChannel.level = level;
 						} else {
-							selectedChannel.channel = channel;
+							selectedChannel = selectedChannelCache[channel];
+							selectedChannel.channelIndex = channel;
 							selectedChannel.level = level;
 							//_ = GetSelectedChannelInfo(); // TODO: if too many channels are moved in quick succession, overload occurs
 						}
-						UpdateSelectedChannel();
 					}
+					UpdateSelectedChannel();
 				});
 			} else { // Now it's for the application audio mixer stuff
 				int index = config.mixer.channelCount - channel - 1;
@@ -750,19 +759,21 @@ namespace TouchFaders_MIDI {
 						   elementLSB == 0x15 &&
 						   indexMSB == 0x00 &&
 						   indexLSB == 0x00) {    // kIconID
-					if (channel == selectedChannel.channel) {
+					if (channel == selectedChannel.channelIndex) {
 						selectedChannel.iconID = bytes[15];
 						UpdateSelectedChannel();
 					}
+					selectedChannelCache[channel].iconID = bytes[15];
 				} else if (dataCategory == 0x01 &&  // kIconInputChannel
 						   elementMSB == 0x01 &&
 						   elementLSB == 0x15 &&
 						   indexMSB == 0x00 &&
 						   indexLSB == 0x01) {    // KIconBgColor
-					if (channel == selectedChannel.channel) {
+					if (channel == selectedChannel.channelIndex) {
 						selectedChannel.bgColourID = bytes[15];
 						UpdateSelectedChannel();
 					}
+					selectedChannelCache[channel].bgColourID = bytes[15];
 				}
 			} else {
 				byte dataCategory = bytes[4];
@@ -898,7 +909,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public async Task SendSysEx (NormalSysExEvent normalSysExEvent) {
-			queue.Enqueue(normalSysExEvent);
+			midiQueue.Enqueue(normalSysExEvent);
 			await Task.Run(() => {
 				Thread.Sleep(25);
 			});

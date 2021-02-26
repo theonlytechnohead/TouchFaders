@@ -1,6 +1,5 @@
 {
   "config_version": 4,
-  "oscDevices_version": 1,
   "sendsToMix_version": 1,
   "channelConfig_version": 2,
   "mixer": {
@@ -12,13 +11,5 @@
   "mixFaders_version": 0,
   "device_ID": 1,
   "NUM_CHANNELS": 64,
-  "NUM_MIXES": 16,
-  "linkedChannels": {
-    "links": [
-      {
-        "leftChannel": 4,
-        "rightChannel": 5
-      }
-    ]
-  }
+  "NUM_MIXES": 16
 }

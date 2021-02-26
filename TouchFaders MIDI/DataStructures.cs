@@ -15,11 +15,8 @@ namespace TouchFaders_MIDI {
 		// Constants and stuff goes here
 		public class appconfig {
 			public int? config_version { get; set; }
-			public int oscDevices_version { get; set; }
 			public int sendsToMix_version { get; set; }
 
-			public int? channelNames_version { get; set; } // Deprecated
-			public int? channelFaders_version { get; set; } // Deprecated
 			public int? channelConfig_version { get; set; } // Replaces channelNames_version and channelFaders_version
 
 			public Mixer mixer { get; set; }
@@ -28,18 +25,12 @@ namespace TouchFaders_MIDI {
 			public int device_ID { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
-			public LinkedChannels linkedChannels { get; set; } // For compatibility
 
 			public static appconfig defaultValues () {
 				return new appconfig() {
-					config_version = 4,
-					oscDevices_version = 1,
+					config_version = 5,
 					sendsToMix_version = 1,
-
-					channelNames_version = null,
-					channelFaders_version = null,
 					channelConfig_version = 2,
-
 					mixer = Mixer.LS932,
 					mixNames_version = 0,
 					mixFaders_version = 0,
@@ -60,18 +51,11 @@ namespace TouchFaders_MIDI {
 					config.config_version = appconfig.defaultValues().config_version;
 				}
 				if (config.config_version >= 1) {
-					if (config.oscDevices_version == 0) {
-						config.oscDevices_version = appconfig.defaultValues().config_version.Value;
-					}
 					if (config.sendsToMix_version == 0) {
 						config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
 					}
 					if (config.channelConfig_version == null) {
-						if (config.channelNames_version == 1 && config.channelFaders_version == 1) {
-							config.channelConfig_version = 1;
-						} else {
-							config.channelConfig_version = appconfig.defaultValues().channelConfig_version;
-						}
+						config.channelConfig_version = appconfig.defaultValues().channelConfig_version;
 					}
 				}
 				if (config.config_version >= 2) {
@@ -88,12 +72,11 @@ namespace TouchFaders_MIDI {
 					}
 				}
 				if (config.config_version >= 4) {
-
 					if (config.mixer == null) {
 						config.mixer = appconfig.defaultValues().mixer;
 					}
 				}
-				if (config.config_version >= 5) {
+				if (config.config_version >= 6) {
 					if (config.mixNames_version == 0) {
 						config.mixNames_version = appconfig.defaultValues().mixNames_version;
 					}
@@ -108,6 +91,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public static async Task Save (appconfig config) {
+			if (config == null) return;
 			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, };
 			_ = Directory.CreateDirectory("config");
 			using (FileStream fs = File.Create("config/config.txt")) {
@@ -158,47 +142,11 @@ namespace TouchFaders_MIDI {
 			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<List<int>> levels = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 823).ToList()).ToList(); // Initalized to 0dB
+		private List<List<int>> levels = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 623).ToList()).ToList(); // Initalized to -10dB
 
 		public List<List<int>> sendLevel {
 			get { return levels; }
 			set { levels = value; sendsChanged?.Invoke(this, new EventArgs()); }
-		}
-	}
-
-	// Deprecated, replaced by ChannelConfig
-	public class ChannelNames {
-		public event EventHandler channelNamesChanged;
-
-		private List<string> channelNames = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select $"CH {channel}").ToList();
-
-		public string this[int index] {
-			get { return channelNames[index]; }
-			set { channelNames[index] = value; channelNamesChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		public List<string> names {
-			get => channelNames; set {
-				channelNames = value;
-				channelNamesChanged?.Invoke(this, new EventArgs());
-			}
-		}
-	}
-
-	// Deprecated, replaced by ChannelConfig
-	public class ChannelFaders {
-		public event EventHandler channelFadersChanged;
-
-		private List<int> channelFaders = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 823).ToList();
-
-		public int this[int index] {
-			get { return channelFaders[index]; }
-			set { channelFaders[index] = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		public List<int> faders {
-			get { return channelFaders; }
-			set { channelFaders = value; channelFadersChanged?.Invoke(this, new EventArgs()); }
 		}
 	}
 
@@ -236,38 +184,6 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
-	// Deprecated, replaced by ChannelConfig (and can be removed)
-	public class LinkedChannel {
-		public int leftChannel { get; set; }
-		public int rightChannel { get; set; }
-
-		public bool isLinked (int index) {
-			if (index == leftChannel || index == rightChannel) {
-				return true;
-			}
-			return false;
-		}
-	}
-	public class LinkedChannels {
-		public List<LinkedChannel> links { get; set; }
-
-		public int getIndex (int index) {
-			foreach (LinkedChannel linkedChannel in links) {
-				if (linkedChannel.isLinked(index)) {
-					if (index == linkedChannel.leftChannel) {
-						return linkedChannel.rightChannel;
-					}
-					return linkedChannel.leftChannel;
-				}
-			}
-			return -1;
-		}
-
-		public LinkedChannels () {
-			links = new List<LinkedChannel>();
-		}
-	}
-
 	public class ChannelConfig {
 		public class Channel {
 			public event EventHandler channelLevelChanged;
@@ -285,7 +201,7 @@ namespace TouchFaders_MIDI {
 		public class SelectedChannel {
 			private Channel currentChannel { get; set; }
 
-			public int channel { get; set; }
+			public int channelIndex { get; set; }
 			public string name {
 				get {
 					if (kNameShort1 != null && kNameShort2 != null) {
@@ -360,7 +276,7 @@ namespace TouchFaders_MIDI {
 
 			public SelectedChannel () {
 				currentChannel = new Channel();
-				channel = 0;
+				channelIndex = 0;
 				name = "Ch 1";
 				level = 823;
 				iconID = 22;
