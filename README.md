@@ -1,7 +1,5 @@
 # TouchFaders MIDI
 
-GitHub repo for TouchFaders MIDI program, developed by Craig Anderson
-
 ## What is this?
 The YAMAHA® LS9 digital mixing console for audio is a fantastically capable device. There exists three issues with it:
 
@@ -19,7 +17,6 @@ Requests received from OSC devices are also issued to the console on their behal
 ## Instructions for use:
 You need:
 * A USB to MIDI adapter / cable/ interface (to make the PC talk to the console)
-  * Alternatively, you can try modifying my code to support the Network MIDI driver from YAMAHA® (Network driver v1.2.4 is compatible with Win10 2004), which you would use with Studio Manager
 * A computer
 * A wireless LAN network
 * Mobile device(s) with the [TouchFaders mobile app](http://github.com/theonlytechnohead/TouchFaders_APP) installed (for Android only currently)
@@ -94,4 +91,6 @@ That's not a legal licence, but also it's not like I can stop you anyway
 Please make a pull request when you do, otherwise suggestions via the 'Issues' tab are appreciated
 
 ---
+GitHub repo for TouchFaders MIDI program, developed by Craig Anderson
+
 "Yamaha" is a registered trademark of Yamaha Corporation.
