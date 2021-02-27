@@ -1,21 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj": {}
+    "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj": {
+    "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj",
+        "projectUniqueName": "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj",
         "projectName": "TouchFaders MIDI",
-        "projectPath": "C:\\Users\\HP\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj",
-        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\obj\\",
+        "projectPath": "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders MIDI.csproj",
+        "packagesPath": "C:\\Users\\desktop\\.nuget\\packages\\",
+        "outputPath": "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\desktop\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
