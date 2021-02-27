@@ -170,6 +170,7 @@ namespace TouchFaders_MIDI {
 				infoWindow = new InfoWindow();
 				infoWindow.DataContext = this.DataContext;
 				audioMixerWindow = new AudioMixerWindow();
+				audioMixerWindow.Visibility = Visibility.Hidden;
 
 				infoWindow.KeyDown += MainWindow_KeyDown;
 				audioMixerWindow.KeyDown += MainWindow_KeyDown;

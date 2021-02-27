@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -94,6 +95,7 @@ namespace TouchFaders_MIDI {
 							try {
 								Dispatcher.Invoke(() => {
 									sessionProgressBar.Value = newValue;
+									sessionProgressBarGrey.Value = newValue;
 									lastValue = newValue;
 								});
 							} catch (TaskCanceledException) {
@@ -106,6 +108,12 @@ namespace TouchFaders_MIDI {
 			};
 
 			UpdateUI(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
+			Dispatcher.Invoke(() => {
+				var margin = sessionProgressBar.Margin;
+				margin.Right = (1 - session.SimpleAudioVolume.MasterVolume) * sessionProgressBar.ActualWidth;
+				Console.WriteLine($"Master volume: {session.SimpleAudioVolume.MasterVolume}, margin (right): {margin.Right}");
+				sessionProgressBar.Margin = margin;
+			});
 		}
 
 		private void SessionVolumeChanged (object sender, float newVolume, bool newMute) {
@@ -136,6 +144,9 @@ namespace TouchFaders_MIDI {
 				SolidColorBrush borderBrush = new SolidColorBrush();
 				borderBrush.Color = System.Windows.Media.Color.FromArgb(100, 200, 200, 200);
 				BorderBrush = borderBrush;
+				sessionProgressBar.Foreground = new SolidColorBrush() { Color = Color.FromRgb(176, 176, 176) };
+				Color greyColour = ((SolidColorBrush)sessionProgressBarGrey.Foreground).Color;
+				sessionProgressBarGrey.Foreground = new SolidColorBrush() { Color = Color.FromArgb(0, greyColour.R, greyColour.G, greyColour.B) };
 			} else {
 				SolidColorBrush backgroundBrush = new SolidColorBrush();
 				Color bgColour = System.Windows.Media.Color.FromArgb(100, 255, 255, 255);
@@ -145,7 +156,15 @@ namespace TouchFaders_MIDI {
 				SolidColorBrush borderBrush = new SolidColorBrush();
 				borderBrush.Color = bgColour;
 				BorderBrush = borderBrush;
+				sessionProgressBar.Foreground = new SolidColorBrush() { Color = Color.FromRgb(6, 176, 37) };
+				Color greyColour = ((SolidColorBrush)sessionProgressBarGrey.Foreground).Color;
+				sessionProgressBarGrey.Foreground = new SolidColorBrush() { Color = Color.FromArgb(255, greyColour.R, greyColour.G, greyColour.B) };
 			}
+		}
+
+
+		public void UpdateUI (object sender) {
+			UpdateUI(sender, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
 		}
 
 		private void UpdateUI (object sender, float newVolume, bool newMute) {
@@ -156,6 +175,9 @@ namespace TouchFaders_MIDI {
 				sessionSlider.ValueChanged -= SessionSlider_ValueChanged;
 				sessionSlider.Value = newVolume;
 				sessionCheckBox.IsChecked = newMute;
+				var margin = sessionProgressBar.Margin;
+				margin.Right = (1 - newVolume) * sessionProgressBarGrey.ActualWidth;
+				sessionProgressBar.Margin = margin;
 				sessionSlider.ValueChanged += SessionSlider_ValueChanged;
 			}
 		}

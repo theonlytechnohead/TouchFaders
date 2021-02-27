@@ -48,6 +48,12 @@ namespace TouchFaders_MIDI {
 
 			ListDevices();
 
+			Activated += (_, __) => {
+				foreach (SessionUI sessionUI in sessions) {
+					sessionUI.UpdateUI(this);
+				}
+			};
+
 			//Console.WriteLine((sessionStackPanel.Children[0] as SessionUI).sessionLabel);
 		}
 
