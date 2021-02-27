@@ -1,5 +1,5 @@
 # TouchFaders MIDI
-
+![Screenshot of application](/Screenshot.png?raw=true "TouchFaders MIDI application")
 ## What is this?
 The YAMAHA® LS9 digital mixing console for audio is a fantastically capable device. There exists three issues with it:
 
