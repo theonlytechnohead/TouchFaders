@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -205,7 +206,37 @@ namespace TouchFaders_MIDI {
 			public string name {
 				get {
 					if (kNameShort1 != null && kNameShort2 != null) {
-						return BitConverter.ToString(kNameShort1).Replace("-", "") + "\n" + BitConverter.ToString(kNameShort2).Replace("-", "");
+						var kNameShort1_7b = string.Concat(kNameShort1.Select(b => Convert.ToString(b, 2).PadLeft(8, '0')));
+						var kNameShort2_7b = string.Concat(kNameShort2.Select(b => Convert.ToString(b, 2).PadLeft(8, '0')));
+						string kNameShort1_8b = "";
+						for (int i = 0; i < kNameShort1_7b.Length; i++) {
+							if (i % 8 != 0) {
+								kNameShort1_8b += kNameShort1_7b[i];
+							}
+						}
+						string kNameShort2_8b = "";
+						for (int i = 0; i < kNameShort2_7b.Length; i++) {
+							if (i % 8 != 0) {
+								kNameShort2_8b += kNameShort2_7b[i];
+							}
+						}
+						kNameShort1_8b = kNameShort1_8b.Substring(3); // skip the first nibble, not needed
+						kNameShort2_8b = kNameShort2_8b.Substring(3); // as above
+						string name1 = "";
+						string char1 = kNameShort1_8b.Substring(0, 8);
+						string char2 = kNameShort1_8b.Substring(8, 8);
+						string char3 = kNameShort1_8b.Substring(16, 8);
+						string char4 = kNameShort1_8b.Substring(24, 8);
+						name1 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char1));
+						name1 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char2));
+						name1 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char3));
+						name1 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char4));
+						string name2 = "";
+						string char5 = kNameShort2_8b.Substring(0, 8);
+						string char6 = kNameShort2_8b.Substring(8, 8);
+						name2 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char5));
+						name2 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char6));
+						return name1 + name2;
 					} else {
 						return currentChannel.name;
 					}
@@ -281,6 +312,18 @@ namespace TouchFaders_MIDI {
 				level = 823;
 				iconID = 22;
 				bgColourID = 0;
+			}
+
+			byte[] GetBytesFromBinaryString (string binary) {
+				var list = new List<byte>();
+
+				for (int i = 0; i < binary.Length; i += 8) {
+					string t = binary.Substring(i, 8);
+
+					list.Add(Convert.ToByte(t, 2));
+				}
+
+				return list.ToArray();
 			}
 
 		}
