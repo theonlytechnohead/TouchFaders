@@ -59,9 +59,9 @@ Maybe a story... soon.
 - [x] Channel configuration editor
  - [x] Channel names
  - [x] Channel link group
-- [ ] Selected channel information, take two
+- [x] Selected channel information, take two
   - [x] Channel level
-  - [ ] Channel name (50%, I've emailed about decoding the data)
+  - [x] Channel name (ASCII, once you correct the 7bit encoding of MIDI from 5bytes down to 4bytes + a nibble of 0's)
   - [x] Channel colour
   - [x] Channel icon
 - [x] WinAPI audio session control via MIDI! (no name though, as pending above)
