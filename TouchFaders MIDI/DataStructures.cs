@@ -197,6 +197,22 @@ namespace TouchFaders_MIDI {
 			public string name { get; set; }
 			public int level { get { return fader; } set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelChangedEventArgs() { linkGroup = linkGroup }); } }
 			public char linkGroup { get; set; }
+
+			public static string kNameShortToString (byte[] kNameShort) {
+				string raw_MIDI = string.Concat(kNameShort.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))); // convert the byte array to a string of 0's and 1's
+				string decoded_MIDI = "";
+				for (int i = 0; i < kNameShort.Length; i++) {
+					if (i % 8 != 0) { // if it's not the 8th bit in a byte
+						decoded_MIDI += raw_MIDI[i]; // add it to the new string, reforming the original 8-bit encoding
+					}
+				}
+				decoded_MIDI = decoded_MIDI.Substring(3); // skip the first nibble-ish, it's a leftover artifact of the 7b/8b encoding
+				List<byte> list = new List<byte>();
+				for (int i = 0; i < decoded_MIDI.Length; i += 8) {
+					list.Add(Convert.ToByte(decoded_MIDI.Substring(i, 8), 2)); // convert segments 8 bits to a byte, and put in a list
+				}
+				return Encoding.ASCII.GetString(list.ToArray());
+			}
 		}
 
 		public class SelectedChannel {
@@ -236,7 +252,7 @@ namespace TouchFaders_MIDI {
 						string char6 = kNameShort2_8b.Substring(8, 8);
 						name2 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char5));
 						name2 += Encoding.ASCII.GetString(GetBytesFromBinaryString(char6));
-						return name1 + name2;
+						return Channel.kNameShortToString(kNameShort1) + name2;
 					} else {
 						return currentChannel.name;
 					}
