@@ -39,9 +39,8 @@ Once that's all done, follow the below steps:
 	* If you select a mix, and something doesn't look right, press the 'O' key in TouchFaders MIDI to resync OSC devices
 1. You're done!
 
-## How did I make this happen?
-A lot of research and frustration.
-Maybe a story... soon.
+## I want to do something similar to this, but I don't know how!
+Check out the [Wiki](../../wiki)
 
 ## Todo
 - [x] Add general config file for storing data about settings
