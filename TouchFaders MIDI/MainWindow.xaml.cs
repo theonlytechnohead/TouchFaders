@@ -655,6 +655,9 @@ namespace TouchFaders_MIDI {
 
 			byte inputPatch = bytes[15];
 			channelConfig.channels[channel].patch = inputPatch;
+			foreach (oscDevice device in devices) {
+				device.SendChannelPatch(channel + 1, inputPatch);
+			}
 		}
 
 		void HandleChannelOn (byte[] bytes) {

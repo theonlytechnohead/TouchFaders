@@ -71,6 +71,7 @@ namespace TouchFaders_MIDI {
 						currentMix = mix;
 						ResendMixFaders();
 						SendChannelNames();
+						SendChannelPatches();
 						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
@@ -102,11 +103,26 @@ namespace TouchFaders_MIDI {
 		public void SendChannelNames () {
 			for (int label = 1; label <= MainWindow.instance.channelConfig.channels.Count; label++) {
 				SendChannelName(label, MainWindow.instance.channelConfig.channels[label - 1].name);
+				Thread.Sleep(3);
 			}
 		}
 
 		public void SendChannelName (int channel, string name) {
 			OscMessage message = new OscMessage($"/label/{channel}", name);
+			output.Send(message);
+		}
+
+		public void SendChannelPatches () {
+			for (int patch = 1; patch <= MainWindow.instance.channelConfig.channels.Count; patch++) {
+				SendChannelPatch(patch, patch);
+				Thread.Sleep(3);
+			}
+		}
+
+		public void SendChannelPatch (int channel, int patch) {
+			string patchIn = "IN " + MainWindow.instance.channelConfig.channels[patch - 1].patch;
+			OscMessage message = new OscMessage($"/patch/{channel}", patchIn);
+			//Console.WriteLine($"Sending {message.Address}, {message.Arguments[0]}");
 			output.Send(message);
 		}
 
