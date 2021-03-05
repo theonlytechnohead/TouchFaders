@@ -632,12 +632,12 @@ namespace TouchFaders_MIDI {
 
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
-					channelConfig.channels[channel].name = BitConverter.ToString(data).Replace("-", "");
+					channelConfig.channels[channel].name = ChannelConfig.Channel.kNameShortToString(data);
 					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort1 = data; }
 					selectedChannelCache[channel].kNameShort1 = data;
 					break;
 				case 0x01: // kNameShort2
-					channelConfig.channels[channel].name += " " + BitConverter.ToString(data).Replace("-", "");
+					channelConfig.channels[channel].name += ChannelConfig.Channel.kNameShortToString(data);
 					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort2 = data; }
 					selectedChannelCache[channel].kNameShort2 = data;
 					break;
