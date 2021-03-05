@@ -1,73 +1,73 @@
 {
   "channels": [
     {
-      "name": "0309486661 0771000000",
+      "name": "ch 1\u0000\u0000\u0000\u0000",
       "level": 823,
       "linkGroup": " ",
       "patch": 1
     },
     {
-      "name": "0201004020 0201440000",
+      "name": "ch 2\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 2
     },
     {
-      "name": "061B204033 0000000000",
+      "name": "ch 3\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 3
     },
     {
-      "name": "061B204034 0000000000",
+      "name": "ch 4\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 4
     },
     {
-      "name": "061B204035 0000000000",
+      "name": "ch 5\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 5
     },
     {
-      "name": "061B204036 0000000000",
+      "name": "ch 6\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 6
     },
     {
-      "name": "061B204037 0000000000",
+      "name": "ch 7\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 7
     },
     {
-      "name": "061B204038 0000000000",
+      "name": "ch 8\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 8
     },
     {
-      "name": "061B204039 0000000000",
+      "name": "ch 9\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 9
     },
     {
-      "name": "061B206230 0000000000",
+      "name": "ch10\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 10
     },
     {
-      "name": "061B206231 0000000000",
+      "name": "ch11\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 11
     },
     {
-      "name": "061B206232 0000000000",
+      "name": "ch12\u0000\u0000\u0000\u0000",
       "level": 0,
       "linkGroup": " ",
       "patch": 12

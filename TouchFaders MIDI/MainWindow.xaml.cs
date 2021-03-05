@@ -638,6 +638,9 @@ namespace TouchFaders_MIDI {
 					break;
 				case 0x01: // kNameShort2
 					channelConfig.channels[channel].name += ChannelConfig.Channel.kNameShortToString(data);
+					foreach (oscDevice device in devices) {
+						device.SendChannelName(channel + 1, channelConfig.channels[channel].name);
+					}
 					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort2 = data; }
 					selectedChannelCache[channel].kNameShort2 = data;
 					break;
