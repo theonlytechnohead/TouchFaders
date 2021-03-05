@@ -32,7 +32,7 @@ namespace TouchFaders_MIDI {
 		MMDevice selectedDevice;
 		AudioSessionManager2 audioSessionManager2;
 
-		List<SessionUI> sessions = new List<SessionUI>();
+		public List<SessionUI> sessions = new List<SessionUI>();
 
 		public AudioMixerWindow () {
 			InitializeComponent();
@@ -107,6 +107,7 @@ namespace TouchFaders_MIDI {
 				sessionUI.SetSession(session);
 				sessionStackPanel.Children.Add(sessionUI);
 				this.sessions.Add(sessionUI);
+				MainWindow.instance.SendAudioSession(sessions.IndexOf(sessionUI), session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute, true);
 				//Session_OnSimpleVolumeChanged(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
 				SessionVolumeChanged(session, session.SimpleAudioVolume.MasterVolume, session.SimpleAudioVolume.Mute);
 				//sessionUI.session.OnSimpleVolumeChanged += Session_OnSimpleVolumeChanged;

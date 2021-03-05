@@ -914,13 +914,14 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendAllAudioSessions () {
-			for (int i = 0; i < audioMixerWindow.sessionStackPanel.Children.Count; i++) {
-				SessionUI sessionUI = audioMixerWindow.sessionStackPanel.Children[i] as SessionUI;
-				SendAudioSession(i, sessionUI.session.SimpleAudioVolume.MasterVolume, sessionUI.session.SimpleAudioVolume.Mute);
+			for (int i = 0; i < audioMixerWindow.sessions.Count; i++) {
+				SessionUI sessionUI = audioMixerWindow.sessions[i];
+				//Console.WriteLine($"Sending {sessionUI.sessionLabel} to ch {config.mixer.channelCount - i}");
+				SendAudioSession(i, sessionUI.session.SimpleAudioVolume.MasterVolume, sessionUI.session.SimpleAudioVolume.Mute, true);
 			}
 		}
 
-		public void SendAudioSession (int index, float volume, bool mute) {
+		public void SendAudioSession (int index, float volume, bool mute, bool sendIt = false) {
 			byte device_byte = 0x10;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 
@@ -950,9 +951,9 @@ namespace TouchFaders_MIDI {
 			byte[] dataOn = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x31, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, on, 0xF7 };
 			sessionOn.Data = dataOn;
 
-			bool enabled = false;
-			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
-			if (enabled) {
+			bool canContinue = false;
+			Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
+			if (canContinue || sendIt) {
 				//Console.WriteLine(BitConverter.ToString(dataOn));
 				_ = SendSysEx(sessionVolume);
 				_ = SendSysEx(sessionOn);
