@@ -8,12 +8,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="10*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="deviceComboBox" VerticalAlignment="Center" Margin="35,0"/>
+        <ComboBox x:Name="deviceComboBox" Margin="35,0" VerticalAlignment="Center"/>
         <StackPanel x:Name="sessionStackPanel" Grid.Row="1" Margin="35,0"/>
 
     </Grid>

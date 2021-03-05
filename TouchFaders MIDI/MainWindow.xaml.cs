@@ -155,6 +155,7 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
 			for (int i = 0; i < config.mixer.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
+				channelConfig.channels[i].patch = i + 1;
 			}
 
 			// MIDI
@@ -338,6 +339,7 @@ namespace TouchFaders_MIDI {
 				await GetAllFaderValues();
 				await GetChannelFaders();
 				await GetAllChannelsLinkGroup();
+				await RequestChannelsPatch();
 				selectedChannelIndexToGet.Push(0);
 				//await GetChannelNames();
 			}
@@ -462,9 +464,22 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kIconBgColour);
 		}
 
-		async Task GetAllChannelsLinkGroup () {
+		async Task RequestChannelsPatch () {
+			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
+				await RequestChannelPatch(channel);
+			}
+		}
+
+		async Task RequestChannelPatch (int channel) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
+			NormalSysExEvent kPatchInInput = new NormalSysExEvent();
+			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x0B, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
+			kPatchInInput.Data = data;
+			await SendSysEx(kPatchInInput);
+		}
+
+		async Task GetAllChannelsLinkGroup () {
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				await GetChannelLinkGroup(channel);
 			}
@@ -629,6 +644,16 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		void HandleChannelPatch (byte[] bytes) {
+			byte channelMSB = bytes[9];    // channel number MSB
+			byte channelLSB = bytes[10];    // channel number LSB
+			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
+			channel += channelLSB;          // Add LSB
+
+			byte inputPatch = bytes[15];
+			channelConfig.channels[channel].patch = inputPatch;
+		}
+
 		void HandleChannelOn (byte[] bytes) {
 			byte channelMSB = bytes[9];    // channel number MSB
 			byte channelLSB = bytes[10];    // channel number LSB
@@ -767,6 +792,10 @@ namespace TouchFaders_MIDI {
 						   elementMSB == 0x01 &&
 						   elementLSB == 0x06) { // kGroupID_Input
 					HandleChannelLinkGroup(bytes);
+				} else if (dataCategory == 0x01 &&
+						   elementMSB == 0x01 &&
+						   elementLSB == 0x0B) { // kPatchInInput
+					HandleChannelPatch(bytes);
 				} else if (dataCategory == 0x01 &&  // kIconInputChannel
 						   elementMSB == 0x01 &&
 						   elementLSB == 0x15 &&
@@ -960,6 +989,7 @@ namespace TouchFaders_MIDI {
 			int total = config.NUM_CHANNELS * config.NUM_MIXES; // sends to mix levels
 			total += config.NUM_CHANNELS; // channel levels
 			total += config.NUM_CHANNELS; // channel link groups
+			total += config.NUM_CHANNELS; // channel patch in (inputs)
 										  //total += config.NUM_CHANNELS; // channel names?
 			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
 		}

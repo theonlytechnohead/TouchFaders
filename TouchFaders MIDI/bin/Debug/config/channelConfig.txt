@@ -3,322 +3,386 @@
     {
       "name": "0309486661 0771000000",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 1
     },
     {
       "name": "0201004020 0201440000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 2
     },
     {
       "name": "061B204033 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 3
     },
     {
       "name": "061B204034 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 4
     },
     {
       "name": "061B204035 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 5
     },
     {
       "name": "061B204036 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 6
     },
     {
       "name": "061B204037 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 7
     },
     {
       "name": "061B204038 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 8
     },
     {
       "name": "061B204039 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 9
     },
     {
       "name": "061B206230 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 10
     },
     {
       "name": "061B206231 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 11
     },
     {
       "name": "061B206232 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 12
     },
     {
       "name": "061B206233 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 13
     },
     {
       "name": "061B206234 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 14
     },
     {
       "name": "061B206235 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 15
     },
     {
       "name": "061B206236 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 16
     },
     {
       "name": "061B206237 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 17
     },
     {
       "name": "061B206238 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 18
     },
     {
       "name": "061B206239 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 19
     },
     {
       "name": "061B206430 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 20
     },
     {
       "name": "061B206431 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 21
     },
     {
       "name": "061B206432 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 22
     },
     {
       "name": "061B206433 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 23
     },
     {
       "name": "061B206434 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 24
     },
     {
       "name": "061B206435 0000000000",
       "level": 0,
-      "linkGroup": "A"
+      "linkGroup": "A",
+      "patch": 25
     },
     {
       "name": "061B206436 0000000000",
       "level": 0,
-      "linkGroup": "A"
+      "linkGroup": "A",
+      "patch": 26
     },
     {
       "name": "061B206437 0000000000",
       "level": 0,
-      "linkGroup": "B"
+      "linkGroup": "B",
+      "patch": 27
     },
     {
       "name": "061B206438 0000000000",
       "level": 0,
-      "linkGroup": "B"
+      "linkGroup": "B",
+      "patch": 28
     },
     {
       "name": "061B206439 0000000000",
       "level": 0,
-      "linkGroup": "C"
+      "linkGroup": "C",
+      "patch": 29
     },
     {
       "name": "061B206630 0000000000",
       "level": 0,
-      "linkGroup": "C"
+      "linkGroup": "C",
+      "patch": 30
     },
     {
       "name": "061B206631 0000000000",
       "level": 0,
-      "linkGroup": "C"
+      "linkGroup": "C",
+      "patch": 31
     },
     {
       "name": "061B206632 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 32
     },
     {
       "name": "061B206633 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 33
     },
     {
       "name": "061B206634 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 34
     },
     {
       "name": "061B206635 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 35
     },
     {
       "name": "061B206636 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 36
     },
     {
       "name": "061B206637 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 37
     },
     {
       "name": "061B206638 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 38
     },
     {
       "name": "061B206639 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 39
     },
     {
       "name": "061B206830 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 40
     },
     {
       "name": "061B206831 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 41
     },
     {
       "name": "061B206832 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 42
     },
     {
       "name": "061B206833 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 43
     },
     {
       "name": "061B206834 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 44
     },
     {
       "name": "061B206835 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 45
     },
     {
       "name": "061B206836 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 46
     },
     {
       "name": "061B206837 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 47
     },
     {
       "name": "061B206838 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 48
     },
     {
       "name": "061B206839 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 49
     },
     {
       "name": "061B206A30 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 50
     },
     {
       "name": "061B206A31 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 51
     },
     {
       "name": "061B206A32 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 52
     },
     {
       "name": "061B206A33 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 53
     },
     {
       "name": "061B206A34 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 54
     },
     {
       "name": "061B206A35 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 55
     },
     {
       "name": "061B206A36 0000000000",
       "level": 0,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 56
     },
     {
       "name": "CH 57",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 57
     },
     {
       "name": "Ch 58",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 58
     },
     {
       "name": "Ch 59",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 59
     },
     {
       "name": "CH 60",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 60
     },
     {
       "name": "CH 61",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 61
     },
     {
       "name": "Ch 62",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 62
     },
     {
       "name": "Ch 63",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 63
     },
     {
       "name": "CH 64",
       "level": 823,
-      "linkGroup": " "
+      "linkGroup": " ",
+      "patch": 64
     }
   ]
 }

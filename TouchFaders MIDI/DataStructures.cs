@@ -197,6 +197,7 @@ namespace TouchFaders_MIDI {
 			public string name { get; set; }
 			public int level { get { return fader; } set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelChangedEventArgs() { linkGroup = linkGroup }); } }
 			public char linkGroup { get; set; }
+			public int patch { get; set; }
 
 			public static string kNameShortToString (byte[] kNameShort) {
 				string raw_MIDI = string.Concat(kNameShort.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))); // convert the byte array to a string of 0's and 1's

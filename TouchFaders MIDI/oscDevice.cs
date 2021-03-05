@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace TouchFaders_MIDI {
 	public class oscDevice {
@@ -69,6 +70,7 @@ namespace TouchFaders_MIDI {
 					if (message.Arguments[0].ToString() == "1") {
 						currentMix = mix;
 						ResendMixFaders();
+						SendChannelNames();
 						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
@@ -95,6 +97,17 @@ namespace TouchFaders_MIDI {
 				ResendMixNames(mix, channelNames);
 				Thread.Sleep(3);
 			}
+		}
+
+		public void SendChannelNames () {
+			for (int label = 1; label <= MainWindow.instance.channelConfig.channels.Count; label++) {
+				SendChannelName(label, MainWindow.instance.channelConfig.channels[label - 1].name);
+			}
+		}
+
+		public void SendChannelName (int channel, string name) {
+			OscMessage message = new OscMessage($"/label/{channel}", name);
+			output.Send(message);
 		}
 
 		public void sendOSCMessage (int mix, int channel, int value) {

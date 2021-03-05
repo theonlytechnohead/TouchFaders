@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
-             d:DesignHeight="70" d:DesignWidth="230" Background="White" MinWidth="200" MinHeight="70" MaxHeight="70" BorderThickness="2">
+             d:DesignHeight="55" d:DesignWidth="230" Background="White" MinWidth="200" MinHeight="55" MaxHeight="55" BorderThickness="2">
     <UserControl.Resources>
         <SolidColorBrush x:Key="SliderThumb.Static.Foreground" Color="#FFE5E5E5"/>
         <SolidColorBrush x:Key="SliderThumb.MouseOver.Background" Color="#FFDCECFC"/>
@@ -263,7 +263,6 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="2*"/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
