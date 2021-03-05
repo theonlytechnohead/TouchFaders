@@ -155,7 +155,6 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
 			for (int i = 0; i < config.mixer.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
-				channelConfig.channels[i].patch = i + 1;
 			}
 
 			// MIDI
@@ -399,7 +398,9 @@ namespace TouchFaders_MIDI {
 
 		void GetSelectedChannelInfo (object state) {
 			bool canContinue = false;
-			Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
+			try {
+				Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
+			} catch (TaskCanceledException) { }
 			if (!canContinue) return;
 			if (selectedChannelIndexToGet.Count == 0) {
 				return;
