@@ -22,6 +22,7 @@ namespace TouchFaders_MIDI {
 
 		List<oscDevice> devices = new List<oscDevice>();
 
+		MIDI_Functions MIDI;
 		OutputDevice Console_in;
 		InputDevice Console_out;
 		Timer queueTimer;
@@ -332,14 +333,14 @@ namespace TouchFaders_MIDI {
 					Title = "TouchFaders MIDI | MIDI started";
 					Console.WriteLine("Started MIDI");
 				});
-				queueTimer = new Timer(sendQueueItem, null, 0, 20);
-				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000);
-				selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
+				queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
 				await GetAllFaderValues();
 				await GetChannelFaders();
 				await GetAllChannelsLinkGroup();
 				await RequestChannelsPatch();
 				selectedChannelIndexToGet.Push(0);
+				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000);
+				selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
 				SendAllAudioSessions();
 				//await GetChannelNames();
 			}

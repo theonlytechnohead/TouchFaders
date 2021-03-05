@@ -97,32 +97,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Configuration\AppConfiguration.cs" />
     <Compile Include="BroadcastUDPClient.cs" />
-    <Compile Include="SessionUI.xaml.cs">
+    <Compile Include="WinSessionMixer\SessionUI.xaml.cs">
       <DependentUpon>SessionUI.xaml</DependentUpon>
     </Compile>
-    <None Include="Win32.cs" />
-    <Page Include="AudioMixerWindow.xaml">
+    <Page Include="WinSessionMixer\AudioMixerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ChannelConfigWindow.xaml">
+    <Page Include="Configuration\ChannelConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ConfigWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CreateOSCDevice.xaml">
+    <Page Include="Configuration\ConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="InfoWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="IPTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -134,31 +126,25 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AudioMixerWindow.xaml.cs">
+    <Compile Include="WinSessionMixer\AudioMixerWindow.xaml.cs">
       <DependentUpon>AudioMixerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChannelConfigWindow.xaml.cs">
+    <Compile Include="Configuration\ChannelConfigWindow.xaml.cs">
       <DependentUpon>ChannelConfigWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ConfigWindow.xaml.cs">
+    <Compile Include="Configuration\ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CreateOSCDevice.xaml.cs">
-      <DependentUpon>CreateOSCDevice.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataStructures.cs" />
     <Compile Include="HandleIO.cs" />
     <Compile Include="InfoWindow.xaml.cs">
       <DependentUpon>InfoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IPTextBox.xaml.cs">
-      <DependentUpon>IPTextBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SessionUI.xaml">
+    <Page Include="WinSessionMixer\SessionUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
