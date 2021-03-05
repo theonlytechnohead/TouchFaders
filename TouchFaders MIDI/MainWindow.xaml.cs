@@ -340,6 +340,7 @@ namespace TouchFaders_MIDI {
 				await GetAllChannelsLinkGroup();
 				await RequestChannelsPatch();
 				selectedChannelIndexToGet.Push(0);
+				SendAllAudioSessions();
 				//await GetChannelNames();
 			}
 		}
@@ -723,10 +724,14 @@ namespace TouchFaders_MIDI {
 					UpdateSelectedChannel();
 				});
 			} else { // Now it's for the application audio mixer stuff
-				int index = config.mixer.channelCount - channel - 1;
-				float volume = level / 1023f;
-				audioMixerWindow.UpdateSession(index, volume);
-				//Console.WriteLine($"Updating audio session (index): {index}");
+				bool canUpdate = false;
+				Dispatcher.Invoke(() => canUpdate = midiProgressBar.Value >= midiProgressBar.Maximum);
+				if (canUpdate) {
+					int index = config.mixer.channelCount - channel - 1;
+					float volume = level / 1023f;
+					audioMixerWindow.UpdateSession(index, volume);
+					//Console.WriteLine($"Updating audio session (index): {index}");
+				}
 			}
 		}
 		#endregion
@@ -906,6 +911,13 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
 			if (enabled)
 				_ = SendSysEx(kGroupID_Input);
+		}
+
+		public void SendAllAudioSessions () {
+			for (int i = 0; i < audioMixerWindow.sessionStackPanel.Children.Count; i++) {
+				SessionUI sessionUI = audioMixerWindow.sessionStackPanel.Children[i] as SessionUI;
+				SendAudioSession(i, sessionUI.session.SimpleAudioVolume.MasterVolume, sessionUI.session.SimpleAudioVolume.Mute);
+			}
 		}
 
 		public void SendAudioSession (int index, float volume, bool mute) {
