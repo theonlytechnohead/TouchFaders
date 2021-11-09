@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TouchFaders_MIDI"
         mc:Ignorable="d" Icon="icon.ico"
-        Title="TouchFaders MIDI" Loaded="mainWindow_Loaded" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="275" Width="600" Height="300" UseLayoutRounding="True">
+        Title="TouchFaders MIDI" Loaded="mainWindow_Loaded" WindowStartupLocation="CenterScreen" MinWidth="500" MinHeight="275" Width="600" Height="340" UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
@@ -163,6 +163,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <GroupBox Header="MIDI control" Margin="5, 5, 0, 0" Style="{DynamicResource GroupBoxSquareStyle}">
                 <Grid>
@@ -187,7 +188,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="Console" Margin="5, 0, 0, 5" Style="{DynamicResource GroupBoxSquareStyle}">
+            <GroupBox Grid.Row="1" Header="Console" Margin="5,0,0,0" Style="{DynamicResource GroupBoxSquareStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -216,14 +217,39 @@
 
                 </Grid>
             </GroupBox>
-            <GroupBox Grid.Column="1" Header="Metering" Grid.RowSpan="2" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5">
+            <GroupBox Header="Devices" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,5,5,0" Grid.RowSpan="2" Grid.Column="1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
-                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <ListBox x:Name="devicesListBox"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Metering" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,5" Grid.Row="2" Grid.ColumnSpan="2">
+                <Grid>
+                    <Grid.RowDefinitions>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
