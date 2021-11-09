@@ -29,6 +29,7 @@ namespace TouchFaders_MIDI {
 				}
 			}
 			public ObservableCollection<char> ChannelGroups { get; set; }
+			public int ChannelPatch { get; set; }
 
 			public EventHandler PropertyChanged;
 
@@ -37,13 +38,15 @@ namespace TouchFaders_MIDI {
 				ChannelLevel = channel.level;
 				ChannelGroup = channel.linkGroup;
 				ChannelGroups = ChannelConfig.ChannelGroupChars;
+				ChannelPatch = channel.patch;
 			}
 
 			public ChannelConfig.Channel AsChannel () {
 				return new ChannelConfig.Channel() {
 					name = ChannelName,
 					level = ChannelLevel,
-					linkGroup = ChannelGroup
+					linkGroup = ChannelGroup,
+					patch = ChannelPatch
 				};
 			}
 		}

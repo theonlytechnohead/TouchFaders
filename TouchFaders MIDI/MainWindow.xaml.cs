@@ -21,7 +21,7 @@ namespace TouchFaders_MIDI {
 		public class Device {
 			public string Name { get; set; }
 
-			public override string ToString() {
+			public override string ToString () {
 				return Name;
 			}
 		}
@@ -53,7 +53,7 @@ namespace TouchFaders_MIDI {
 
 
 		#region WindowEvents
-		public MainWindow() {
+		public MainWindow () {
 			InitializeComponent();
 
 			instance = this;
@@ -79,14 +79,14 @@ namespace TouchFaders_MIDI {
 
 		}
 
-		private void mainWindow_Loaded(object sender, RoutedEventArgs e) {
+		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
 			selectedChannel = new ChannelConfig.SelectedChannel();
 			UpdateSelectedChannel();
 			devicesListBox.DataContext = this;
 			devicesListBox.ItemsSource = uiDevices;
 		}
 
-		protected override async void OnClosed(EventArgs e) {
+		protected override async void OnClosed (EventArgs e) {
 			Console.WriteLine("Closing...");
 			infoWindow.Visibility = Visibility.Hidden;
 			infoWindow.Close();
@@ -113,7 +113,7 @@ namespace TouchFaders_MIDI {
 				new PropertyChangedCallback(OnScaleValueChanged),
 				new CoerceValueCallback(OnCoerceScaleValue)));
 
-		private static object OnCoerceScaleValue(DependencyObject o, object value) {
+		private static object OnCoerceScaleValue (DependencyObject o, object value) {
 			MainWindow mainWindow = o as MainWindow;
 			if (mainWindow != null)
 				return mainWindow.OnCoerceScaleValue((double)value);
@@ -121,13 +121,13 @@ namespace TouchFaders_MIDI {
 				return value;
 		}
 
-		private static void OnScaleValueChanged(DependencyObject o, DependencyPropertyChangedEventArgs e) {
+		private static void OnScaleValueChanged (DependencyObject o, DependencyPropertyChangedEventArgs e) {
 			MainWindow mainWindow = o as MainWindow;
 			if (mainWindow != null)
 				mainWindow.OnScaleValueChanged((double)e.OldValue, (double)e.NewValue);
 		}
 
-		protected virtual double OnCoerceScaleValue(double value) {
+		protected virtual double OnCoerceScaleValue (double value) {
 			if (double.IsNaN(value))
 				return 1.0f;
 
@@ -135,7 +135,7 @@ namespace TouchFaders_MIDI {
 			return value;
 		}
 
-		protected virtual void OnScaleValueChanged(double oldValue, double newValue) {
+		protected virtual void OnScaleValueChanged (double oldValue, double newValue) {
 			// Don't need to do anything
 		}
 
@@ -148,11 +148,11 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void mainGrid_SizeChanged(object sender, EventArgs e) {
+		private void mainGrid_SizeChanged (object sender, EventArgs e) {
 			CalculateScale();
 		}
 
-		private void CalculateScale() {
+		private void CalculateScale () {
 			double xScale = ActualWidth / 600f; // must be set to initial window sizing for proper scaling!!!
 			double yScale = ActualHeight / 340f; // must be set to initial window sizing for proper scaling!!!
 			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
@@ -162,7 +162,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region File & network I/O (and setup)
-		void DataLoaded(HandleIO.FileData fileData) {
+		void DataLoaded (HandleIO.FileData fileData) {
 			// Lists and config
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
 			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
@@ -190,7 +190,7 @@ namespace TouchFaders_MIDI {
 			});
 		}
 
-		private void UDPAdvertiser(object state) {
+		private void UDPAdvertiser (object state) {
 			IPAddress localIP;
 			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0)) {
 				socket.Connect("8.8.8.8", 65530);
@@ -216,7 +216,7 @@ namespace TouchFaders_MIDI {
 			sendUdpClient.Send(data, data.Length, targetEndPoint);
 		}
 
-		private void UDPListener() {
+		private void UDPListener () {
 			IPAddress anAddress = IPAddress.Any;
 			UdpClient listener = new UdpClient();
 			IPEndPoint endPoint = new IPEndPoint(anAddress, 8878);
@@ -249,7 +249,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void TCPListener() {
+		private void TCPListener () {
 			IPAddress anAddress = IPAddress.Any;
 			TcpListener listener = new TcpListener(anAddress, 8878);
 			listener.Start();
@@ -285,7 +285,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region Device UI management
-		void AddOSCDevice(IPAddress ipAddress, string name, int ports) {
+		void AddOSCDevice (IPAddress ipAddress, string name, int ports) {
 			int sendPort = 9000 + ports;
 			int listenPort = 8000 + ports;
 			oscDevice device = new oscDevice(name, ipAddress, sendPort, listenPort);
@@ -295,7 +295,7 @@ namespace TouchFaders_MIDI {
 			});
 		}
 
-		async Task RefreshOSCDevices() {
+		async Task RefreshOSCDevices () {
 			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in devices) {
 				tasks.Add(Task.Run(() => {
@@ -307,7 +307,7 @@ namespace TouchFaders_MIDI {
 			await Task.WhenAll(tasks);
 		}
 
-		void displayMIDIDevices() {
+		void displayMIDIDevices () {
 			Dispatcher.Invoke(() => { inputMIDIComboBox.IsEnabled = false; });
 			inputMIDIComboBox.Items.Clear();
 			foreach (InputDevice inputDevice in InputDevice.GetAll()) {
@@ -323,7 +323,7 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => { startMIDIButton.IsEnabled = true; });
 		}
 
-		int SendMixMeteringBroadcast(byte[] data) {
+		int SendMixMeteringBroadcast (byte[] data) {
 			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8879);
 			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
 			//Console.WriteLine($"Sent metering bytes: {BitConverter.ToString(data)}");
@@ -332,7 +332,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region MIDI management
-		public async Task InitializeMIDI() {
+		public async Task InitializeMIDI () {
 			try {
 				Dispatcher.Invoke(() => { Console_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString()); });
 				Dispatcher.Invoke(() => { Console_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString()); });
@@ -370,7 +370,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void sendQueueItem(object state) {
+		void sendQueueItem (object state) {
 			if (midiQueue.Count > 0) {
 				try {
 					NormalSysExEvent sysExEvent = midiQueue.Dequeue();
@@ -392,7 +392,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		async Task GetAllFaderValues() {
+		async Task GetAllFaderValues () {
 			await GetFaderValuesForMix(0x05); // Mix 1 level...
 			await GetFaderValuesForMix(0x08);
 			await GetFaderValuesForMix(0x0B);
@@ -411,7 +411,7 @@ namespace TouchFaders_MIDI {
 			await GetFaderValuesForMix(0x32); // Mix 16
 		}
 
-		async Task GetFaderValuesForMix(byte mix) {
+		async Task GetFaderValuesForMix (byte mix) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
@@ -422,7 +422,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void GetSelectedChannelInfo(object state) {
+		void GetSelectedChannelInfo (object state) {
 			bool canContinue = false;
 			try {
 				Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
@@ -441,7 +441,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		async Task GetChannelFaders() {
+		async Task GetChannelFaders () {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
@@ -452,7 +452,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		async Task GetChannelNames() {
+		async Task GetChannelNames () {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
@@ -460,7 +460,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		async Task GetChannelName(int channel) {
+		async Task GetChannelName (int channel) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent kNameShort1 = new NormalSysExEvent();
@@ -473,7 +473,7 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kNameShort2);
 		}
 
-		async Task GetChannelIcon(int channel) {
+		async Task GetChannelIcon (int channel) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent kIconID = new NormalSysExEvent();
@@ -482,7 +482,7 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kIconID);
 		}
 
-		async Task GetChannelColour(int channel) {
+		async Task GetChannelColour (int channel) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent kIconBgColour = new NormalSysExEvent();
@@ -491,13 +491,13 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kIconBgColour);
 		}
 
-		async Task RequestChannelsPatch() {
+		async Task RequestChannelsPatch () {
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				await RequestChannelPatch(channel);
 			}
 		}
 
-		async Task RequestChannelPatch(int channel) {
+		async Task RequestChannelPatch (int channel) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent kPatchInInput = new NormalSysExEvent();
@@ -506,13 +506,13 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kPatchInInput);
 		}
 
-		async Task GetAllChannelsLinkGroup() {
+		async Task GetAllChannelsLinkGroup () {
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				await GetChannelLinkGroup(channel);
 			}
 		}
 
-		async Task GetChannelLinkGroup(int channel) {
+		async Task GetChannelLinkGroup (int channel) {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
@@ -521,7 +521,7 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(kGroupID_Input);
 		}
 
-		async void GetMixesMetering(object state) {
+		async void GetMixesMetering (object state) {
 			bool get = true;
 			Dispatcher.Invoke(() => {
 				get = midiProgressBar.Value >= midiProgressBar.Maximum;
@@ -535,7 +535,7 @@ namespace TouchFaders_MIDI {
 			await SendSysEx(mixesMeteringPost);
 		}
 
-		async Task StopMetering() {
+		async Task StopMetering () {
 			byte device_byte = 0x30;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 			NormalSysExEvent stopMeteringEvent = new NormalSysExEvent();
@@ -547,7 +547,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region SysExMIDIHelpers
-		bool CheckSysEx(byte[] bytes) {
+		bool CheckSysEx (byte[] bytes) {
 			if (bytes.Length != 17) {
 				return false;
 			}
@@ -580,7 +580,7 @@ namespace TouchFaders_MIDI {
 			return false;
 		}
 
-		(int, int, int) ConvertByteArray(byte[] bytes) {
+		(int, int, int) ConvertByteArray (byte[] bytes) {
 			byte mixMSB = bytes[7];         // mix number MSB
 			byte mixLSB = bytes[8];         // mix number LSB
 			ushort mixHex = (ushort)(mixMSB << 7);       // Convert MSB to int in the right place
@@ -618,7 +618,7 @@ namespace TouchFaders_MIDI {
 			return (mix, channel, value);
 		}
 
-		void HandleMixSendMIDI(SysExEvent midiEvent) {
+		void HandleMixSendMIDI (SysExEvent midiEvent) {
 			(int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
 			/*int linkedIndex = linkedChannels.getIndex(channel - 1); // TODO: fix this
 			if (linkedIndex != -1) {
@@ -638,7 +638,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void HandleChannelName(byte[] bytes) {
+		void HandleChannelName (byte[] bytes) {
 			byte indexMSB = bytes[7];       // kNameShort1 is 0x00, 0x00
 			byte indexLSB = bytes[8];       // kNameShort2 is 0x00, 0x01
 			byte channelMSB = bytes[9];    // Channel MSB per channel
@@ -674,7 +674,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void HandleChannelPatch(byte[] bytes) {
+		void HandleChannelPatch (byte[] bytes) {
 			byte channelMSB = bytes[9];    // channel number MSB
 			byte channelLSB = bytes[10];    // channel number LSB
 			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
@@ -687,7 +687,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void HandleChannelOn(byte[] bytes) {
+		void HandleChannelOn (byte[] bytes) {
 			byte channelMSB = bytes[9];    // channel number MSB
 			byte channelLSB = bytes[10];    // channel number LSB
 			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
@@ -707,7 +707,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void HandleChannelLinkGroup(byte[] bytes) {
+		void HandleChannelLinkGroup (byte[] bytes) {
 			byte channelMSB = bytes[9];    // channel number MSB
 			byte channelLSB = bytes[10];    // channel number LSB
 			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
@@ -718,7 +718,7 @@ namespace TouchFaders_MIDI {
 			channelConfig.channels[channel].linkGroup = ChannelConfig.ChannelGroupChars[group];
 		}
 
-		void HandleChannelFader(byte[] bytes) {
+		void HandleChannelFader (byte[] bytes) {
 			byte channelMSB = bytes[9];    // channel number MSB
 			byte channelLSB = bytes[10];    // channel number LSB
 			ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
@@ -762,7 +762,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region MIDI I/O
-		void Console_out_EventReceived(object sender, MidiEventReceivedEventArgs e) {
+		void Console_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
 			var console = (MidiDevice)sender;
 			if (e.Event.EventType != MidiEventType.NormalSysEx)
 				return;
@@ -873,7 +873,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public void SendFaderValue(int mix, int channel, int value, oscDevice sender) {
+		public void SendFaderValue (int mix, int channel, int value, oscDevice sender) {
 			sendsToMix[mix - 1, channel - 1] = value;
 			SendOSCValue(mix, channel, value, sender);
 			byte mixLSB = mix switch {
@@ -917,7 +917,7 @@ namespace TouchFaders_MIDI {
 				_ = SendSysEx(sysExEvent);
 		}
 
-		public void SendChannelLinkGroup(int channel, char linkGroup) {
+		public void SendChannelLinkGroup (int channel, char linkGroup) {
 			byte device_byte = 0x10;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 
@@ -938,7 +938,7 @@ namespace TouchFaders_MIDI {
 				_ = SendSysEx(kGroupID_Input);
 		}
 
-		public void SendAllAudioSessions() {
+		public void SendAllAudioSessions () {
 			for (int i = 0; i < audioMixerWindow.sessions.Count; i++) {
 				SessionUI sessionUI = audioMixerWindow.sessions[i];
 				//Console.WriteLine($"Sending {sessionUI.sessionLabel} to ch {config.mixer.channelCount - i}");
@@ -946,7 +946,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public void SendAudioSession(int index, float volume, bool mute, bool sendIt = false) {
+		public void SendAudioSession (int index, float volume, bool mute, bool sendIt = false) {
 			byte device_byte = 0x10;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
 
@@ -985,7 +985,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void SendOSCValue(int mix, int channel, int value, oscDevice sender) {
+		private void SendOSCValue (int mix, int channel, int value, oscDevice sender) {
 			Task.Run(() => {
 				foreach (oscDevice device in devices) {
 					if (device != sender) { // Avoid feedback loop!
@@ -995,14 +995,14 @@ namespace TouchFaders_MIDI {
 			});
 		}
 
-		public async Task SendSysEx(NormalSysExEvent normalSysExEvent) {
+		public async Task SendSysEx (NormalSysExEvent normalSysExEvent) {
 			midiQueue.Enqueue(normalSysExEvent);
 			await Task.Run(() => {
 				Thread.Sleep(25);
 			});
 		}
 
-		void Console_in_EventSent(object sender, MidiEventSentEventArgs e) {
+		void Console_in_EventSent (object sender, MidiEventSentEventArgs e) {
 			var console = (MidiDevice)sender;
 			NormalSysExEvent sysExEvent = e.Event as NormalSysExEvent;
 			//string byte_string = BitConverter.ToString(sysExEvent.Data).Replace("-", ", ");
@@ -1011,7 +1011,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region UIEvents
-		void startMIDIButton_Click(object sender, RoutedEventArgs e) {
+		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
 				CalculateSysExCommands();
 				Dispatcher.Invoke(() => {
@@ -1030,7 +1030,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		void CalculateSysExCommands() {
+		void CalculateSysExCommands () {
 			int total = config.NUM_CHANNELS * config.NUM_MIXES; // sends to mix levels
 			total += config.NUM_CHANNELS; // channel levels
 			total += config.NUM_CHANNELS; // channel link groups
@@ -1039,7 +1039,7 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
 		}
 
-		void stopMIDIButton_Click(object sender, RoutedEventArgs e) {
+		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
 			(meteringTimer as IDisposable)?.Dispose();
 			if (stopMIDIButton.IsEnabled) {
 				_ = StopMetering();
@@ -1059,7 +1059,7 @@ namespace TouchFaders_MIDI {
 			displayMIDIDevices();
 		}
 
-		void refreshMIDIButton_Click(object sender, RoutedEventArgs e) {
+		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
 			Dispatcher.Invoke(new Action(() => {
 				refreshMIDIButton.IsEnabled = false;
 				midiProgressBar.Value = 0;
@@ -1079,7 +1079,7 @@ namespace TouchFaders_MIDI {
 
 		}
 
-		private void infoWindowButton_Click(object sender, RoutedEventArgs e) {
+		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
 			if (infoWindow.Visibility == Visibility.Visible) {
 				if (infoWindow.IsActive) {
 					infoWindow.Hide();
@@ -1095,7 +1095,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void configWindowButton_Click(object sender, RoutedEventArgs e) {
+		private void configWindowButton_Click (object sender, RoutedEventArgs e) {
 			ConfigWindow configWindow = new ConfigWindow();
 			configWindow.Owner = this;
 			configWindow.DataContext = this.DataContext;
@@ -1106,7 +1106,7 @@ namespace TouchFaders_MIDI {
 			configWindow.ShowDialog();
 		}
 
-		private void UpdateSelectedChannel() {
+		private void UpdateSelectedChannel () {
 			if (!Dispatcher.CheckAccess()) {
 				Dispatcher.Invoke(() => UpdateSelectedChannel());
 			} else {
@@ -1117,11 +1117,11 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void devicesListBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+		private void devicesListBox_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
 			devicesListBox.UnselectAll();
 		}
 
-		private void MainWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
 			switch (e.Key) {
 				case System.Windows.Input.Key.D:
 					displayMIDIDevices();
