@@ -15,11 +15,17 @@
                         ScaleY="{Binding ScaleValue, ElementName=channelConfigWindow}" />
         </Grid.LayoutTransform>
         <Grid>
-            <DataGrid x:Name="channelDataGrid" AutoGenerateColumns="False" VirtualizingPanel.ScrollUnit="Pixel" MouseDown="channelDataGrid_MouseDown" LoadingRow="channelDataGrid_LoadingRow" SelectionUnit="Cell" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserAddRows="False" RowDetailsVisibilityMode="Visible" CanUserResizeRows="False" CanUserResizeColumns="False" GridLinesVisibility="None" Foreground="Black" BorderThickness="0" >
+            <DataGrid x:Name="channelDataGrid" AutoGenerateColumns="False" VirtualizingPanel.ScrollUnit="Pixel" MouseDown="channelDataGrid_MouseDown" LoadingRow="channelDataGrid_LoadingRow" SelectionUnit="Cell" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserAddRows="False" RowDetailsVisibilityMode="Visible" CanUserResizeRows="False" CanUserResizeColumns="False" GridLinesVisibility="None" Foreground="Black" BorderThickness="0" Margin="0" >
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    </Style>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Padding" Value="6,3,6,3" />
+                    </Style>
+                    <Style TargetType="DataGridRowHeader">
+                        <Setter Property="Padding" Value="6,3,6,3" />
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>

@@ -225,7 +225,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <ListBox x:Name="devicesListBox"/>
+                    <ListBox x:Name="devicesListBox" BorderThickness="0" MouseDown="devicesListBox_MouseDown"/>
                 </Grid>
             </GroupBox>
             <GroupBox Header="Metering" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,5" Grid.Row="2" Grid.ColumnSpan="2">

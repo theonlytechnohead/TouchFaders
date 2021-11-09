@@ -1117,6 +1117,10 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		private void devicesListBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			devicesListBox.UnselectAll();
+		}
+
 		private void MainWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
 			switch (e.Key) {
 				case System.Windows.Input.Key.D:
@@ -1168,6 +1172,5 @@ namespace TouchFaders_MIDI {
 			e.Handled = true;
 		}
 		#endregion
-
 	}
 }
