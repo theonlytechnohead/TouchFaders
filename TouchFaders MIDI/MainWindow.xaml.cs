@@ -1,4 +1,4 @@
-﻿using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
@@ -188,7 +188,10 @@ namespace TouchFaders_MIDI {
 
 			string name = Dns.GetHostName();
 
-			IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8877);
+			byte[] directedBroadcast = localIP.GetAddressBytes();
+			directedBroadcast[3] = 0xFF;
+
+			IPEndPoint targetEndPoint = new IPEndPoint(new IPAddress(directedBroadcast), 8877);
 			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
 			byte[] ipArray = localIP.GetAddressBytes();
 			byte[] nameArray = Encoding.UTF8.GetBytes(name);
