@@ -99,7 +99,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void CalculateScale () {
-			double xScale = ActualWidth / 400f; // must be set to initial window sizing for proper scaling!!!
+			double xScale = ActualWidth / 500f; // must be set to initial window sizing for proper scaling!!!
 			double yScale = ActualHeight / 300f; // must be set to initial window sizing for proper scaling!!!
 			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
 			ScaleValue = (double)OnCoerceScaleValue(configWindow, value); // Update the actual scale for the main window

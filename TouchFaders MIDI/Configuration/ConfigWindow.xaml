@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TouchFaders_MIDI"
         mc:Ignorable="d"
-        Title="Configuration" Height="300" Width="400" WindowStartupLocation="CenterOwner" MinWidth="400" MinHeight="300">
+        Title="Configuration" Height="300" Width="500" WindowStartupLocation="CenterOwner" MinWidth="400" MinHeight="300">
     <Window.Resources>
         <ResourceDictionary>
             <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
@@ -80,11 +80,11 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
                         <ColumnDefinition/>
+                        <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <Slider x:Name="deviceIDSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="1" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="deviceIDSlider_ValueChanged"/>
-                    <ComboBox x:Name="mixerComboBox" Grid.Column="1" VerticalAlignment="Center" SelectionChanged="mixerComboBox_SelectionChanged"/>
+                    <Slider x:Name="deviceIDSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="1" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="deviceIDSlider_ValueChanged" Grid.Column="1"/>
+                    <ComboBox x:Name="mixerComboBox" VerticalAlignment="Center" SelectionChanged="mixerComboBox_SelectionChanged" HorizontalAlignment="Center" Width="96"/>
                 </Grid>
             </GroupBox>
             <GroupBox x:Name="channelGroupBox" Header="Channels:" Grid.Row="2" Margin="5,0,5,5" Style="{DynamicResource GroupBoxSquareStyle}">
@@ -93,24 +93,24 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
                         <ColumnDefinition/>
+                        <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <Slider x:Name="channelSlider" VerticalAlignment="Center" Maximum="64" Minimum="1" SmallChange="1" Value="32" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="channelSlider_ValueChanged"/>
-                    <Button x:Name="editChannelsButton" Content="Edit channels" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Click="editChannelsButton_Click"/>
+                    <Slider x:Name="channelSlider" VerticalAlignment="Center" Maximum="64" Minimum="1" SmallChange="1" Value="32" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="channelSlider_ValueChanged" Grid.Column="1"/>
+                    <Button x:Name="editChannelsButton" Content="Edit channels" HorizontalAlignment="Center" VerticalAlignment="Center" Click="editChannelsButton_Click" Width="96"/>
                 </Grid>
             </GroupBox>
             <GroupBox x:Name="mixGroupBox" Header="Mixes:" Grid.Row="3" Margin="5,0,5,5" Style="{DynamicResource GroupBoxSquareStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
                         <ColumnDefinition/>
+                        <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Slider x:Name="mixSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="8" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="mixSlider_ValueChanged"/>
-                    <Button x:Name="editMixNamesButton" Content="Edit names" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Click="editMixNamesButton_Click" IsEnabled="False"/>
+                    <Slider x:Name="mixSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="8" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="mixSlider_ValueChanged" Grid.Column="1"/>
+                    <Button x:Name="editMixNamesButton" Content="Edit names" HorizontalAlignment="Center" VerticalAlignment="Center" Width="96" Click="editMixNamesButton_Click" IsEnabled="False"/>
                 </Grid>
             </GroupBox>
         </Grid>
