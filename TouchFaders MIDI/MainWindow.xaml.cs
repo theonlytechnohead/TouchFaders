@@ -77,7 +77,7 @@ namespace TouchFaders_MIDI {
 
 			this.KeyDown += MainWindow_KeyDown;
 
-		}
+        }
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
 			selectedChannel = new ChannelConfig.SelectedChannel();
@@ -1106,6 +1106,22 @@ namespace TouchFaders_MIDI {
 			configWindow.ShowDialog();
 		}
 
+		private void audioWindowButton_Click (object sender, RoutedEventArgs e) {
+			if (audioMixerWindow.Visibility == Visibility.Visible) {
+				if (audioMixerWindow.IsActive) {
+					audioMixerWindow.Hide();
+				} else {
+					audioMixerWindow.Activate();
+				}
+			} else {
+				audioMixerWindow.Show();
+			}
+		}
+
+		private void quitButton_Click (object sender, RoutedEventArgs e) {
+			this.Close();
+        }
+
 		private void UpdateSelectedChannel () {
 			if (!Dispatcher.CheckAccess()) {
 				Dispatcher.Invoke(() => UpdateSelectedChannel());
@@ -1122,39 +1138,38 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
+			if (menuBar.IsKeyboardFocusWithin) return;
 			switch (e.Key) {
 				case System.Windows.Input.Key.D:
+					e.Handled = true;
 					displayMIDIDevices();
 					break;
 				case System.Windows.Input.Key.R:
+					e.Handled = true;
 					if (refreshMIDIButton.IsEnabled)
 						refreshMIDIButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.O:
+					e.Handled = true;
 					Task.Run(async () => await RefreshOSCDevices());
 					break;
 				case System.Windows.Input.Key.S:
+					e.Handled = true;
 					if (startMIDIButton.IsEnabled)
 						startMIDIButton_Click(this, new RoutedEventArgs());
 					if (stopMIDIButton.IsEnabled)
 						stopMIDIButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.A:
-					if (audioMixerWindow.Visibility == Visibility.Visible) {
-						if (audioMixerWindow.IsActive) {
-							audioMixerWindow.Hide();
-						} else {
-							audioMixerWindow.Activate();
-						}
-						break;
-					} else {
-						audioMixerWindow.Show();
-						break;
-					}
+					e.Handled = true;
+					audioWindowButton_Click(this, new RoutedEventArgs());
+					break;
 				case System.Windows.Input.Key.I:
+					e.Handled = true;
 					infoWindowButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.T:
+					e.Handled = true;
 					if (stopMIDIButton.IsEnabled) {
 						if (sendsToMix[0, 0] != 0) {
 							SendFaderValue(1, 1, 0, null);
@@ -1166,10 +1181,10 @@ namespace TouchFaders_MIDI {
 					}
 					break;
 				case System.Windows.Input.Key.Q:
-					this.Close();
+					e.Handled = true;
+					quitButton_Click(this, new RoutedEventArgs());
 					break;
 			}
-			e.Handled = true;
 		}
 		#endregion
 	}
