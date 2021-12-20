@@ -156,9 +156,8 @@
         </Grid.LayoutTransform>
 
         <DockPanel>
-            <Menu x:Name="menuBar" DockPanel.Dock="Top">
+            <Menu x:Name="menuBar" DockPanel.Dock="Top" Background="{x:Null}">
                 <MenuItem Header="_File">
-                    <Separator />
                     <MenuItem Header="_Quit" InputGestureText="Q" Click="quitButton_Click" />
                 </MenuItem>
                 <MenuItem Header="_View">
