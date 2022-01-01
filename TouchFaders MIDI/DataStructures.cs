@@ -9,40 +9,6 @@ namespace TouchFaders_MIDI {
 	class DataStructures {
 	}
 
-	public class Mixer {
-		public Mixer () { model = "NONE"; channelCount = 0; mixCount = 0; }
-		private Mixer (string value, int channels, int mixes) { model = value; channelCount = channels; mixCount = mixes; }
-
-		public string model { get; set; }
-		public int channelCount { get; set; }
-		public int mixCount { get; set; }
-
-		public override string ToString () {
-			return $"{model}, ch{channelCount}×{mixCount}";
-		}
-
-		public override bool Equals (object obj) {
-			if (obj.GetType() != typeof(Mixer)) return false;
-			Mixer other = obj as Mixer;
-			if (model != other.model) return false;
-			if (channelCount != other.channelCount) return false;
-			if (mixCount != other.mixCount) return false;
-			return true;
-		}
-
-		public override int GetHashCode () {
-			int hashCode = -316074491;
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(model);
-			hashCode = hashCode * -1521134295 + channelCount.GetHashCode();
-			hashCode = hashCode * -1521134295 + mixCount.GetHashCode();
-			return hashCode;
-		}
-
-		public static Mixer LS932 { get { return new Mixer("LS9-32", 64, 16); } }
-		public static Mixer LS916 { get { return new Mixer("LS9-16", 32, 16); } }
-
-	}
-
 	public class SendsToMix {
 		public event EventHandler sendsChanged;
 
@@ -59,6 +25,69 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
+	public class MixConfig {
+		public class Mix {
+			public event EventHandler mixLevelChanged;
+			private int fader;
+
+			public string name { get; set; }
+			public int level {
+                get => fader;
+                set {
+					fader = value;
+					mixLevelChanged?.Invoke(this, new EventArgs());
+				}
+            }
+
+			public static string kNameShortToString (byte[] kNameShort) {
+				string raw_MIDI = string.Concat(kNameShort.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))); // convert the byte array to a string of 0's and 1's
+				string decoded_MIDI = "";
+				for (int i = 0; i < raw_MIDI.Length; i++) {
+					if (i % 8 != 0) { // if it's not the 8th bit in a byte
+						decoded_MIDI += raw_MIDI[i]; // add it to the new string, reforming the original 8-bit encoding
+					}
+				}
+				decoded_MIDI = decoded_MIDI.Substring(3); // skip the first nibble-ish, it's a leftover artifact of the 7b/8b encoding
+				List<byte> list = new List<byte>();
+				for (int i = 0; i < decoded_MIDI.Length; i += 8) {
+					list.Add(Convert.ToByte(decoded_MIDI.Substring(i, 8), 2)); // convert segments 8 bits to a byte, and put in a list
+				}
+				return Encoding.ASCII.GetString(list.ToArray());
+			}
+		}
+
+		public List<Mix> mixes { get; set; }
+
+		public MixConfig () {
+			mixes = new List<Mix>();
+		}
+
+		public void Initialise(AppConfiguration.appconfig appConfig) {
+			for (int i = 1; i <= appConfig.NUM_MIXES; i++) {
+				mixes.Add(new Mix() { name = $"MIX {i}", level = 823 });
+			}
+        }
+
+		//public event EventHandler mixNamesChanged;
+		//public event EventHandler mixFadersChanged;
+
+		//private List<string> mixNames = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select $"MIX {mix}").ToList();
+		//private List<int> mixFaders = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select 823).ToList();
+
+		//public List<string> names {
+		//	get => mixNames; set {
+		//		mixNames = value;
+		//		mixNamesChanged?.Invoke(this, new EventArgs());
+		//	}
+		//}
+
+		//public List<int> faders {
+		//	get { return mixFaders; }
+		//	set { mixFaders = value; mixFadersChanged?.Invoke(this, new EventArgs()); }
+		//}
+	}
+
+	// deprecated
 	public class MixNames {
 		public event EventHandler mixNamesChanged;
 
@@ -77,6 +106,7 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
+	// deprecated
 	public class MixFaders {
 		public event EventHandler mixFadersChanged;
 

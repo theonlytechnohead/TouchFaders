@@ -10,6 +10,7 @@ namespace TouchFaders_MIDI {
 			public int sendsToMix_version { get; set; }
 
 			public int? channelConfig_version { get; set; } // Replaces channelNames_version and channelFaders_version
+			public int? mixConfig_version { get; set; } // Replaces mixNames_version and mixFaders_version - eventually
 
 			public Mixer mixer { get; set; }
 			public int mixNames_version { get; set; }
@@ -24,8 +25,9 @@ namespace TouchFaders_MIDI {
 					sendsToMix_version = 1,
 					channelConfig_version = 2,
 					mixer = Mixer.LS932,
-					mixNames_version = 0,
-					mixFaders_version = 0,
+					mixConfig_version = 2,
+					mixNames_version = 1,
+					mixFaders_version = 1,
 					device_ID = 1,
 					NUM_MIXES = 8,
 					NUM_CHANNELS = 32

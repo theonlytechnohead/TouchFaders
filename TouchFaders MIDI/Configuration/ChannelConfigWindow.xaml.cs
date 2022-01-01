@@ -64,7 +64,7 @@ namespace TouchFaders_MIDI {
 			channelDataGrid.DataContext = this;
 			channelDataGrid.ItemsSource = channelConfigUI;
 			channelConfigUI.CollectionChanged += ChannelConfigUI_CollectionChanged;
-			for (int i = 1; i <= 64; i++) {
+			for (int i = 1; i <= channelConfig.channels.Count; i++) {
 				ChannelConfigUI channel = new ChannelConfigUI(channelConfig.channels[i - 1]);
 				channelConfigUI.Add(channel);
 			}

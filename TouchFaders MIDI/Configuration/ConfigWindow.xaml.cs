@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using TouchFaders_MIDI.Configuration;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -150,11 +151,15 @@ namespace TouchFaders_MIDI {
 			mixGroupBox.Header = $"Mixes: {config.NUM_MIXES}";
 		}
 
-		private void editMixNamesButton_Click (object sender, RoutedEventArgs e) {
-			Process fileopener = new Process();
-			fileopener.StartInfo.FileName = "explorer";
-			fileopener.StartInfo.Arguments = "\"config\\mixNames.txt\"";
-			fileopener.Start();
+		private void editMixesButton_Click (object sender, RoutedEventArgs e) {
+			MixConfigWindow mixConfigWindow = new MixConfigWindow();
+			mixConfigWindow.Owner = this;
+			mixConfigWindow.DataContext = this.DataContext;
+			mixConfigWindow.mixConfig = MainWindow.instance.mixConfig;
+			if (WindowState == WindowState.Maximized) {
+				mixConfigWindow.WindowState = WindowState.Maximized;
+            }
+			mixConfigWindow.ShowDialog();
 		}
 
 	}

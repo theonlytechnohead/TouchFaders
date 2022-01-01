@@ -43,6 +43,7 @@ namespace TouchFaders_MIDI {
 		public SendsToMix sendsToMix;
 
 		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
+		public MixConfig mixConfig;
 		public ChannelConfig.SelectedChannel selectedChannel;
 		List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
 		Stack<int> selectedChannelIndexToGet = new Stack<int>();
@@ -97,7 +98,8 @@ namespace TouchFaders_MIDI {
 			await AppConfiguration.Save(config);
 			HandleIO.FileData fileData = new HandleIO.FileData() {
 				sendsToMix = this.sendsToMix,
-				channelConfig = this.channelConfig
+				channelConfig = this.channelConfig,
+				mixConfig = this.mixConfig
 			};
 			await HandleIO.SaveAll(fileData);
 			base.OnClosed(e);
@@ -169,6 +171,8 @@ namespace TouchFaders_MIDI {
 			for (int i = 0; i < config.mixer.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
 			}
+
+			Dispatcher.Invoke(() => { mixConfig = fileData.mixConfig; });
 
 			// MIDI
 			Dispatcher.Invoke(() => displayMIDIDevices());

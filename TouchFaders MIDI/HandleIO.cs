@@ -14,9 +14,8 @@ namespace TouchFaders_MIDI {
 
 			public ChannelConfig channelConfig = new ChannelConfig();
 
-			public MixNames mixNames = new MixNames();
-			public MixFaders mixFaders = new MixFaders();
-		}
+			public MixConfig mixConfig = new MixConfig();
+        }
 
 		public static FileData LoadAll () {
 			FileData data = new FileData();
@@ -39,14 +38,16 @@ namespace TouchFaders_MIDI {
 					File.Delete("config/channelFaders.txt");
 				}
 
-				if (MainWindow.instance.config.mixNames_version >= 1) {
-					string mixNamesFile = File.ReadAllText("config/mixNames.txt");
-					data.mixNames.names = JsonSerializer.Deserialize<List<string>>(mixNamesFile, jsonDeserializerOptions);
+				if (MainWindow.instance.config.mixConfig_version >= 2) {
+					string mixConfigFile = File.ReadAllText("config/mixConfig.txt");
+					data.mixConfig = JsonSerializer.Deserialize<MixConfig>(mixConfigFile, jsonDeserializerOptions);
 				}
 
-				if (MainWindow.instance.config.mixFaders_version >= 1) {
-					string mixFadersFile = File.ReadAllText("config/mixFaders.txt");
-					data.mixFaders.faders = JsonSerializer.Deserialize<List<int>>(mixFadersFile, jsonDeserializerOptions);
+				if (MainWindow.instance.config.mixNames_version == 1 || MainWindow.instance.config.mixFaders_version == 1) {
+					MainWindow.instance.config.mixConfig_version = AppConfiguration.appconfig.defaultValues().mixConfig_version;
+					MainWindow.instance.config.mixNames_version = 0;
+					MainWindow.instance.config.mixFaders_version = 0;
+					data.mixConfig.Initialise(MainWindow.instance.config);
 				}
 			} catch (FileNotFoundException ex) {
 				//await SaveAll(data);
@@ -68,6 +69,11 @@ namespace TouchFaders_MIDI {
 			if (data.channelConfig != null) {
 				using (FileStream fs = File.Create("config/channelConfig.txt")) {
 					await JsonSerializer.SerializeAsync(fs, data.channelConfig, serializerOptions);
+				}
+			}
+			if (data.mixConfig != null) {
+				using (FileStream fs = File.Create("config/mixConfig.txt")) {
+					await JsonSerializer.SerializeAsync(fs, data.mixConfig, serializerOptions);
 				}
 			}
 		}

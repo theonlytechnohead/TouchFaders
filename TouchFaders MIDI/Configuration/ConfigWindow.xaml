@@ -110,7 +110,7 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Slider x:Name="mixSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="8" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="mixSlider_ValueChanged" Grid.Column="1"/>
-                    <Button x:Name="editMixNamesButton" Content="Edit names" HorizontalAlignment="Center" VerticalAlignment="Center" Width="96" Click="editMixNamesButton_Click" IsEnabled="False"/>
+                    <Button x:Name="editMixesButton" Content="Edit mixes" HorizontalAlignment="Center" VerticalAlignment="Center" Width="96" Click="editMixesButton_Click"/>
                 </Grid>
             </GroupBox>
         </Grid>
