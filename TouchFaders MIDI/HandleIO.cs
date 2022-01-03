@@ -43,10 +43,10 @@ namespace TouchFaders_MIDI {
 					data.mixConfig = JsonSerializer.Deserialize<MixConfig>(mixConfigFile, jsonDeserializerOptions);
 				}
 
-				if (MainWindow.instance.config.mixNames_version == 1 || MainWindow.instance.config.mixFaders_version == 1) {
+				if (MainWindow.instance.config.mixNames_version == 0 || MainWindow.instance.config.mixFaders_version == 0) {
 					MainWindow.instance.config.mixConfig_version = AppConfiguration.appconfig.defaultValues().mixConfig_version;
-					MainWindow.instance.config.mixNames_version = 0;
-					MainWindow.instance.config.mixFaders_version = 0;
+					MainWindow.instance.config.mixNames_version = 1;
+					MainWindow.instance.config.mixFaders_version = 1;
 					data.mixConfig.Initialise(MainWindow.instance.config);
 				}
 			} catch (FileNotFoundException ex) {

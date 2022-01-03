@@ -25,9 +25,9 @@ namespace TouchFaders_MIDI {
 					sendsToMix_version = 1,
 					channelConfig_version = 2,
 					mixer = Mixer.LS932,
-					mixConfig_version = 2,
-					mixNames_version = 1,
-					mixFaders_version = 1,
+					mixConfig_version = 0,
+					mixNames_version = 0,
+					mixFaders_version = 0,
 					device_ID = 1,
 					NUM_MIXES = 8,
 					NUM_CHANNELS = 32

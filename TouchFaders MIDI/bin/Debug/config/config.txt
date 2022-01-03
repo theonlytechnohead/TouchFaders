@@ -8,8 +8,8 @@
     "channelCount": 64,
     "mixCount": 16
   },
-  "mixNames_version": 0,
-  "mixFaders_version": 0,
+  "mixNames_version": 1,
+  "mixFaders_version": 1,
   "device_ID": 1,
   "NUM_CHANNELS": 64,
   "NUM_MIXES": 16
