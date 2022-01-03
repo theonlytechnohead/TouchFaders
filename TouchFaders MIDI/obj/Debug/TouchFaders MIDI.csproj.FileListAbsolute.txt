@@ -65,13 +65,11 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Threadin
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.ValueTuple.dll
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\CoreAudio.dll
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\SharpOSC.dll
-D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csprojAssemblyReference.cache
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\MainWindow.baml
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.g.resources
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders_MIDI.Properties.Resources.resources
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.GenerateResource.cache
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CoreCompileInputs.cache
-D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\App.baml
@@ -85,3 +83,8 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\Configuration\C
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\WinSessionMixer\SessionUI.g.cs
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\Configuration\ChannelConfigWindow.baml
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\Configuration\ConfigWindow.baml
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.AssemblyReference.cache
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.SuggestedBindingRedirects.cache
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\Configuration\MixConfigWindow.g.cs
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\Configuration\MixConfigWindow.baml

@@ -99,9 +99,18 @@
     </ApplicationDefinition>
     <Compile Include="Configuration\AppConfiguration.cs" />
     <Compile Include="BroadcastUDPClient.cs" />
+    <Compile Include="Configuration\MixConfigWindow.xaml.cs">
+      <DependentUpon>MixConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MIDI_Functions.cs" />
+    <Compile Include="Mixer.cs" />
     <Compile Include="WinSessionMixer\SessionUI.xaml.cs">
       <DependentUpon>SessionUI.xaml</DependentUpon>
     </Compile>
+    <Page Include="Configuration\MixConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WinSessionMixer\AudioMixerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
