@@ -111,7 +111,6 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => {
 				var margin = sessionProgressBar.Margin;
 				margin.Right = (1 - session.SimpleAudioVolume.MasterVolume) * sessionProgressBar.ActualWidth;
-				Console.WriteLine($"Master volume: {session.SimpleAudioVolume.MasterVolume}, margin (right): {margin.Right}");
 				sessionProgressBar.Margin = margin;
 			});
 		}
@@ -198,24 +197,36 @@ namespace TouchFaders_MIDI {
 				string firstLetter = text.Substring(0, 1).ToUpper();
 				return firstLetter + text.Substring(1);
 			}
-			List<string> vowels = new List<string>() { "a", "e", "i", "o", "u" };
+			if (text.Split()[0].Length <= 6) {
+				string firstLetter = text.Substring(0, 1).ToUpper();
+				return firstLetter + text.Split()[0].Substring(1);
+            }
+			int iterations = 0;
 			string output = "";
-			for (int i = 0; i < text.Length; i++) {
-				string character = text.Substring(i, 1);
-				if (i == 0) {
-					output += character.ToUpper();
-					continue;
+			while (iterations < text.Length - 6) {
+				output = RemoveLastVowel(text);
+				if (output.Length == 6) {
+					break;
 				}
-				if (vowels.Contains(character.ToLower())) {
-					continue;
-				}
-				output += character;
-			}
+				iterations++;
+            }
 
 			if (output.Length > 6) {
 				output = output.Substring(0, 6);
+            }
+			string firstLetterUppercase = output.Substring(0, 1).ToUpper();
+			return firstLetterUppercase + output.Substring(1);
+		}
+
+		private string RemoveLastVowel (string text) {
+			List<string> vowels = new List<string>() { "a", "e", "i", "o", "u" };
+			for (int i = text.Length - 1; 0 <= i; i--) {
+				string character = text.Substring(i, 1);
+				if (vowels.Contains(character.ToLower())) {
+					return text.Substring(0, i) + text.Substring(i + 1);
+				}
 			}
-			return output;
+			return text;
 		}
 	}
 }
