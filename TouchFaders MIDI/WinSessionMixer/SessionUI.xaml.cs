@@ -53,11 +53,11 @@ namespace TouchFaders_MIDI {
 
 			if (!Dispatcher.CheckAccess()) {
 				Dispatcher.Invoke(() => {
-					sessionLabel.Content = session.IsSystemSoundsSession ? "System sounds" : session.DisplayName;
+					sessionLabel.Content = session.IsSystemSoundsSession ? "System" : session.DisplayName;
 					if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p.ProcessName;
 				});
 			} else {
-				sessionLabel.Content = session.IsSystemSoundsSession ? "System sounds" : session.DisplayName;
+				sessionLabel.Content = session.IsSystemSoundsSession ? "System" : session.DisplayName;
 				if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p.ProcessName;
 			}
 
