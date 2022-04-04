@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using CoreAudio;
 
@@ -34,10 +36,26 @@ namespace TouchFaders_MIDI {
 
 		public List<SessionUI> sessions = new List<SessionUI>();
 
-		public AudioMixerWindow () {
+		#region Hide close button
+		// from https://stackoverflow.com/questions/743906/how-to-hide-close-button-in-wpf-window
+		private const int GWL_STYLE = -16;
+		private const int WS_SYSMENU = 0x80000;
+		[DllImport("user32.dll", SetLastError = true)]
+		private static extern int GetWindowLong (IntPtr hWnd, int nIndex);
+		[DllImport("user32.dll")]
+		private static extern int SetWindowLong (IntPtr hWnd, int nIndex, int dwNewLong);
+        #endregion
+
+        public AudioMixerWindow () {
 			InitializeComponent();
 
 			instance = this;
+
+			Loaded += delegate {
+				// hide close button
+				var hwnd = new WindowInteropHelper(this).Handle;
+				SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+			};
 
 			Foreground = MainWindow.instance.Foreground;
 			Background = MainWindow.instance.Background;
