@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TouchFaders_MIDI.Configuration {
     /// <summary>
@@ -26,17 +18,35 @@ namespace TouchFaders_MIDI.Configuration {
 
 		public class MixConfigUI {
 			public string MixName { get; set; }
+			private string mixColour;
+			public Dictionary<string, SolidColorBrush> Colours {
+				get {
+					return DataStructures.bgColourMap;
+				}
+			}
+			public string MixColour {
+				get {
+					return mixColour;
+				}
+				set {
+					mixColour = value;
+					PropertyChanged?.Invoke(this, new EventArgs());
+				}
+			}
 			int MixLevel { get; set; }
 
+			public EventHandler PropertyChanged;
 
 			public MixConfigUI(MixConfig.Mix mix) {
 				MixName = mix.name;
+				MixColour = DataStructures.bgColourNames[mix.bgColourId];
 				MixLevel = mix.level;
             }
 
 			public MixConfig.Mix AsMix () {
 				return new MixConfig.Mix {
 					name = MixName,
+					bgColourId = DataStructures.bgColourNames.IndexOf(MixColour),
 					level = MixLevel
 				};
             }

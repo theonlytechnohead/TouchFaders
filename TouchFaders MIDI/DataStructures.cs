@@ -7,6 +7,31 @@ using System.Windows.Media;
 
 namespace TouchFaders_MIDI {
 	class DataStructures {
+
+		public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {
+			new SolidColorBrush(Color.FromRgb(1, 1, 253)), // blue, default
+			new SolidColorBrush(Color.FromRgb(255, 102, 1)), // orange
+			new SolidColorBrush(Color.FromRgb(153, 102, 1)), // brown
+			new SolidColorBrush(Color.FromRgb(102, 1, 153)), // purple
+			new SolidColorBrush(Color.FromRgb(1, 153, 255)), // cyan
+			new SolidColorBrush(Color.FromRgb(255, 102, 153)), // pink
+			new SolidColorBrush(Color.FromRgb(102, 1, 1)), // bergundy
+			new SolidColorBrush(Color.FromRgb(1, 102, 51)) // green
+		};
+
+		public static ObservableCollection<string> bgColourNames = new ObservableCollection<string>() {
+			"blue",
+			"orange",
+			"brown",
+			"purple",
+			"cyan",
+			"pink",
+			"bergundy",
+			"green"
+		};
+
+		public static Dictionary<string, SolidColorBrush> bgColourMap = Enumerable.Range(0, bgColourNames.Count).ToDictionary(i => bgColourNames[i], i => bgColours[i]);
+
 	}
 
 	public class SendsToMix {
@@ -38,6 +63,7 @@ namespace TouchFaders_MIDI {
 					mixLevelChanged?.Invoke(this, new EventArgs());
 				}
             }
+			public int bgColourId { get; set; }
 
 			public static string kNameShortToString (byte[] kNameShort) {
 				string raw_MIDI = string.Concat(kNameShort.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))); // convert the byte array to a string of 0's and 1's
@@ -134,6 +160,7 @@ namespace TouchFaders_MIDI {
 
 			public string name { get; set; }
 			public int level { get { return fader; } set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelChangedEventArgs() { linkGroup = linkGroup }); } }
+			public int bgColourId { get; set; }
 			public char linkGroup { get; set; }
 			public int patch { get; set; }
 
@@ -217,16 +244,6 @@ namespace TouchFaders_MIDI {
 				new Uri("Resources/39_blank.png", UriKind.Relative)
 			};
 			public int bgColourID { get; set; }
-			public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {
-				new SolidColorBrush(Color.FromRgb(1, 1, 253)), // blue, default
-				new SolidColorBrush(Color.FromRgb(255, 102, 1)), // orange
-				new SolidColorBrush(Color.FromRgb(153, 102, 1)), // brown
-				new SolidColorBrush(Color.FromRgb(102, 1, 153)), // purple
-				new SolidColorBrush(Color.FromRgb(1, 153, 255)), // cyan
-				new SolidColorBrush(Color.FromRgb(255, 102, 153)), // pink
-				new SolidColorBrush(Color.FromRgb(102, 1, 1)), // bergundy
-				new SolidColorBrush(Color.FromRgb(1, 102, 51)) // green
-			};
 
 			public int level { get { return currentChannel.level; } set { currentChannel.level = value; } }
 

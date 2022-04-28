@@ -73,7 +73,7 @@ namespace TouchFaders_MIDI {
 				Application.Current.Resources["textColour"] = new SolidColorBrush(Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B));
 			}
 			if (Application.Current.Resources.Contains("textBackground")) {
-				Application.Current.Resources["textBackground"] = new SolidColorBrush(Color.FromArgb(0, background.R, background.G, background.B));
+				Application.Current.Resources["textBackground"] = new SolidColorBrush(Color.FromArgb(background.A, background.R, background.G, background.B));
 			}
 
 			this.KeyDown += MainWindow_KeyDown;
@@ -280,7 +280,19 @@ namespace TouchFaders_MIDI {
 				byte oscSend = Convert.ToByte(ports); // offset from 9000
 				byte oscReceive = Convert.ToByte(ports); // offset from 8000
 
-				byte[] sendBuffer = new byte[] { oscSend, oscReceive, Convert.ToByte(config.NUM_CHANNELS), Convert.ToByte(config.NUM_MIXES) };
+				List<byte> sendArray = new List<byte>();
+				sendArray.Add(oscSend);
+				sendArray.Add(oscReceive);
+				sendArray.Add(Convert.ToByte(config.NUM_CHANNELS));
+				sendArray.Add(Convert.ToByte(config.NUM_MIXES));
+				foreach (MixConfig.Mix mix in mixConfig.mixes) {
+					sendArray.Add(Convert.ToByte(mix.bgColourId));
+                }
+
+				byte[] sendBuffer = sendArray.ToArray();
+
+				//int i = 0;
+				//sendArray.ForEach(send => { Console.WriteLine($"{i}: {send.ToString()}"); i++; });
 
 				networkStream.Write(sendBuffer, 0, sendBuffer.Length);
 				client.Close();
@@ -1133,7 +1145,7 @@ namespace TouchFaders_MIDI {
 				selectedChannelFader.Value = selectedChannel.level;
 				selectedChannelName.Content = selectedChannel.name;
 				selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(ChannelConfig.SelectedChannel.iconURIs[selectedChannel.iconID]);
-				selectedChannelColour.Fill = ChannelConfig.SelectedChannel.bgColours[selectedChannel.bgColourID];
+				selectedChannelColour.Fill = DataStructures.bgColours[selectedChannel.bgColourID];
 			}
 		}
 

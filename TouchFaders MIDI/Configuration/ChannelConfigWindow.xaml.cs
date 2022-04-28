@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace TouchFaders_MIDI {
-	/// <summary>
-	/// Interaction logic for ChannelConfigWindow.xaml
-	/// </summary>
-	public partial class ChannelConfigWindow : Window {
+    /// <summary>
+    /// Interaction logic for ChannelConfigWindow.xaml
+    /// </summary>
+    public partial class ChannelConfigWindow : Window {
 
 		public ChannelConfig channelConfig;
 
@@ -18,6 +20,19 @@ namespace TouchFaders_MIDI {
 		public class ChannelConfigUI {
 			public string ChannelName { get; set; }
 			int ChannelLevel { get; set; }
+			private string channelColour;
+			public Dictionary<string, SolidColorBrush> Colours {
+				get {
+					return DataStructures.bgColourMap;
+				}
+            }
+			public string ChannelColour {
+				get { return channelColour; }
+				set {
+					channelColour = value;
+					PropertyChanged?.Invoke(this, new EventArgs());
+				}
+			}
 			private char group;
 			public char ChannelGroup {
 				get {
@@ -36,6 +51,7 @@ namespace TouchFaders_MIDI {
 			public ChannelConfigUI (ChannelConfig.Channel channel) {
 				ChannelName = channel.name;
 				ChannelLevel = channel.level;
+				ChannelColour = DataStructures.bgColourNames[channel.bgColourId];
 				ChannelGroup = channel.linkGroup;
 				ChannelGroups = ChannelConfig.ChannelGroupChars;
 				ChannelPatch = channel.patch;
@@ -45,6 +61,7 @@ namespace TouchFaders_MIDI {
 				return new ChannelConfig.Channel() {
 					name = ChannelName,
 					level = ChannelLevel,
+					bgColourId = DataStructures.bgColourNames.IndexOf(ChannelColour),
 					linkGroup = ChannelGroup,
 					patch = ChannelPatch
 				};

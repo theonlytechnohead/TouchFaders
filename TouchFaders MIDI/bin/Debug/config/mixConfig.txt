@@ -2,67 +2,83 @@
   "mixes": [
     {
       "name": "MIX 1",
-      "level": 823
+      "level": 823,
+      "bgColourId": 1
     },
     {
       "name": "MIX 2",
-      "level": 823
+      "level": 823,
+      "bgColourId": 1
     },
     {
       "name": "MIX 3",
-      "level": 823
+      "level": 823,
+      "bgColourId": 1
     },
     {
       "name": "MIX 4",
-      "level": 823
+      "level": 823,
+      "bgColourId": 1
     },
     {
       "name": "MIX 5",
-      "level": 823
+      "level": 823,
+      "bgColourId": 0
     },
     {
       "name": "MIX 6",
-      "level": 823
+      "level": 823,
+      "bgColourId": 0
     },
     {
       "name": "MIX 7",
-      "level": 823
+      "level": 823,
+      "bgColourId": 0
     },
     {
       "name": "MIX 8",
-      "level": 823
+      "level": 823,
+      "bgColourId": 0
     },
     {
       "name": "MIX 9",
-      "level": 823
+      "level": 823,
+      "bgColourId": 4
     },
     {
       "name": "MIX 10",
-      "level": 823
+      "level": 823,
+      "bgColourId": 4
     },
     {
       "name": "MIX 11",
-      "level": 823
+      "level": 823,
+      "bgColourId": 4
     },
     {
       "name": "MIX 12",
-      "level": 823
+      "level": 823,
+      "bgColourId": 4
     },
     {
       "name": "MIX 13",
-      "level": 823
+      "level": 823,
+      "bgColourId": 3
     },
     {
       "name": "MIX 14",
-      "level": 823
+      "level": 823,
+      "bgColourId": 3
     },
     {
       "name": "MIX 15",
-      "level": 823
+      "level": 823,
+      "bgColourId": 3
     },
     {
       "name": "MIX 16",
-      "level": 823
+      "level": 823,
+      "bgColourId": 3
     }
   ]
 }
