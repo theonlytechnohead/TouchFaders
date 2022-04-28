@@ -3,84 +3,84 @@
     {
       "name": "ch 1\u0000\u0000\u0000\u0000",
       "level": 823,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "patch": 1
     },
     {
       "name": "ch 2\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "patch": 2
     },
     {
       "name": "ch 3\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "patch": 3
     },
     {
       "name": "ch 4\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "patch": 4
     },
     {
       "name": "ch 5\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "patch": 5
     },
     {
       "name": "ch 6\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "patch": 6
     },
     {
       "name": "ch 7\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 6,
       "linkGroup": " ",
       "patch": 7
     },
     {
       "name": "ch 8\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 2,
       "linkGroup": " ",
       "patch": 8
     },
     {
       "name": "ch 9\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 2,
       "linkGroup": " ",
       "patch": 9
     },
     {
       "name": "ch10\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 5,
       "linkGroup": " ",
       "patch": 10
     },
     {
       "name": "ch11\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 3,
       "linkGroup": " ",
       "patch": 11
     },
     {
       "name": "ch12\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 3,
       "linkGroup": " ",
       "patch": 12
     },
@@ -108,14 +108,14 @@
     {
       "name": "ch16\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 6,
       "linkGroup": " ",
       "patch": 16
     },
     {
       "name": "ch17\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 6,
       "linkGroup": " ",
       "patch": 17
     },
@@ -164,57 +164,57 @@
     {
       "name": "ch24\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
+      "bgColourId": 5,
       "linkGroup": " ",
       "patch": 24
     },
     {
       "name": "ch25\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
-      "linkGroup": "A",
+      "bgColourId": 4,
+      "linkGroup": " ",
       "patch": 25
     },
     {
       "name": "ch26\u0000\u0000\u0000\u0000",
       "level": 0,
-      "bgColourId": 0,
-      "linkGroup": "A",
+      "bgColourId": 1,
+      "linkGroup": " ",
       "patch": 26
     },
     {
       "name": "ch27\u0000\u0000\u0000\u0000",
       "level": 0,
       "bgColourId": 0,
-      "linkGroup": "B",
+      "linkGroup": " ",
       "patch": 27
     },
     {
       "name": "ch28\u0000\u0000\u0000\u0000",
       "level": 0,
       "bgColourId": 0,
-      "linkGroup": "B",
+      "linkGroup": "A",
       "patch": 28
     },
     {
       "name": "ch29\u0000\u0000\u0000\u0000",
       "level": 0,
       "bgColourId": 0,
-      "linkGroup": "C",
+      "linkGroup": "A",
       "patch": 29
     },
     {
       "name": "ch30\u0000\u0000\u0000\u0000",
       "level": 0,
       "bgColourId": 0,
-      "linkGroup": "C",
+      "linkGroup": "B",
       "patch": 30
     },
     {
       "name": "ch31\u0000\u0000\u0000\u0000",
       "level": 0,
       "bgColourId": 0,
-      "linkGroup": "C",
+      "linkGroup": "B",
       "patch": 31
     },
     {
