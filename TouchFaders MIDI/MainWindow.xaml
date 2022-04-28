@@ -156,13 +156,13 @@
         </Grid.LayoutTransform>
 
         <DockPanel>
-            <Menu x:Name="menuBar" DockPanel.Dock="Top" Background="{x:Null}">
+            <Menu x:Name="menuBar" DockPanel.Dock="Top" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Quit" InputGestureText="Q" Click="quitButton_Click" />
+                    <MenuItem Header="_Quit" InputGestureText="Q" Click="quitButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
                 <MenuItem Header="_View">
-                    <MenuItem Header="_Info" InputGestureText="I" Click="infoWindowButton_Click" />
-                    <MenuItem Header="_Audio" InputGestureText="A" Click="audioWindowButton_Click" />
+                    <MenuItem Header="_Info" InputGestureText="I" Click="infoWindowButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Audio" InputGestureText="A" Click="audioWindowButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
             </Menu>
             <Grid>

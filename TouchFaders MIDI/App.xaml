@@ -48,5 +48,11 @@
             <Setter Property="Background" Value="{DynamicResource textBackground}" />
         </Style>
 
+        <Style TargetType="MenuItem" x:Key="MenuItem">
+            <Setter Property="Foreground" Value="{DynamicResource textColour}" />
+            <Setter Property="Background" Value="{DynamicResource textBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource textBackground}" />
+        </Style>
+
     </Application.Resources>
 </Application>
