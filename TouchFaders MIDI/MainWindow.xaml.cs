@@ -284,6 +284,9 @@ namespace TouchFaders_MIDI {
 				sendArray.Add(oscSend);
 				sendArray.Add(oscReceive);
 				sendArray.Add(Convert.ToByte(config.NUM_CHANNELS));
+				foreach (ChannelConfig.Channel channel in channelConfig.channels) {
+					sendArray.Add(Convert.ToByte(channel.bgColourId));
+				}
 				sendArray.Add(Convert.ToByte(config.NUM_MIXES));
 				foreach (MixConfig.Mix mix in mixConfig.mixes) {
 					sendArray.Add(Convert.ToByte(mix.bgColourId));
