@@ -49,8 +49,12 @@ namespace TouchFaders_MIDI {
 		}
 
 		void handleOSCMessage (OscMessage message) {
-			//Console.WriteLine($"OSC from {DeviceName}: {message.Address} {message.Arguments[0]}");
-			if (message.Address.Contains("/mix")) {
+			//Console.WriteLine($"OSC from {deviceName}: {message.Address} {message.Arguments[0]}");
+			if (message.Address == "/test") {
+				output.Send(new OscMessage("/test/test", 1));
+				//output.Send(new OscMessage("/mix1/fader1", 823));
+            }
+            if (message.Address.Contains("/mix")) {
 				string[] address = message.Address.Split('/');
 				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
 				if (address.Length > 1) {
@@ -128,7 +132,7 @@ namespace TouchFaders_MIDI {
 
 		public void sendOSCMessage (int mix, int channel, int value) {
 			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");
-			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
+            OscMessage message = new OscMessage($"/mix{mix}/fader{channel}", value);
 			output.Send(message);
 		}
 	}
