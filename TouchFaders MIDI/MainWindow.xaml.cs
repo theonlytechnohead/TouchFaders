@@ -291,13 +291,22 @@ namespace TouchFaders_MIDI {
 				foreach (MixConfig.Mix mix in mixConfig.mixes) {
 					sendArray.Add(Convert.ToByte(mix.bgColourId));
                 }
+				foreach (MixConfig.Mix mix in mixConfig.mixes) {
+					for (int i = 0; i < 6; i++) {
+						if (i < mix.name.Length) {
+							sendArray.Add(Convert.ToByte(mix.name[i]));
+						} else {
+							sendArray.Add(0);
+						}
+					}
+				}
 
 				byte[] sendBuffer = sendArray.ToArray();
 
-				//int i = 0;
-				//sendArray.ForEach(send => { Console.WriteLine($"{i}: {send.ToString()}"); i++; });
+				//int b = 0;
+                //sendArray.ForEach(send => { Console.WriteLine($"{b}: {send.ToString()}"); b++; });
 
-				networkStream.Write(sendBuffer, 0, sendBuffer.Length);
+                networkStream.Write(sendBuffer, 0, sendBuffer.Length);
 				client.Close();
 			}
 		}
