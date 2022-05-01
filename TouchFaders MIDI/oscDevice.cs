@@ -112,7 +112,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendChannelName (int channel, string name) {
-			OscMessage message = new OscMessage($"/label/{channel}", name);
+			OscMessage message = new OscMessage($"/label{channel}", name);
 			output.Send(message);
 		}
 
@@ -123,9 +123,14 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		public void SendDisconnect () {
+			OscMessage message = new OscMessage("/disconnect");
+			output.Send(message);
+        }
+
 		public void SendChannelPatch (int channel, int patch) {
 			string patchIn = "IN " + MainWindow.instance.channelConfig.channels[patch - 1].patch;
-			OscMessage message = new OscMessage($"/patch/{channel}", patchIn);
+			OscMessage message = new OscMessage($"/patch{channel}", patchIn);
 			//Console.WriteLine($"Sending {message.Address}, {message.Arguments[0]}");
 			output.Send(message);
 		}

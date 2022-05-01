@@ -89,6 +89,11 @@ namespace TouchFaders_MIDI {
 
 		protected override async void OnClosed (EventArgs e) {
 			Console.WriteLine("Closing...");
+
+			foreach (oscDevice device in devices) {
+				device.SendDisconnect();
+            }
+
 			infoWindow.Visibility = Visibility.Hidden;
 			infoWindow.Close();
 			audioMixerWindow.Visibility = Visibility.Hidden;
@@ -242,7 +247,9 @@ namespace TouchFaders_MIDI {
 				if (deviceToRemove != null) {
 					deviceToRemove.Close();
 					devices.Remove(deviceToRemove);
-					Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
+					try {
+						Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
+					} catch (Exception ex) { }
 				}
 				foreach (Device device in uiDevices) {
 					if (device.Name == name) {
