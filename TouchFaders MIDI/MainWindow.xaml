@@ -157,6 +157,11 @@
 
         <DockPanel>
             <Menu x:Name="menuBar" DockPanel.Dock="Top" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <DockPanel HorizontalAlignment="Stretch" />
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>
                 <MenuItem Header="_File">
                     <MenuItem Header="_Quit" InputGestureText="Q" Click="quitButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
@@ -164,6 +169,7 @@
                     <MenuItem Header="_Info" InputGestureText="I" Click="infoWindowButton_Click" Style="{StaticResource MenuItem}" />
                     <MenuItem Header="_Audio" InputGestureText="A" Click="audioWindowButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
+                <MenuItem Header="" HorizontalAlignment="Right" Focusable="False" IsHitTestVisible="False" IsTabStop="False" />
             </Menu>
             <Grid>
                 <Grid.ColumnDefinitions>

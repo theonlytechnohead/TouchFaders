@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Windows.UI.ViewManagement;
 
@@ -208,6 +209,12 @@ namespace TouchFaders_MIDI {
 			}
 
 			string name = Dns.GetHostName();
+
+			Dispatcher.Invoke(() => {
+				MenuItem ipMenu = (MenuItem)menuBar.Items[menuBar.Items.Count - 1];
+				ipMenu.Header = $"{name} ({localIP})";
+			});
+
 
 			byte[] directedBroadcast = localIP.GetAddressBytes();
 			directedBroadcast[3] = 0xFF;
