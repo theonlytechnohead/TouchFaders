@@ -42,6 +42,7 @@ namespace TouchFaders_MIDI {
 		public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
 		public SendsToMix sendsToMix;
+		public MutesToMix mutesToMix;
 
 		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
 		public MixConfig mixConfig;
@@ -104,6 +105,7 @@ namespace TouchFaders_MIDI {
 			await AppConfiguration.Save(config);
 			HandleIO.FileData fileData = new HandleIO.FileData() {
 				sendsToMix = this.sendsToMix,
+				mutesToMix = this.mutesToMix,
 				channelConfig = this.channelConfig,
 				mixConfig = this.mixConfig
 			};
@@ -173,6 +175,7 @@ namespace TouchFaders_MIDI {
 		void DataLoaded (HandleIO.FileData fileData) {
 			// Lists and config
 			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
+			Dispatcher.Invoke(() => { mutesToMix = fileData.mutesToMix; });
 			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
 			for (int i = 0; i < config.mixer.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
@@ -291,8 +294,8 @@ namespace TouchFaders_MIDI {
 				AddOSCDevice(new IPAddress(ipBuffer), Encoding.ASCII.GetString(buffer, 4, bytesRead - 4), ports);
 
 
-				byte oscSend = Convert.ToByte(ports); // offset from 9000
-				byte oscReceive = Convert.ToByte(ports); // offset from 8000
+				byte oscSend = Convert.ToByte(ports); // offset from 9000 in client app
+				byte oscReceive = Convert.ToByte(ports); // offset from 8000 in client app
 
 				List<byte> sendArray = new List<byte>();
 				sendArray.Add(oscSend);
@@ -959,6 +962,13 @@ namespace TouchFaders_MIDI {
 				_ = SendSysEx(sysExEvent);
 		}
 
+		public void SendChannelMute (int mix, int channel, bool muted, oscDevice sender) {
+            mutesToMix[mix - 1, channel - 1] = muted;
+			SendOSCValue(mix, channel, muted, sender);
+			// TODO: encode for MIDI
+			// TODO: send to console
+        }
+
 		public void SendChannelLinkGroup (int channel, char linkGroup) {
 			byte device_byte = 0x10;
 			device_byte |= Convert.ToByte(config.device_ID - 1);
@@ -1032,6 +1042,16 @@ namespace TouchFaders_MIDI {
 				foreach (oscDevice device in devices) {
 					if (device != sender) { // Avoid feedback loop!
 						device.sendOSCMessage(mix, channel, value);
+					}
+				}
+			});
+		}
+
+		private void SendOSCValue (int mix, int channel, bool muted, oscDevice sender) {
+			Task.Run(() => {
+				foreach (oscDevice device in devices) {
+					if (device != sender) { // Avoid feedback loop!
+						device.SendChannelMute(mix, channel, muted);
 					}
 				}
 			});

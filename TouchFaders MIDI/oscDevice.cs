@@ -60,21 +60,30 @@ namespace TouchFaders_MIDI {
 				if (address.Length > 1) {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
-					if (message.Arguments[0] is int) { // TouchFaders OSC clients use 1:1 mapping ints for fader values (can be passed directly to the console)
-						int value = (int)message.Arguments[0];
-						/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
-						if (linkedIndex != -1) {
-							sendOSCMessage(mix, linkedIndex + 1, value);
-							MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
-						}*/
-						MainWindow.instance.SendFaderValue(mix, channel, value, this);
+					if (address.Length == 2) {
+						if (message.Arguments[0] is int) { // TouchFaders OSC clients use 1:1 mapping ints for fader values (can be passed directly to the console)
+							int value = (int)message.Arguments[0];
+							/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
+							if (linkedIndex != -1) {
+								sendOSCMessage(mix, linkedIndex + 1, value);
+								MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
+							}*/
+							MainWindow.instance.SendFaderValue(mix, channel, value, this);
+						}
+					} else if (address.Length == 3 && message.Arguments[0] is int) {
+						bool muted = false;
+						if ((int)message.Arguments[0] == 1) {
+							muted = true;
+                        }
+						MainWindow.instance.SendChannelMute(mix, channel, muted, this);
 					}
 				} else {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
 						currentMix = mix;
 						ResendMixFaders();
-						SendChannelNames();
+						SendMixMutes(mix);
+                        SendChannelNames();
 						SendChannelPatches();
 						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
@@ -123,17 +132,32 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		public void SendChannelPatch (int channel, int patch) {
+			string patchIn = "IN " + MainWindow.instance.channelConfig.channels[patch - 1].patch;
+			OscMessage message = new OscMessage($"/patch{channel}", patchIn);
+			output.Send(message);
+		}
+
+		public void SendMixMutes (int mix) {
+			for (int channel = 1; channel <= MainWindow.instance.channelConfig.channels.Count; channel++) {
+				SendChannelMute(mix, channel);
+			}
+        }
+
+		public void SendChannelMute (int mix, int channel) {
+			bool muted = MainWindow.instance.mutesToMix[mix - 1, channel - 1];
+			SendChannelMute(mix, channel, muted);
+		}
+
+		public void SendChannelMute (int mix, int channel, bool muted) {
+			OscMessage message = new OscMessage($"/mix{mix}/fader{channel}/mute", muted ? 1 : 0);
+			output.Send(message);
+        }
+
 		public void SendDisconnect () {
 			OscMessage message = new OscMessage("/disconnect");
 			output.Send(message);
         }
-
-		public void SendChannelPatch (int channel, int patch) {
-			string patchIn = "IN " + MainWindow.instance.channelConfig.channels[patch - 1].patch;
-			OscMessage message = new OscMessage($"/patch{channel}", patchIn);
-			//Console.WriteLine($"Sending {message.Address}, {message.Arguments[0]}");
-			output.Send(message);
-		}
 
 		public void sendOSCMessage (int mix, int channel, int value) {
 			//Console.WriteLine($"Sending OSC: /mix{mix}/fader{channel} {value}");

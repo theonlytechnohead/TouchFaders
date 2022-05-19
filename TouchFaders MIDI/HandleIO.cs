@@ -12,6 +12,8 @@ namespace TouchFaders_MIDI {
 		public class FileData {
 			public SendsToMix sendsToMix = new SendsToMix();
 
+			public MutesToMix mutesToMix = new MutesToMix();
+
 			public ChannelConfig channelConfig = new ChannelConfig();
 
 			public MixConfig mixConfig = new MixConfig();
@@ -25,6 +27,13 @@ namespace TouchFaders_MIDI {
 				string sendsToMixFile = File.ReadAllText("config/sendsToMix.txt");
 				if (MainWindow.instance.config.sendsToMix_version >= 1) {
 					data.sendsToMix.sendLevel = JsonSerializer.Deserialize<List<List<int>>>(sendsToMixFile, jsonDeserializerOptions);
+				}
+
+				if (File.Exists("config/mutesToMix.txt")) {
+					string mutesToMixFile = File.ReadAllText("config/mutesToMix.txt");
+					if (MainWindow.instance.config.mutesToMix_version >= 1) {
+						data.mutesToMix.sendMute = JsonSerializer.Deserialize<List<List<bool>>>(mutesToMixFile, jsonDeserializerOptions);
+					}
 				}
 
 				if (MainWindow.instance.config.channelConfig_version >= 2) {
@@ -66,6 +75,11 @@ namespace TouchFaders_MIDI {
 					await JsonSerializer.SerializeAsync(fs, data.sendsToMix.sendLevel, serializerOptions);
 				}
 			}
+			if (data.mutesToMix != null) {
+				using (FileStream fs = File.Create("config/mutesToMix.txt")) {
+					await JsonSerializer.SerializeAsync(fs, data.mutesToMix.sendMute, serializerOptions);
+                }
+            }
 			if (data.channelConfig != null) {
 				using (FileStream fs = File.Create("config/channelConfig.txt")) {
 					await JsonSerializer.SerializeAsync(fs, data.channelConfig, serializerOptions);

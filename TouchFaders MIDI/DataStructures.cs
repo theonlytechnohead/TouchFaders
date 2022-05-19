@@ -36,6 +36,7 @@ namespace TouchFaders_MIDI {
 
 	public class SendsToMix {
 		public event EventHandler sendsChanged;
+		
 
 		public int this[int mix, int channel] {
 			get { return sendLevel[mix][channel]; }
@@ -43,10 +44,27 @@ namespace TouchFaders_MIDI {
 		}
 
 		private List<List<int>> levels = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 623).ToList()).ToList(); // Initalized to -10dB
+		
 
 		public List<List<int>> sendLevel {
 			get { return levels; }
 			set { levels = value; sendsChanged?.Invoke(this, new EventArgs()); }
+		}
+	}
+
+	public class MutesToMix {
+		public event EventHandler mutesChanged;
+
+		public bool this[int mix, int channel] {
+			get { return mutes[mix][channel]; }
+			set { mutes[mix][channel] = value; mutesChanged?.Invoke(this, new EventArgs()); }
+		}
+
+		private List<List<bool>> mutes = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select false).ToList()).ToList(); // Initalized to ON (unmuted)
+
+		public List<List<bool>> sendMute {
+			get { return mutes; }
+			set { mutes = value; mutesChanged?.Invoke(this, new EventArgs()); }
 		}
 	}
 
@@ -160,6 +178,7 @@ namespace TouchFaders_MIDI {
 
 			public string name { get; set; }
 			public int level { get { return fader; } set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelChangedEventArgs() { linkGroup = linkGroup }); } }
+			public bool muted { get; set; }
 			public int bgColourId { get; set; }
 			public char linkGroup { get; set; }
 			public int patch { get; set; }

@@ -8,6 +8,7 @@ namespace TouchFaders_MIDI {
 		public class appconfig {
 			public int? config_version { get; set; }
 			public int sendsToMix_version { get; set; }
+			public int mutesToMix_version { get; set; }
 
 			public int? channelConfig_version { get; set; } // Replaces channelNames_version and channelFaders_version
 			public int? mixConfig_version { get; set; } // Replaces mixNames_version and mixFaders_version - eventually
@@ -23,6 +24,7 @@ namespace TouchFaders_MIDI {
 				return new appconfig() {
 					config_version = 5,
 					sendsToMix_version = 1,
+					mutesToMix_version = 1,
 					channelConfig_version = 2,
 					mixer = Mixer.LS932,
 					mixConfig_version = 0,
@@ -48,6 +50,9 @@ namespace TouchFaders_MIDI {
 					if (config.sendsToMix_version == 0) {
 						config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
 					}
+					if (config.mutesToMix_version == 0) {
+						config.mutesToMix_version = appconfig.defaultValues().mutesToMix_version;
+                    }
 					if (config.channelConfig_version == null) {
 						config.channelConfig_version = appconfig.defaultValues().channelConfig_version;
 					}
