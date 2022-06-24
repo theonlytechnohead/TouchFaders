@@ -52,12 +52,12 @@ namespace TouchFaders_MIDI {
 				faderChannel15,
 				faderChannel16
 			};
-			//MainWindow.instance.channelNames.channelNamesChanged += channelNamesChanged;// TODO: fix this
+            Data.channelNameChanged += channelNamesChanged;
 			for (int i = 0; i < 16; i++) {
-				//MainWindow.instance.channelConfig.channels[i].channelLevelChanged += channelLevelChanged;
+				Data.channelLevelChanged += channelLevelChanged;
 			}
-			//SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
-			//SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
+            SetLabelsText();
+			SetFadersValue();
 		}
 
 		protected override void OnClosing (CancelEventArgs e) {
@@ -68,6 +68,10 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		private void channelNamesChanged (object sender, EventArgs e) {
+			SetLabelsText();
+        }
+
 		private void channelLevelChanged (object sender, EventArgs e) {
 			ChannelConfig.Channel channel = sender as ChannelConfig.Channel;
 			int index = MainWindow.instance.channelConfig.channels.IndexOf(channel);
@@ -76,26 +80,22 @@ namespace TouchFaders_MIDI {
 			});
 		}
 
-		private void channelNamesChanged (object sender, EventArgs e) {
-			SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
-		}
-
 		private void channelFadersChanged (object sender, EventArgs e) {
-			SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
-		}
+			SetFadersValue();
+        }
 
-		void SetLabelsText (List<string> channelNames) {
+		void SetLabelsText () {
 			Dispatcher.Invoke(() => {
-				for (int i = 0; i <= 15; i++) {
-					labels[i].Content = channelNames[i];
+				for (int i = 0; i < Math.Min(16, MainWindow.instance.config.NUM_CHANNELS); i++) {
+					labels[i].Content = MainWindow.instance.data.channels[i].name;
 				}
 			});
 		}
 
-		void SetFadersValue (List<int> channelFaders) {
+		void SetFadersValue () {
 			Dispatcher.Invoke(() => {
-				for (int i = 0; i <= 15; i++) {
-					faderBars[i].Value = channelFaders[i];
+				for (int i = 0; i < Math.Min(16, MainWindow.instance.config.NUM_CHANNELS); i++) {
+					faderBars[i].Value = MainWindow.instance.data.channels[i].level;
 				}
 			});
 		}
