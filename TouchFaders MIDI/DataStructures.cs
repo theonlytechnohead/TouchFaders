@@ -151,24 +151,6 @@ namespace TouchFaders_MIDI {
 
 	}
 
-	public class SendsToMix {
-		public event EventHandler sendsChanged;
-		
-
-		public int this[int mix, int channel] {
-			get { return sendLevel[mix][channel]; }
-			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		private List<List<int>> levels = (from mix in Enumerable.Range(1, 16) select (from channel in Enumerable.Range(1, 64) select 623).ToList()).ToList(); // Initalized to -10dB
-		
-
-		public List<List<int>> sendLevel {
-			get { return levels; }
-			set { levels = value; sendsChanged?.Invoke(this, new EventArgs()); }
-		}
-	}
-
 	public class ChannelConfig {
 		public class Channel {
 			public event EventHandler channelLevelChanged;

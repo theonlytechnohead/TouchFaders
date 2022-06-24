@@ -93,7 +93,7 @@ namespace TouchFaders_MIDI {
 
 		public void ResendMixFaders () {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
-				int level = MainWindow.instance.sendsToMix[currentMix - 1, channel - 1];
+				int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
 				sendOSCMessage(currentMix, channel, level);
 				Thread.Sleep(3);
 			}

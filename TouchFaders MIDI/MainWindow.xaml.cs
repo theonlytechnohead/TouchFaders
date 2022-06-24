@@ -42,8 +42,6 @@ namespace TouchFaders_MIDI {
 		Timer meteringTimer;
 		public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
-		public SendsToMix sendsToMix = new SendsToMix();
-
 		public ChannelConfig channelConfig = new ChannelConfig(); // Replaces ChannelNames and ChannelFaders
 		public ChannelConfig.SelectedChannel selectedChannel;
 		List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
@@ -662,7 +660,7 @@ namespace TouchFaders_MIDI {
 			if (linkedIndex != -1) {
 				sendsToMix[mix - 1, linkedIndex] = value;
 			}*/
-			sendsToMix[mix - 1, channel - 1] = value;
+			data.channels[channel - 1].sends[mix - 1].level = value;
 			//Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
 			foreach (oscDevice device in devices) {
 				/*if (linkedIndex != -1) { // TODO: fix this
@@ -912,7 +910,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendFaderValue (int mix, int channel, int value, oscDevice sender) {
-			sendsToMix[mix - 1, channel - 1] = value;
+			this.data.channels[channel - 1].sends[mix - 1].level = value;
 			SendOSCValue(mix, channel, value, sender);
 			byte mixLSB = mix switch {
 				1 => 0x05,
@@ -1226,7 +1224,8 @@ namespace TouchFaders_MIDI {
 				case System.Windows.Input.Key.T:
 					e.Handled = true;
 					if (stopMIDIButton.IsEnabled) {
-						if (sendsToMix[0, 0] != 0) {
+						// idk what this is for
+						if (data.channels[0].sends[0].level != 0) {
 							SendFaderValue(1, 1, 0, null);
 							break;
 						} else {
