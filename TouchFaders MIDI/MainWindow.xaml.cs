@@ -109,7 +109,7 @@ namespace TouchFaders_MIDI {
             stopMIDIButton_Click(null, null);
             advertisingTimer?.Dispose();
             await AppConfiguration.Save(config);
-            await HandleIO.SaveAll(new Data());
+            await HandleIO.SaveAll(data);
             base.OnClosed(e);
         }
         #endregion
