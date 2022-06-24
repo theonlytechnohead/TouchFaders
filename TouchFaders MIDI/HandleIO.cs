@@ -13,13 +13,10 @@ namespace TouchFaders_MIDI {
 		public static Data LoadAll () {
 			Data data = new Data ();
 			try {
-				if (File.Exists("config/data.json")) {
-					string dataFile = File.ReadAllText("config/data.json");
-					var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(dataFile);
-				}
+				string dataFile = File.ReadAllText("config/data.json");
+				var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(dataFile);
 			} catch (FileNotFoundException ex) {
-				//await SaveAll(data);
-				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.Message));
+				_ = SaveAll(data);
 			} catch (Exception ex) {
 				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
 			}

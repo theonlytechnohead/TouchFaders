@@ -41,6 +41,7 @@ namespace TouchFaders_MIDI {
 				}
 			} else {
 				config = appconfig.defaultValues();
+				_ = Save(config);
 			}
 			return config;
 		}
