@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 
 namespace TouchFaders_MIDI {
 	public class AppConfiguration {
+
+		public const string CONFIG_DIR = "config";
+		public const string CONFIG_FILE = "config";
+		public const string DATA_FILE = "data";
+
 		// Constants and stuff goes here
 		public class appconfig {
 			public Mixer mixer { get; set; }
@@ -23,9 +28,9 @@ namespace TouchFaders_MIDI {
 
 		public static appconfig Load () {
 			appconfig config;
-			_ = Directory.CreateDirectory("config");
-			if (File.Exists("config/config.json")) {
-				string configFile = File.ReadAllText("config/config.json");
+			_ = Directory.CreateDirectory(CONFIG_DIR);
+			if (File.Exists($"{CONFIG_DIR}/{CONFIG_FILE}.json")) {
+				string configFile = File.ReadAllText($"{CONFIG_DIR}/{CONFIG_FILE}.json");
 				config = JsonSerializer.Deserialize<appconfig>(configFile);
 				if (config.NUM_MIXES == 0) {
 					config.NUM_MIXES = appconfig.defaultValues().NUM_MIXES;
@@ -49,11 +54,10 @@ namespace TouchFaders_MIDI {
 		public static async Task Save (appconfig config) {
 			if (config == null) return;
 			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
-			_ = Directory.CreateDirectory("config");
-			using (FileStream fs = File.Create("config/config.json")) {
-				await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
-			}
-		}
+			_ = Directory.CreateDirectory(CONFIG_DIR);
+            using FileStream fs = File.Create($"{CONFIG_DIR}/{CONFIG_FILE}.json");
+            await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
+        }
 	}
 
 }

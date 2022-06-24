@@ -13,9 +13,9 @@ namespace TouchFaders_MIDI {
 		public static Data LoadAll () {
 			Data data = new Data ();
 			try {
-				string dataFile = File.ReadAllText("config/data.json");
+				string dataFile = File.ReadAllText($"{AppConfiguration.CONFIG_DIR}/{AppConfiguration.DATA_FILE}.json");
 				var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(dataFile);
-			} catch (FileNotFoundException ex) {
+			} catch (FileNotFoundException) {
 				_ = SaveAll(data);
 			} catch (Exception ex) {
 				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
@@ -25,11 +25,10 @@ namespace TouchFaders_MIDI {
 
 		public static async Task SaveAll (Data data) {
 			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
-			_ = Directory.CreateDirectory("config");
+			_ = Directory.CreateDirectory(AppConfiguration.CONFIG_DIR);
 			if (data != null) {
-                using (FileStream fs = File.Create("config/data.json")) {
+                using FileStream fs = File.Create($"{AppConfiguration.CONFIG_DIR}/{AppConfiguration.DATA_FILE}.json");
                 await JsonSerializer.SerializeAsync(fs, data, serializerOptions);
-                }
             }
         }
 	}
