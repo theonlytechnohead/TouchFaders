@@ -73,7 +73,7 @@ namespace TouchFaders_MIDI {
 		private void channelLevelChanged (object sender, EventArgs e) {
 			Data.Channel.LevelArgs levelArgs = e as Data.Channel.LevelArgs;
 			int index = levelArgs.channel - 1;
-			if (0 <= index && index < 16) {
+			if (0 <= index && index < faderBars.Count) {
 				Dispatcher.Invoke(() => {
 					faderBars[index].Value = levelArgs.level;
 				});
@@ -86,7 +86,7 @@ namespace TouchFaders_MIDI {
 
 		void SetLabelsText () {
 			Dispatcher.Invoke(() => {
-				for (int i = 0; i < Math.Min(16, MainWindow.instance.config.NUM_CHANNELS); i++) {
+				for (int i = 0; i < Math.Min(labels.Count, MainWindow.instance.config.NUM_CHANNELS); i++) {
 					labels[i].Content = MainWindow.instance.data.channels[i].name;
 				}
 			});
@@ -94,7 +94,7 @@ namespace TouchFaders_MIDI {
 
 		void SetFadersValue () {
 			Dispatcher.Invoke(() => {
-				for (int i = 0; i < Math.Min(16, MainWindow.instance.config.NUM_CHANNELS); i++) {
+				for (int i = 0; i < Math.Min(faderBars.Count, MainWindow.instance.config.NUM_CHANNELS); i++) {
 					faderBars[i].Value = MainWindow.instance.data.channels[i].level;
 				}
 			});

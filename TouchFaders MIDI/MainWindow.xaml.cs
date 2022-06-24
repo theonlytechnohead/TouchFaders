@@ -63,8 +63,8 @@ namespace TouchFaders_MIDI {
 			instance = this;
 			Title = "TouchFaders MIDI | MIDI not started";
 
-			config = AppConfiguration.Load();
-			Task.Run(() => { DataLoaded(HandleIO.LoadData()); });
+			config = AppConfiguration.LoadConfig();
+			Task.Run(() => { DataLoaded(AppConfiguration.LoadData()); });
 
 			UISettings settings = new UISettings();
 			Windows.UI.Color foreground = settings.GetColorValue(UIColorType.Foreground);
@@ -108,8 +108,8 @@ namespace TouchFaders_MIDI {
             }
             stopMIDIButton_Click(null, null);
             advertisingTimer?.Dispose();
-            await AppConfiguration.Save(config);
-            await HandleIO.SaveAll(data);
+            await AppConfiguration.SaveConfig(config);
+            await AppConfiguration.SaveData(data);
             base.OnClosed(e);
         }
         #endregion

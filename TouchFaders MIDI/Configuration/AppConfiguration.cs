@@ -1,6 +1,11 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Threading;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TouchFaders_MIDI {
 	public class AppConfiguration {
@@ -26,7 +31,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public static appconfig Load () {
+		public static appconfig LoadConfig () {
 			appconfig config;
 			_ = Directory.CreateDirectory(CONFIG_DIR);
 			if (File.Exists($"{CONFIG_DIR}/{CONFIG_FILE}.json")) {
@@ -46,18 +51,40 @@ namespace TouchFaders_MIDI {
 				}
 			} else {
 				config = appconfig.defaultValues();
-				_ = Save(config);
+				_ = SaveConfig(config);
 			}
 			return config;
 		}
 
-		public static async Task Save (appconfig config) {
+		public static async Task SaveConfig (appconfig config) {
 			if (config == null) return;
 			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
 			_ = Directory.CreateDirectory(CONFIG_DIR);
             using FileStream fs = File.Create($"{CONFIG_DIR}/{CONFIG_FILE}.json");
             await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
         }
+
+		public static Data LoadData () {
+			Data data = new Data();
+			try {
+				string dataFile = File.ReadAllText($"{CONFIG_DIR}/{DATA_FILE}.json");
+				var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(dataFile);
+			} catch (FileNotFoundException) {
+				_ = SaveData(data);
+			} catch (Exception ex) {
+				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
+			}
+			return data;
+		}
+
+		public static async Task SaveData (Data data) {
+			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
+			_ = Directory.CreateDirectory(CONFIG_DIR);
+			if (data != null) {
+				using FileStream fs = File.Create($"{CONFIG_DIR}/{DATA_FILE}.json");
+				await JsonSerializer.SerializeAsync(fs, data, serializerOptions);
+			}
+		}
 	}
 
 }
