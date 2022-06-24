@@ -169,22 +169,6 @@ namespace TouchFaders_MIDI {
 		}
 	}
 
-	public class MutesToMix {
-		public event EventHandler mutesChanged;
-
-		public bool this[int mix, int channel] {
-			get { return mutes[mix][channel]; }
-			set { mutes[mix][channel] = value; mutesChanged?.Invoke(this, new EventArgs()); }
-		}
-
-		private List<List<bool>> mutes = (from mix in Enumerable.Range(1, 16) select (from channel in Enumerable.Range(1, 64) select false).ToList()).ToList(); // Initalized to ON (unmuted)
-
-		public List<List<bool>> sendMute {
-			get { return mutes; }
-			set { mutes = value; mutesChanged?.Invoke(this, new EventArgs()); }
-		}
-	}
-
 	public class ChannelConfig {
 		public class Channel {
 			public event EventHandler channelLevelChanged;

@@ -43,7 +43,6 @@ namespace TouchFaders_MIDI {
 		public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
 		public SendsToMix sendsToMix = new SendsToMix();
-		public MutesToMix mutesToMix = new MutesToMix();
 
 		public ChannelConfig channelConfig = new ChannelConfig(); // Replaces ChannelNames and ChannelFaders
 		public ChannelConfig.SelectedChannel selectedChannel;
@@ -957,7 +956,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendChannelMute (int mix, int channel, bool muted, oscDevice sender) {
-            mutesToMix[mix - 1, channel - 1] = muted;
+			data.channels[channel - 1].sends[mix - 1].muted = muted;
 			SendOSCValue(mix, channel, muted, sender);
 			// TODO: encode for MIDI
 			// TODO: send to console

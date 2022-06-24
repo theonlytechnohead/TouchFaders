@@ -145,7 +145,7 @@ namespace TouchFaders_MIDI {
         }
 
 		public void SendChannelMute (int mix, int channel) {
-			bool muted = MainWindow.instance.mutesToMix[mix - 1, channel - 1];
+			bool muted = MainWindow.instance.data.channels[channel - 1].sends[mix - 1].muted;
 			SendChannelMute(mix, channel, muted);
 		}
 
