@@ -34,8 +34,6 @@ namespace TouchFaders_MIDI {
 
 	}
 
-
-
 	public class Data {
 		public static event EventHandler sendLevelChanged;
 		public static event EventHandler sendMuteChanged;
