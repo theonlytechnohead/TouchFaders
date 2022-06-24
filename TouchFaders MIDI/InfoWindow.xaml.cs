@@ -52,12 +52,10 @@ namespace TouchFaders_MIDI {
 				faderChannel15,
 				faderChannel16
 			};
-			//MainWindow.instance.channelNames.channelNamesChanged += channelNamesChanged;// TODO: fix this
-			for (int i = 0; i < 16; i++) {
-				MainWindow.instance.channelConfig.channels[i].channelLevelChanged += channelLevelChanged;
-			}
-			SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
-			SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
+            Data.channelNameChanged += channelNamesChanged;
+			Data.channelLevelChanged += channelLevelChanged;
+            SetLabelsText();
+			SetFadersValue();
 		}
 
 		protected override void OnClosing (CancelEventArgs e) {
@@ -68,34 +66,36 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void channelLevelChanged (object sender, EventArgs e) {
-			ChannelConfig.Channel channel = sender as ChannelConfig.Channel;
-			int index = MainWindow.instance.channelConfig.channels.IndexOf(channel);
-			Dispatcher.Invoke(() => {
-				faderBars[index].Value = channel.level;
-			});
-		}
-
 		private void channelNamesChanged (object sender, EventArgs e) {
-			SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
+			SetLabelsText();
+        }
+
+		private void channelLevelChanged (object sender, EventArgs e) {
+			Data.Channel.LevelArgs levelArgs = e as Data.Channel.LevelArgs;
+			int index = levelArgs.channel - 1;
+			if (0 <= index && index < faderBars.Count) {
+				Dispatcher.Invoke(() => {
+					faderBars[index].Value = levelArgs.level;
+				});
+			}
 		}
 
 		private void channelFadersChanged (object sender, EventArgs e) {
-			SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
-		}
+			SetFadersValue();
+        }
 
-		void SetLabelsText (List<string> channelNames) {
+		void SetLabelsText () {
 			Dispatcher.Invoke(() => {
-				for (int i = 0; i <= 15; i++) {
-					labels[i].Content = channelNames[i];
+				for (int i = 0; i < Math.Min(labels.Count, MainWindow.instance.config.NUM_CHANNELS); i++) {
+					labels[i].Content = MainWindow.instance.data.channels[i].name;
 				}
 			});
 		}
 
-		void SetFadersValue (List<int> channelFaders) {
+		void SetFadersValue () {
 			Dispatcher.Invoke(() => {
-				for (int i = 0; i <= 15; i++) {
-					faderBars[i].Value = channelFaders[i];
+				for (int i = 0; i < Math.Min(faderBars.Count, MainWindow.instance.config.NUM_CHANNELS); i++) {
+					faderBars[i].Value = MainWindow.instance.data.channels[i].level;
 				}
 			});
 		}

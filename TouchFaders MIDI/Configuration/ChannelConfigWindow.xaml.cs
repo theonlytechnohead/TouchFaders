@@ -13,11 +13,10 @@ namespace TouchFaders_MIDI {
     /// </summary>
     public partial class ChannelConfigWindow : Window {
 
-		public ChannelConfig channelConfig;
-
 		public ObservableCollection<ChannelConfigUI> channelConfigUI;
 
 		public class ChannelConfigUI {
+			private int channel;
 			public string ChannelName { get; set; }
 			int ChannelLevel { get; set; }
 			private string channelColour;
@@ -48,25 +47,24 @@ namespace TouchFaders_MIDI {
 
 			public EventHandler PropertyChanged;
 
-			public ChannelConfigUI (ChannelConfig.Channel channel) {
+			public ChannelConfigUI (Data.Channel channel) {
+				this.channel = channel.channel;
 				ChannelName = channel.name;
 				ChannelLevel = channel.level;
 				ChannelColour = DataStructures.bgColourNames[channel.bgColourId];
 				ChannelGroup = channel.linkGroup;
-				ChannelGroups = ChannelConfig.ChannelGroupChars;
+				ChannelGroups = DataStructures.ChannelGroupChars;
 				ChannelPatch = channel.patch;
 			}
 
-			public ChannelConfig.Channel AsChannel () {
-				return new ChannelConfig.Channel() {
-					name = ChannelName,
-					level = ChannelLevel,
-					bgColourId = DataStructures.bgColourNames.IndexOf(ChannelColour),
-					linkGroup = ChannelGroup,
-					patch = ChannelPatch
-				};
-			}
-		}
+            public Data.Channel AsChannel () => new Data.Channel(channel) {
+                name = ChannelName,
+                level = ChannelLevel,
+                bgColourId = DataStructures.bgColourNames.IndexOf(ChannelColour),
+                linkGroup = ChannelGroup,
+                patch = ChannelPatch
+            };
+        }
 
 		public ChannelConfigWindow () {
 			InitializeComponent();
@@ -81,9 +79,9 @@ namespace TouchFaders_MIDI {
 			channelDataGrid.DataContext = this;
 			channelDataGrid.ItemsSource = channelConfigUI;
 			channelConfigUI.CollectionChanged += ChannelConfigUI_CollectionChanged;
-			for (int i = 1; i <= channelConfig.channels.Count; i++) {
-				ChannelConfigUI channel = new ChannelConfigUI(channelConfig.channels[i - 1]);
-				channelConfigUI.Add(channel);
+			foreach (var channel in MainWindow.instance.data.channels) {
+				ChannelConfigUI channelConfig = new ChannelConfigUI(channel);
+				channelConfigUI.Add(channelConfig);
 			}
 		}
 
@@ -110,10 +108,9 @@ namespace TouchFaders_MIDI {
 		}
 
 		protected override void OnClosed (EventArgs e) {
-			for (int i = 0; i < channelConfig.channels.Count; i++) {
-				channelConfig.channels[i] = channelConfigUI[i].AsChannel();
+			for (int i = 0; i < MainWindow.instance.data.channels.Count; i++) {
+				MainWindow.instance.data.channels[i] = channelConfigUI[i].AsChannel();
 			}
-			MainWindow.instance.channelConfig = channelConfig;
 			base.OnClosed(e);
 		}
 

@@ -90,7 +90,7 @@ namespace TouchFaders_MIDI {
 			int data = ConvertDataBytes(dataBytes);
 			SysExCommand command = new SysExCommand(commandBytes);
 			SysExCommand.CommandType commandType = (SysExCommand.CommandType)(-1);
-			foreach (KeyValuePair<SysExCommand.CommandType, SysExCommand> pair in MainWindow.instance.config.mixer.commands) {
+			foreach (KeyValuePair<SysExCommand.CommandType, SysExCommand> pair in MainWindow.instance.config.MIXER.commands) {
 				if (command.DataCategory == pair.Value.DataCategory) {
 					if (command.Element == pair.Value.Element) {
 						commandType = pair.Key;

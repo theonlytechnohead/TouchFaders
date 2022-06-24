@@ -12,11 +12,10 @@ namespace TouchFaders_MIDI.Configuration {
     /// </summary>
     public partial class MixConfigWindow : Window {
         
-        public MixConfig mixConfig;
-
 		public ObservableCollection<MixConfigUI> mixConfigUI;
 
 		public class MixConfigUI {
+			private int mix;
 			public string MixName { get; set; }
 			private string mixColour;
 			public Dictionary<string, SolidColorBrush> Colours {
@@ -37,20 +36,19 @@ namespace TouchFaders_MIDI.Configuration {
 
 			public EventHandler PropertyChanged;
 
-			public MixConfigUI(MixConfig.Mix mix) {
+			public MixConfigUI(Data.Mix mix) {
+				this.mix = mix.mix;
 				MixName = mix.name;
 				MixColour = DataStructures.bgColourNames[mix.bgColourId];
 				MixLevel = mix.level;
             }
 
-			public MixConfig.Mix AsMix () {
-				return new MixConfig.Mix {
-					name = MixName,
-					bgColourId = DataStructures.bgColourNames.IndexOf(MixColour),
-					level = MixLevel
-				};
-            }
-		}
+            public Data.Mix AsMix () => new Data.Mix(mix) {
+                name = MixName,
+                bgColourId = DataStructures.bgColourNames.IndexOf(MixColour),
+                level = MixLevel
+            };
+        }
 
         public MixConfigWindow () {
             InitializeComponent();
@@ -65,16 +63,15 @@ namespace TouchFaders_MIDI.Configuration {
 			mixDataGrid.DataContext = this;
 			mixDataGrid.ItemsSource = mixConfigUI;
             //Console.WriteLine($"Loaded in {mixConfig.mixes.Count} mixes");
-			foreach (var mix in mixConfig.mixes) {
+			foreach (var mix in MainWindow.instance.data.mixes) {
 				mixConfigUI.Add(new MixConfigUI(mix));
             }
 		}
 
         protected override void OnClosed (EventArgs e) {
-			for (int i = 0; i < mixConfig.mixes.Count; i++) {
-				mixConfig.mixes[i] = mixConfigUI[i].AsMix();
+			for (int i = 0; i < MainWindow.instance.data.mixes.Count; i++) {
+				MainWindow.instance.data.mixes[i] = mixConfigUI[i].AsMix();
 			}
-			MainWindow.instance.mixConfig = mixConfig;
 			base.OnClosed(e);
         }
 

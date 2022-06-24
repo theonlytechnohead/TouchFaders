@@ -1,100 +1,87 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace TouchFaders_MIDI {
-	public class AppConfiguration {
+    public class AppConfiguration {
+
+		public const string CONFIG_DIR = "config";
+		public const string CONFIG_FILE = "config";
+		public const string DATA_FILE = "data";
+
 		// Constants and stuff goes here
-		public class appconfig {
-			public int? config_version { get; set; }
-			public int sendsToMix_version { get; set; }
-			public int mutesToMix_version { get; set; }
-
-			public int? channelConfig_version { get; set; } // Replaces channelNames_version and channelFaders_version
-			public int? mixConfig_version { get; set; } // Replaces mixNames_version and mixFaders_version - eventually
-
-			public Mixer mixer { get; set; }
-			public int mixNames_version { get; set; }
-			public int mixFaders_version { get; set; }
-			public int device_ID { get; set; }
+		public class Config {
+			public Mixer MIXER { get; set; }
+			public int DEVICE_ID { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
 
-			public static appconfig defaultValues () {
-				return new appconfig() {
-					config_version = 5,
-					sendsToMix_version = 1,
-					mutesToMix_version = 1,
-					channelConfig_version = 2,
-					mixer = Mixer.LS932,
-					mixConfig_version = 0,
-					mixNames_version = 0,
-					mixFaders_version = 0,
-					device_ID = 1,
+			public static Config defaultValues () {
+				return new Config() {
+					MIXER = Mixer.LS932,
+					DEVICE_ID = 1,
 					NUM_MIXES = 8,
 					NUM_CHANNELS = 32
 				};
 			}
 		}
 
-		public static appconfig Load () {
-			appconfig config;
-			_ = Directory.CreateDirectory("config");
-			if (File.Exists("config/config.txt")) {
-				string configFile = File.ReadAllText("config/config.txt");
-				config = JsonSerializer.Deserialize<appconfig>(configFile);
-				if (config.config_version == null) {
-					config.config_version = appconfig.defaultValues().config_version;
+		public static Config LoadConfig () {
+			Config config;
+			_ = Directory.CreateDirectory(CONFIG_DIR);
+			if (File.Exists($"{CONFIG_DIR}/{CONFIG_FILE}.json")) {
+				string configFile = File.ReadAllText($"{CONFIG_DIR}/{CONFIG_FILE}.json");
+				config = JsonSerializer.Deserialize<Config>(configFile);
+				if (config.NUM_MIXES == 0) {
+					config.NUM_MIXES = Config.defaultValues().NUM_MIXES;
 				}
-				if (config.config_version >= 1) {
-					if (config.sendsToMix_version == 0) {
-						config.sendsToMix_version = appconfig.defaultValues().sendsToMix_version;
-					}
-					if (config.mutesToMix_version == 0) {
-						config.mutesToMix_version = appconfig.defaultValues().mutesToMix_version;
-                    }
-					if (config.channelConfig_version == null) {
-						config.channelConfig_version = appconfig.defaultValues().channelConfig_version;
-					}
+				if (config.NUM_CHANNELS == 0) {
+					config.NUM_CHANNELS = Config.defaultValues().NUM_CHANNELS;
 				}
-				if (config.config_version >= 2) {
-					if (config.NUM_MIXES == 0) {
-						config.NUM_MIXES = appconfig.defaultValues().NUM_MIXES;
-					}
-					if (config.NUM_CHANNELS == 0) {
-						config.NUM_CHANNELS = appconfig.defaultValues().NUM_CHANNELS;
-					}
+				if (config.DEVICE_ID == 0) {
+					config.DEVICE_ID = Config.defaultValues().DEVICE_ID;
 				}
-				if (config.config_version >= 3) {
-					if (config.device_ID == 0) {
-						config.device_ID = appconfig.defaultValues().device_ID;
-					}
-				}
-				if (config.config_version >= 4) {
-					if (config.mixer == null) {
-						config.mixer = appconfig.defaultValues().mixer;
-					}
-				}
-				if (config.config_version >= 6) {
-					if (config.mixNames_version == 0) {
-						config.mixNames_version = appconfig.defaultValues().mixNames_version;
-					}
-					if (config.mixFaders_version == 0) {
-						config.mixFaders_version = appconfig.defaultValues().mixFaders_version;
-					}
+				if (config.MIXER == null) {
+					config.MIXER = Config.defaultValues().MIXER;
 				}
 			} else {
-				config = appconfig.defaultValues();
+				config = Config.defaultValues();
+				_ = SaveConfig(config);
 			}
 			return config;
 		}
 
-		public static async Task Save (appconfig config) {
+		public static async Task SaveConfig (Config config) {
 			if (config == null) return;
-			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true, };
-			_ = Directory.CreateDirectory("config");
-			using (FileStream fs = File.Create("config/config.txt")) {
-				await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
+			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
+			_ = Directory.CreateDirectory(CONFIG_DIR);
+            using FileStream fs = File.Create($"{CONFIG_DIR}/{CONFIG_FILE}.json");
+            await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
+        }
+
+		public static Data LoadData () {
+			Data data;
+			try {
+				string dataFile = File.ReadAllText($"{CONFIG_DIR}/{DATA_FILE}.json");
+				data = JsonSerializer.Deserialize<Data>(dataFile);
+			} catch (FileNotFoundException) {
+				data = new Data();
+				_ = SaveData(data);
+			} catch (Exception ex) {
+				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
+				data = new Data();
+			}
+			return data;
+		}
+
+		public static async Task SaveData (Data data) {
+			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
+			_ = Directory.CreateDirectory(CONFIG_DIR);
+			if (data != null) {
+				using FileStream fs = File.Create($"{CONFIG_DIR}/{DATA_FILE}.json");
+				await JsonSerializer.SerializeAsync(fs, data, serializerOptions);
 			}
 		}
 	}

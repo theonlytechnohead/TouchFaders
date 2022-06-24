@@ -12,7 +12,7 @@ namespace TouchFaders_MIDI {
 	/// </summary>
 	public partial class ConfigWindow : Window {
 
-		public AppConfiguration.appconfig config;
+		public AppConfiguration.Config config;
 
 		ObservableCollection<Mixer> mixers = new ObservableCollection<Mixer>();
 
@@ -26,8 +26,8 @@ namespace TouchFaders_MIDI {
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			if (config == null) return;
 
-			deviceGroupBox.Header = $"Device ID: {config.device_ID}";
-			deviceIDSlider.Value = config.device_ID;
+			deviceGroupBox.Header = $"Device ID: {config.DEVICE_ID}";
+			deviceIDSlider.Value = config.DEVICE_ID;
 
 			Mixer dataObject = new Mixer();
 			PropertyInfo[] properties = typeof(Mixer).GetProperties(BindingFlags.Static | BindingFlags.Public);
@@ -36,7 +36,7 @@ namespace TouchFaders_MIDI {
 			}
 
 			mixerComboBox.ItemsSource = mixers;
-			mixerComboBox.SelectedItem = config.mixer;
+			mixerComboBox.SelectedItem = config.MIXER;
 
 			channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
 			channelSlider.Value = config.NUM_CHANNELS;
@@ -111,18 +111,18 @@ namespace TouchFaders_MIDI {
 		private void deviceIDSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
 			Slider slider = sender as Slider;
 			if (config == null) return;
-			config.device_ID = (int)slider.Value;
-			deviceGroupBox.Header = $"Device ID: {config.device_ID}";
+			config.DEVICE_ID = (int)slider.Value;
+			deviceGroupBox.Header = $"Device ID: {config.DEVICE_ID}";
 		}
 
 		private void mixerComboBox_SelectionChanged (object sender, SelectionChangedEventArgs e) {
-			config.mixer = mixerComboBox.SelectedItem as Mixer;
+			config.MIXER = mixerComboBox.SelectedItem as Mixer;
 
-			if (channelSlider.Value >= config.mixer.channelCount) channelSlider.Value = config.mixer.channelCount;
-			channelSlider.Maximum = config.mixer.channelCount;
+			if (channelSlider.Value >= config.MIXER.channelCount) channelSlider.Value = config.MIXER.channelCount;
+			channelSlider.Maximum = config.MIXER.channelCount;
 
-			if (mixSlider.Value >= config.mixer.mixCount) mixSlider.Value = config.mixer.mixCount;
-			mixSlider.Maximum = config.mixer.mixCount;
+			if (mixSlider.Value >= config.MIXER.mixCount) mixSlider.Value = config.MIXER.mixCount;
+			mixSlider.Maximum = config.MIXER.mixCount;
 		}
 
 		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
@@ -136,7 +136,6 @@ namespace TouchFaders_MIDI {
 			ChannelConfigWindow channelConfigWindow = new ChannelConfigWindow();
 			channelConfigWindow.Owner = this;
 			channelConfigWindow.DataContext = this.DataContext;
-			channelConfigWindow.channelConfig = MainWindow.instance.channelConfig;
 			if (WindowState == WindowState.Maximized) {
 				channelConfigWindow.WindowState = WindowState.Maximized;
 			}
@@ -155,7 +154,6 @@ namespace TouchFaders_MIDI {
 			MixConfigWindow mixConfigWindow = new MixConfigWindow();
 			mixConfigWindow.Owner = this;
 			mixConfigWindow.DataContext = this.DataContext;
-			mixConfigWindow.mixConfig = MainWindow.instance.mixConfig;
 			if (WindowState == WindowState.Maximized) {
 				mixConfigWindow.WindowState = WindowState.Maximized;
             }
