@@ -136,7 +136,6 @@ namespace TouchFaders_MIDI {
 			ChannelConfigWindow channelConfigWindow = new ChannelConfigWindow();
 			channelConfigWindow.Owner = this;
 			channelConfigWindow.DataContext = this.DataContext;
-			channelConfigWindow.channelConfig = MainWindow.instance.channelConfig;
 			if (WindowState == WindowState.Maximized) {
 				channelConfigWindow.WindowState = WindowState.Maximized;
 			}
