@@ -217,7 +217,7 @@ namespace TouchFaders_MIDI {
 			mixes = new List<Mix>();
 		}
 
-		public void Initialise(AppConfiguration.appconfig appConfig) {
+		public void Initialise(AppConfiguration.Config appConfig) {
 			for (int i = 1; i <= appConfig.NUM_MIXES; i++) {
 				mixes.Add(new Mix() { name = $"MIX {i}", level = 823 });
 			}

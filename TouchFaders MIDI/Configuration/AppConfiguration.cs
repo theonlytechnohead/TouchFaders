@@ -15,14 +15,14 @@ namespace TouchFaders_MIDI {
 		public const string DATA_FILE = "data";
 
 		// Constants and stuff goes here
-		public class appconfig {
+		public class Config {
 			public Mixer mixer { get; set; }
 			public int device_ID { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
 
-			public static appconfig defaultValues () {
-				return new appconfig() {
+			public static Config defaultValues () {
+				return new Config() {
 					mixer = Mixer.LS932,
 					device_ID = 1,
 					NUM_MIXES = 8,
@@ -31,32 +31,32 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public static appconfig LoadConfig () {
-			appconfig config;
+		public static Config LoadConfig () {
+			Config config;
 			_ = Directory.CreateDirectory(CONFIG_DIR);
 			if (File.Exists($"{CONFIG_DIR}/{CONFIG_FILE}.json")) {
 				string configFile = File.ReadAllText($"{CONFIG_DIR}/{CONFIG_FILE}.json");
-				config = JsonSerializer.Deserialize<appconfig>(configFile);
+				config = JsonSerializer.Deserialize<Config>(configFile);
 				if (config.NUM_MIXES == 0) {
-					config.NUM_MIXES = appconfig.defaultValues().NUM_MIXES;
+					config.NUM_MIXES = Config.defaultValues().NUM_MIXES;
 				}
 				if (config.NUM_CHANNELS == 0) {
-					config.NUM_CHANNELS = appconfig.defaultValues().NUM_CHANNELS;
+					config.NUM_CHANNELS = Config.defaultValues().NUM_CHANNELS;
 				}
 				if (config.device_ID == 0) {
-					config.device_ID = appconfig.defaultValues().device_ID;
+					config.device_ID = Config.defaultValues().device_ID;
 				}
 				if (config.mixer == null) {
-					config.mixer = appconfig.defaultValues().mixer;
+					config.mixer = Config.defaultValues().mixer;
 				}
 			} else {
-				config = appconfig.defaultValues();
+				config = Config.defaultValues();
 				_ = SaveConfig(config);
 			}
 			return config;
 		}
 
-		public static async Task SaveConfig (appconfig config) {
+		public static async Task SaveConfig (Config config) {
 			if (config == null) return;
 			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
 			_ = Directory.CreateDirectory(CONFIG_DIR);

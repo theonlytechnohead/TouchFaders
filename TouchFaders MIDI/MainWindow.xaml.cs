@@ -28,7 +28,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public static MainWindow instance;
-		public AppConfiguration.appconfig config;
+		public AppConfiguration.Config config;
 		public Data data;
 
 		List<oscDevice> devices = new List<oscDevice>();

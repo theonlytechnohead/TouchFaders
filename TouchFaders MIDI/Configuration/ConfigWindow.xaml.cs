@@ -12,7 +12,7 @@ namespace TouchFaders_MIDI {
 	/// </summary>
 	public partial class ConfigWindow : Window {
 
-		public AppConfiguration.appconfig config;
+		public AppConfiguration.Config config;
 
 		ObservableCollection<Mixer> mixers = new ObservableCollection<Mixer>();
 
