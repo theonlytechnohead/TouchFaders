@@ -1,4 +1,4 @@
-﻿using SharpOSC;
+using SharpOSC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -114,6 +114,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendChannelNames () {
+			Thread.Sleep(15);
 			for (int label = 1; label <= MainWindow.instance.data.channels.Count; label++) {
 				SendChannelName(label, MainWindow.instance.data.channels[label - 1].name);
 				Thread.Sleep(3);
