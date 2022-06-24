@@ -31,15 +31,27 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Channel name">
+                    <DataGridTemplateColumn Header="Channel patch">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding ChannelName, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Style="{StaticResource DataGridTextBox}" />
+                                <ComboBox ItemsSource="{Binding ChannelPatches}" SelectedItem="{Binding ChannelPatch}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding ChannelName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DataGridTextBox}" />
+                                <ComboBox ItemsSource="{Binding ChannelPatches}" SelectedItem="{Binding ChannelPatch}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Channel name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding ChannelName, UpdateSourceTrigger=PropertyChanged}" MaxLength="6" MaxLines="1" VerticalContentAlignment="Center" Style="{StaticResource DataGridTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding ChannelName, UpdateSourceTrigger=PropertyChanged}" MaxLength="6" MaxLines="1" Style="{StaticResource DataGridTextBox}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>

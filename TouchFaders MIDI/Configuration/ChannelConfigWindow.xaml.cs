@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,9 +23,14 @@ namespace TouchFaders_MIDI {
 				public string name;
 			}
 
+			public class PatchArgs : EventArgs {
+				public int channel;
+				public int patch;
+			}
+
 			public int channel;
 			private string name;
-			public string ChannelName { get => name; set { name = value; PropertyChanged?.Invoke(this, new NameArgs() { channel = channel, name = ChannelName }); } }
+            public string ChannelName { get => name; set { name = value; PropertyChanged?.Invoke(this, new NameArgs() { channel = channel, name = ChannelName }); } }
 			private string channelColour;
 			public Dictionary<string, SolidColorBrush> Colours {
 				get {
@@ -49,7 +55,9 @@ namespace TouchFaders_MIDI {
 				}
 			}
 			public ObservableCollection<char> ChannelGroups { get; set; }
-			public int ChannelPatch { get; set; }
+			private int patch;
+			public int ChannelPatch { get => patch; set { patch = value; PropertyChanged?.Invoke(this, new PatchArgs() { channel = channel, patch = ChannelPatch }); } }
+			public List<int> ChannelPatches { get; set; }
 
 			public EventHandler PropertyChanged;
 
@@ -60,6 +68,7 @@ namespace TouchFaders_MIDI {
 				ChannelGroup = channel.linkGroup;
 				ChannelGroups = DataStructures.ChannelGroupChars;
 				ChannelPatch = channel.patch;
+				ChannelPatches = (from port in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select port).ToList();
 			}
         }
 
@@ -100,6 +109,9 @@ namespace TouchFaders_MIDI {
 			if (e is ChannelConfigUI.NameArgs) {
 				ChannelConfigUI.NameArgs args = e as ChannelConfigUI.NameArgs;
 				MainWindow.instance.data.channels[args.channel - 1].name = args.name;
+			} else if (e is ChannelConfigUI.PatchArgs) {
+				ChannelConfigUI.PatchArgs args = e as ChannelConfigUI.PatchArgs;
+				MainWindow.instance.data.channels[args.channel - 1].patch = args.patch;
 			} else {
 				int index = channelConfigUI.IndexOf(channelConfig);
 				char group = channelConfig.ChannelGroup;

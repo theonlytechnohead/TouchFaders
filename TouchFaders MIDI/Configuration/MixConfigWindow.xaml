@@ -34,12 +34,12 @@
                     <DataGridTemplateColumn Header="Mix name">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding MixName}" VerticalContentAlignment="Center" Style="{StaticResource DataGridTextBox}" />
+                                <TextBox Text="{Binding MixName, UpdateSourceTrigger=PropertyChanged}" MaxLength="6" MaxLines="1" VerticalContentAlignment="Center" Style="{StaticResource DataGridTextBox}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <TextBox Text="{Binding MixName}" Style="{StaticResource DataGridTextBox}" />
+                                <TextBox Text="{Binding MixName, UpdateSourceTrigger=PropertyChanged}" MaxLength="6" MaxLines="1" Style="{StaticResource DataGridTextBox}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>

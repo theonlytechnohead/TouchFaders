@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,8 +16,15 @@ namespace TouchFaders_MIDI.Configuration {
 		public ObservableCollection<MixConfigUI> mixConfigUI;
 
 		public class MixConfigUI {
+
+			public class NameArgs : EventArgs {
+				public int mix;
+				public string name;
+			}
+
 			public int mix;
-			public string MixName { get; set; }
+			private string name;
+			public string MixName { get => name; set { name = value; PropertyChanged?.Invoke(this, new NameArgs() { mix = mix, name = MixName }); } }
 			private string mixColour;
 			public Dictionary<string, SolidColorBrush> Colours {
 				get {
@@ -54,11 +62,32 @@ namespace TouchFaders_MIDI.Configuration {
 		private void mixConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			mixDataGrid.DataContext = this;
 			mixDataGrid.ItemsSource = mixConfigUI;
-            //Console.WriteLine($"Loaded in {mixConfig.mixes.Count} mixes");
+            mixConfigUI.CollectionChanged += MixConfigUI_CollectionChanged;
 			foreach (var mix in MainWindow.instance.data.mixes) {
 				mixConfigUI.Add(new MixConfigUI(mix));
             }
 		}
+
+        private void MixConfigUI_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e) {
+			if (e.Action == NotifyCollectionChangedAction.Remove) {
+				foreach (MixConfigUI item in e.OldItems) {
+					//Removed items
+					item.PropertyChanged -= MixConfigUIPropertyChanged;
+				}
+			} else if (e.Action == NotifyCollectionChangedAction.Add) {
+				foreach (MixConfigUI item in e.NewItems) {
+					//Added items
+					item.PropertyChanged += MixConfigUIPropertyChanged;
+				}
+			}
+		}
+
+        private void MixConfigUIPropertyChanged (object sender, EventArgs e) {
+            if (e is MixConfigUI.NameArgs) {
+				MixConfigUI.NameArgs args = e as MixConfigUI.NameArgs;
+				MainWindow.instance.data.mixes[args.mix - 1].name = args.name;
+            }
+        }
 
         protected override void OnClosed (EventArgs e) {
 			foreach (var mixConfig in mixConfigUI) {

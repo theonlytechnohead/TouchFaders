@@ -170,6 +170,8 @@ namespace TouchFaders_MIDI {
 		void DataLoaded (Data data) {
 			Dispatcher.Invoke(() => { this.data = data; });
             Data.channelNameChanged += Data_channelNameChanged;
+			Data.channelPatchChanged += Data_channelPatchChanged;
+			Data.mixNameChanged += Data_mixNameChanged;
             for (int i = 0; i < config.MIXER.channelCount; i++) {
 				selectedChannelCache.Add(new Data.SelectedChannel() { name = $"ch {i + 1}", channelIndex = i });
 			}
@@ -373,6 +375,22 @@ namespace TouchFaders_MIDI {
 			foreach (var device in devices) {
 				device.SendChannelName(args.channel, args.name);
             }
+		}
+
+		private void Data_channelPatchChanged (object sender, EventArgs e) {
+			var args = e as Data.Channel.PatchArgs;
+			foreach (var device in devices) {
+				device.SendChannelPatch(args.channel, args.patch);
+			}
+		}
+
+		private void Data_mixNameChanged (object sender, EventArgs e) {
+			var args = e as Data.Mix.NameArgs;
+			foreach (var device in devices) {
+				// TODO: this is sent over TCP initially
+				// might as well relay to the console anyway
+				//device.SendMixName(args.mix, args.name);
+			}
 		}
 		#endregion
 
