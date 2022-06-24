@@ -73,12 +73,20 @@ namespace TouchFaders_MIDI {
 			private int fader;
 			private bool mute;
 
-			public class ChannelLevelArgs : EventArgs {
+			public class NameArgs : EventArgs {
+				public int channel;
+				public string name;
+            }
+
+			public class LevelArgs : EventArgs {
+				public int channel;
+				public int level;
 				public char linkGroup;
 			}
 
-			public string name { get => label; set { label = value; channelNameChanged?.Invoke(this, new EventArgs()); } }
-			public int level { get => fader; set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelArgs() { linkGroup = linkGroup }); } }
+			public int channel;
+			public string name { get => label; set { label = value; channelNameChanged?.Invoke(this, new NameArgs() { channel = channel, name = name }); } }
+			public int level { get => fader; set { fader = value; channelLevelChanged?.Invoke(this, new LevelArgs() { channel = channel, level = level, linkGroup = linkGroup }); } }
             public bool muted { get => mute; set { mute = value; channelMuteChanged?.Invoke(this, new EventArgs()); } }
 			public int bgColourId { get; set; }
 			public char linkGroup { get; set; }
@@ -87,6 +95,7 @@ namespace TouchFaders_MIDI {
 			public List<Send> sends { get; set; }
 
 			public Channel(int channel) {
+				this.channel = channel;
 				name = $"ch{channel}";
 				// Initialised to 0dB
 				level = 823;
