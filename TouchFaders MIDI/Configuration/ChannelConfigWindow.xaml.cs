@@ -16,8 +16,15 @@ namespace TouchFaders_MIDI {
 		public ObservableCollection<ChannelConfigUI> channelConfigUI;
 
 		public class ChannelConfigUI {
+
+			public class NameArgs : EventArgs {
+				public int channel;
+				public string name;
+			}
+
 			public int channel;
-			public string ChannelName { get; set; }
+			private string name;
+			public string ChannelName { get => name; set { name = value; PropertyChanged?.Invoke(this, new NameArgs() { channel = channel, name = ChannelName }); } }
 			private string channelColour;
 			public Dictionary<string, SolidColorBrush> Colours {
 				get {
@@ -89,11 +96,16 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void ChannelConfigUIPropertyChanged (object sender, EventArgs e) {
-			ChannelConfigUI configUI = sender as ChannelConfigUI;
-			int index = channelConfigUI.IndexOf(configUI);
-			char group = configUI.ChannelGroup;
-			//Console.WriteLine($"{channelConfigUI.IndexOf(configUI)}:{configUI.ChannelGroup}");
-			MainWindow.instance.SendChannelLinkGroup(index, group);
+			ChannelConfigUI channelConfig = sender as ChannelConfigUI;
+			if (e is ChannelConfigUI.NameArgs) {
+				ChannelConfigUI.NameArgs args = e as ChannelConfigUI.NameArgs;
+				MainWindow.instance.data.channels[args.channel - 1].name = args.name;
+			} else {
+				int index = channelConfigUI.IndexOf(channelConfig);
+				char group = channelConfig.ChannelGroup;
+				//Console.WriteLine($"{channelConfigUI.IndexOf(configUI)}:{configUI.ChannelGroup}");
+				MainWindow.instance.SendChannelLinkGroup(index, group);
+			}
 		}
 
 		protected override void OnClosed (EventArgs e) {

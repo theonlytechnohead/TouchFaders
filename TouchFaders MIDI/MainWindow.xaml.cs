@@ -1,4 +1,4 @@
-﻿using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
@@ -169,8 +169,9 @@ namespace TouchFaders_MIDI {
 		#region File & network I/O (and setup)
 		void DataLoaded (Data data) {
 			Dispatcher.Invoke(() => { this.data = data; });
+            Data.channelNameChanged += Data_channelNameChanged;
             for (int i = 0; i < config.MIXER.channelCount; i++) {
-				selectedChannelCache.Add(new Data.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
+				selectedChannelCache.Add(new Data.SelectedChannel() { name = $"ch {i + 1}", channelIndex = i });
 			}
 
 			// MIDI
@@ -363,6 +364,15 @@ namespace TouchFaders_MIDI {
 			BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
 			//Console.WriteLine($"Sent metering bytes: {BitConverter.ToString(data)}");
 			return sendUdpClient.Send(data, data.Length, targetEndPoint);
+		}
+		#endregion
+
+		#region Callbacks
+		private void Data_channelNameChanged (object sender, EventArgs e) {
+			var args = e as Data.Channel.NameArgs;
+			foreach (var device in devices) {
+				device.SendChannelName(args.channel, args.name);
+            }
 		}
 		#endregion
 
