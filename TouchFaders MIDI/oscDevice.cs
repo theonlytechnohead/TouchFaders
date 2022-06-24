@@ -99,23 +99,23 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public void ResendMixNames (int mix, List<string> channelNames) { // TODO: rework
+		public void ResendMixNames (int mix) { // TODO: rework
 			for (int label = 1; label <= MainWindow.instance.config.NUM_CHANNELS; label++) {
-				OscMessage message = new OscMessage($"/mix{mix}/label{label}", channelNames[label - 1]);
+				OscMessage message = new OscMessage($"/mix{mix}/label{label}", MainWindow.instance.data.mixes[label - 1]);
 				output.Send(message);
 			}
 		}
 
-		public void ResendAllNames (List<string> channelNames) { // TODO: remove
+		public void ResendAllNames () { // TODO: remove
 			for (int mix = 1; mix <= MainWindow.instance.config.NUM_MIXES; mix++) {
-				ResendMixNames(mix, channelNames);
+				ResendMixNames(mix);
 				Thread.Sleep(3);
 			}
 		}
 
 		public void SendChannelNames () {
-			for (int label = 1; label <= MainWindow.instance.channelConfig.channels.Count; label++) {
-				SendChannelName(label, MainWindow.instance.channelConfig.channels[label - 1].name);
+			for (int label = 1; label <= MainWindow.instance.data.channels.Count; label++) {
+				SendChannelName(label, MainWindow.instance.data.channels[label - 1].name);
 				Thread.Sleep(3);
 			}
 		}
@@ -126,20 +126,20 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendChannelPatches () {
-			for (int patch = 1; patch <= MainWindow.instance.channelConfig.channels.Count; patch++) {
+			for (int patch = 1; patch <= MainWindow.instance.data.channels.Count; patch++) {
 				SendChannelPatch(patch, patch);
 				Thread.Sleep(3);
 			}
 		}
 
 		public void SendChannelPatch (int channel, int patch) {
-			string patchIn = "IN " + MainWindow.instance.channelConfig.channels[patch - 1].patch;
+			string patchIn = "IN " + MainWindow.instance.data.channels[patch - 1].patch;
 			OscMessage message = new OscMessage($"/patch{channel}", patchIn);
 			output.Send(message);
 		}
 
 		public void SendMixMutes (int mix) {
-			for (int channel = 1; channel <= MainWindow.instance.channelConfig.channels.Count; channel++) {
+			for (int channel = 1; channel <= MainWindow.instance.data.channels.Count; channel++) {
 				SendChannelMute(mix, channel);
 			}
         }

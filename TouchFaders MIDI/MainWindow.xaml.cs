@@ -42,9 +42,8 @@ namespace TouchFaders_MIDI {
 		Timer meteringTimer;
 		public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
-		public ChannelConfig channelConfig = new ChannelConfig(); // Replaces ChannelNames and ChannelFaders
-		public ChannelConfig.SelectedChannel selectedChannel;
-		List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
+		public Data.SelectedChannel selectedChannel;
+		List<Data.SelectedChannel> selectedChannelCache = new List<Data.SelectedChannel>();
 		Stack<int> selectedChannelIndexToGet = new Stack<int>();
 		Timer selectedChannelTimer;
 
@@ -80,7 +79,7 @@ namespace TouchFaders_MIDI {
         }
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
-			selectedChannel = new ChannelConfig.SelectedChannel();
+			selectedChannel = new Data.SelectedChannel();
 			UpdateSelectedChannel();
 			devicesListBox.DataContext = this;
 			devicesListBox.ItemsSource = uiDevices;
@@ -171,7 +170,7 @@ namespace TouchFaders_MIDI {
 		void DataLoaded (Data data) {
 			Dispatcher.Invoke(() => { this.data = data; });
             for (int i = 0; i < config.MIXER.channelCount; i++) {
-				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
+				selectedChannelCache.Add(new Data.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
 			}
 
 			// MIDI
@@ -337,7 +336,7 @@ namespace TouchFaders_MIDI {
 				tasks.Add(Task.Run(() => {
 					device.ResendMixFaders();
 					Thread.Sleep(5);
-					device.ResendAllNames(channelConfig.GetChannelNames());
+					device.ResendAllNames();
 				}));
 			}
 			await Task.WhenAll(tasks);
@@ -695,14 +694,14 @@ namespace TouchFaders_MIDI {
 
 			switch (index) { // the index number is either for kNameShort 1 or 2
 				case 0x00: // kNameShort1
-					channelConfig.channels[channel].name = ChannelConfig.Channel.kNameShortToString(data);
+					this.data.channels[channel].name = Data.kNameShortToString(data);
 					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort1 = data; }
 					selectedChannelCache[channel].kNameShort1 = data;
 					break;
 				case 0x01: // kNameShort2
-					channelConfig.channels[channel].name += ChannelConfig.Channel.kNameShortToString(data);
+					this.data.channels[channel].name += Data.kNameShortToString(data);
 					foreach (oscDevice device in devices) {
-						device.SendChannelName(channel + 1, channelConfig.channels[channel].name);
+						device.SendChannelName(channel + 1, this.data.channels[channel].name);
 					}
 					if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort2 = data; }
 					selectedChannelCache[channel].kNameShort2 = data;
@@ -717,7 +716,7 @@ namespace TouchFaders_MIDI {
 			channel += channelLSB;          // Add LSB
 
 			byte inputPatch = bytes[15];
-			channelConfig.channels[channel].patch = inputPatch;
+			data.channels[channel].patch = inputPatch;
 			foreach (oscDevice device in devices) {
 				device.SendChannelPatch(channel + 1, inputPatch);
 			}
@@ -751,7 +750,7 @@ namespace TouchFaders_MIDI {
 
 			byte group = bytes[15];
 
-			channelConfig.channels[channel].linkGroup = ChannelConfig.ChannelGroupChars[group];
+			data.channels[channel].linkGroup = DataStructures.ChannelGroupChars[group];
 		}
 
 		void HandleChannelFader (byte[] bytes) {
@@ -767,7 +766,7 @@ namespace TouchFaders_MIDI {
 			level += data1;
 
 			if (channel < config.MIXER.channelCount - 8) { // TODO: make this proper and UI and stuff
-				channelConfig.channels[channel].level = level;
+				data.channels[channel].level = level;
 
 				selectedChannelCache[channel].level = level;
 				Dispatcher.Invoke(() => {
@@ -969,7 +968,7 @@ namespace TouchFaders_MIDI {
 			ushort shiftedChannel = (ushort)(channel_int >> 7);
 			byte channelMSB = (byte)(shiftedChannel & 0x7Fu);
 
-			byte group = Convert.ToByte(ChannelConfig.ChannelGroupChars.IndexOf(linkGroup));
+			byte group = Convert.ToByte(DataStructures.ChannelGroupChars.IndexOf(linkGroup));
 			//Console.WriteLine($"Setting channel {channel + 1} link group to {linkGroup}");
 
 			NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
@@ -1181,7 +1180,7 @@ namespace TouchFaders_MIDI {
 			} else {
 				selectedChannelFader.Value = selectedChannel.level;
 				selectedChannelName.Content = selectedChannel.name;
-				selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(ChannelConfig.SelectedChannel.iconURIs[selectedChannel.iconID]);
+				selectedChannelImage.Source = new System.Windows.Media.Imaging.BitmapImage(Data.SelectedChannel.iconURIs[selectedChannel.iconID]);
 				selectedChannelColour.Fill = DataStructures.bgColours[selectedChannel.bgColourID];
 			}
 		}

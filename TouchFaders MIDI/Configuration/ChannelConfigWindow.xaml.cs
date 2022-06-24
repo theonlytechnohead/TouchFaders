@@ -53,7 +53,7 @@ namespace TouchFaders_MIDI {
 				ChannelLevel = channel.level;
 				ChannelColour = DataStructures.bgColourNames[channel.bgColourId];
 				ChannelGroup = channel.linkGroup;
-				ChannelGroups = ChannelConfig.ChannelGroupChars;
+				ChannelGroups = DataStructures.ChannelGroupChars;
 				ChannelPatch = channel.patch;
 			}
 
