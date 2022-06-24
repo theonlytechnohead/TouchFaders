@@ -37,8 +37,10 @@ namespace TouchFaders_MIDI {
 	public class Data {
 		public static event EventHandler sendLevelChanged;
 		public static event EventHandler sendMuteChanged;
+		public static event EventHandler channelNameChanged;
 		public static event EventHandler channelLevelChanged;
 		public static event EventHandler channelMuteChanged;
+		public static event EventHandler mixNameChanged;
 		public static event EventHandler mixLevelChanged;
 		public static event EventHandler mixMuteChanged;
 
@@ -67,6 +69,7 @@ namespace TouchFaders_MIDI {
         }
 
 		public class Channel {
+			private string label;
 			private int fader;
 			private bool mute;
 
@@ -74,7 +77,7 @@ namespace TouchFaders_MIDI {
 				public char linkGroup;
 			}
 
-			public string name { get; set; }
+			public string name { get => label; set { label = value; channelNameChanged?.Invoke(this, new EventArgs()); } }
 			public int level { get => fader; set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelArgs() { linkGroup = linkGroup }); } }
             public bool muted { get => mute; set { mute = value; channelMuteChanged?.Invoke(this, new EventArgs()); } }
 			public int bgColourId { get; set; }
@@ -112,10 +115,11 @@ namespace TouchFaders_MIDI {
 		}
 
 		public class Mix {
+			private string label;
 			private int fader;
 			private bool mute;
 
-			public string name { get; set; }
+			public string name { get => label; set { label = value; mixNameChanged?.Invoke(this, new EventArgs()); } }
 			public int level { get => fader; set { fader = value; mixLevelChanged?.Invoke(this, new EventArgs()); } }
 			public bool muted { get => mute; set { mute = value; mixMuteChanged?.Invoke(this, new EventArgs()); } }
 			public int bgColourId { get; set; }
