@@ -128,12 +128,14 @@ namespace TouchFaders_MIDI {
 			private int fader;
 			private bool mute;
 
+			public int mix;
 			public string name { get => label; set { label = value; mixNameChanged?.Invoke(this, new EventArgs()); } }
 			public int level { get => fader; set { fader = value; mixLevelChanged?.Invoke(this, new EventArgs()); } }
 			public bool muted { get => mute; set { mute = value; mixMuteChanged?.Invoke(this, new EventArgs()); } }
 			public int bgColourId { get; set; }
 
 			public Mix(int mix) {
+				this.mix = mix;
 				name = $"MX{mix}";
 				// Initialised to 0dB
 				level = 823;

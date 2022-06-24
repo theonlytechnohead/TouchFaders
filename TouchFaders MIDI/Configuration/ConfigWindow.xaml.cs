@@ -155,7 +155,6 @@ namespace TouchFaders_MIDI {
 			MixConfigWindow mixConfigWindow = new MixConfigWindow();
 			mixConfigWindow.Owner = this;
 			mixConfigWindow.DataContext = this.DataContext;
-			mixConfigWindow.mixConfig = MainWindow.instance.mixConfig;
 			if (WindowState == WindowState.Maximized) {
 				mixConfigWindow.WindowState = WindowState.Maximized;
             }
