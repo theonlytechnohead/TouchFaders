@@ -16,9 +16,8 @@ namespace TouchFaders_MIDI {
 		public ObservableCollection<ChannelConfigUI> channelConfigUI;
 
 		public class ChannelConfigUI {
-			private int channel;
+			public int channel;
 			public string ChannelName { get; set; }
-			int ChannelLevel { get; set; }
 			private string channelColour;
 			public Dictionary<string, SolidColorBrush> Colours {
 				get {
@@ -50,20 +49,11 @@ namespace TouchFaders_MIDI {
 			public ChannelConfigUI (Data.Channel channel) {
 				this.channel = channel.channel;
 				ChannelName = channel.name;
-				ChannelLevel = channel.level;
 				ChannelColour = DataStructures.bgColourNames[channel.bgColourId];
 				ChannelGroup = channel.linkGroup;
 				ChannelGroups = DataStructures.ChannelGroupChars;
 				ChannelPatch = channel.patch;
 			}
-
-            public Data.Channel AsChannel () => new Data.Channel(channel) {
-                name = ChannelName,
-                level = ChannelLevel,
-                bgColourId = DataStructures.bgColourNames.IndexOf(ChannelColour),
-                linkGroup = ChannelGroup,
-                patch = ChannelPatch
-            };
         }
 
 		public ChannelConfigWindow () {
@@ -80,8 +70,7 @@ namespace TouchFaders_MIDI {
 			channelDataGrid.ItemsSource = channelConfigUI;
 			channelConfigUI.CollectionChanged += ChannelConfigUI_CollectionChanged;
 			foreach (var channel in MainWindow.instance.data.channels) {
-				ChannelConfigUI channelConfig = new ChannelConfigUI(channel);
-				channelConfigUI.Add(channelConfig);
+				channelConfigUI.Add(new ChannelConfigUI(channel));
 			}
 		}
 
@@ -108,8 +97,11 @@ namespace TouchFaders_MIDI {
 		}
 
 		protected override void OnClosed (EventArgs e) {
-			for (int i = 0; i < MainWindow.instance.data.channels.Count; i++) {
-				MainWindow.instance.data.channels[i] = channelConfigUI[i].AsChannel();
+			foreach (var channelConfig in channelConfigUI) {
+				MainWindow.instance.data.channels[channelConfig.channel - 1].name = channelConfig.ChannelName;
+				MainWindow.instance.data.channels[channelConfig.channel - 1].bgColourId = DataStructures.bgColourNames.IndexOf(channelConfig.ChannelColour);
+				MainWindow.instance.data.channels[channelConfig.channel - 1].linkGroup = channelConfig.ChannelGroup;
+				MainWindow.instance.data.channels[channelConfig.channel - 1].patch = channelConfig.ChannelPatch;
 			}
 			base.OnClosed(e);
 		}

@@ -15,7 +15,7 @@ namespace TouchFaders_MIDI.Configuration {
 		public ObservableCollection<MixConfigUI> mixConfigUI;
 
 		public class MixConfigUI {
-			private int mix;
+			public int mix;
 			public string MixName { get; set; }
 			private string mixColour;
 			public Dictionary<string, SolidColorBrush> Colours {
@@ -32,7 +32,6 @@ namespace TouchFaders_MIDI.Configuration {
 					PropertyChanged?.Invoke(this, new EventArgs());
 				}
 			}
-			int MixLevel { get; set; }
 
 			public EventHandler PropertyChanged;
 
@@ -40,14 +39,7 @@ namespace TouchFaders_MIDI.Configuration {
 				this.mix = mix.mix;
 				MixName = mix.name;
 				MixColour = DataStructures.bgColourNames[mix.bgColourId];
-				MixLevel = mix.level;
             }
-
-            public Data.Mix AsMix () => new Data.Mix(mix) {
-                name = MixName,
-                bgColourId = DataStructures.bgColourNames.IndexOf(MixColour),
-                level = MixLevel
-            };
         }
 
         public MixConfigWindow () {
@@ -69,9 +61,10 @@ namespace TouchFaders_MIDI.Configuration {
 		}
 
         protected override void OnClosed (EventArgs e) {
-			for (int i = 0; i < MainWindow.instance.data.mixes.Count; i++) {
-				MainWindow.instance.data.mixes[i] = mixConfigUI[i].AsMix();
-			}
+			foreach (var mixConfig in mixConfigUI) {
+				MainWindow.instance.data.mixes[mixConfig.mix - 1].name = mixConfig.MixName;
+				MainWindow.instance.data.mixes[mixConfig.mix - 1].bgColourId = DataStructures.bgColourNames.IndexOf(mixConfig.MixColour);
+            }
 			base.OnClosed(e);
         }
 

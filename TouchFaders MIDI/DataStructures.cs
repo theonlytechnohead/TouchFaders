@@ -121,7 +121,7 @@ namespace TouchFaders_MIDI {
 				public char linkGroup;
 			}
 
-			public int channel;
+			public int channel { get; set; }
 			public string name { get => label; set { label = value; channelNameChanged?.Invoke(this, new NameArgs() { channel = channel, name = name }); } }
 			public int level { get => fader; set { fader = value; channelLevelChanged?.Invoke(this, new LevelArgs() { channel = channel, level = level, linkGroup = linkGroup }); } }
             public bool muted { get => mute; set { mute = value; channelMuteChanged?.Invoke(this, new EventArgs()); } }
@@ -216,7 +216,7 @@ namespace TouchFaders_MIDI {
 			public SelectedChannel () {
 				currentChannel = new Channel();
 				channelIndex = 0;
-				name = "ch 1";
+				name = "ch1";
 				level = 823;
 				iconID = 22;
 				bgColourID = 0;
@@ -243,7 +243,7 @@ namespace TouchFaders_MIDI {
 			private int fader;
 			private bool mute;
 
-			public int mix;
+			public int mix { get; set; }
 			public string name { get => label; set { label = value; mixNameChanged?.Invoke(this, new EventArgs()); } }
 			public int level { get => fader; set { fader = value; mixLevelChanged?.Invoke(this, new EventArgs()); } }
 			public bool muted { get => mute; set { mute = value; mixMuteChanged?.Invoke(this, new EventArgs()); } }

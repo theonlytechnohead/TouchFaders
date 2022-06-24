@@ -1,6 +1,7 @@
 {
   "channels": [
     {
+      "channel": 1,
       "name": "ch1",
       "level": 823,
       "muted": false,
@@ -75,6 +76,7 @@
       ]
     },
     {
+      "channel": 2,
       "name": "ch2",
       "level": 823,
       "muted": false,
@@ -149,6 +151,7 @@
       ]
     },
     {
+      "channel": 3,
       "name": "ch3",
       "level": 823,
       "muted": false,
@@ -223,6 +226,7 @@
       ]
     },
     {
+      "channel": 4,
       "name": "ch4",
       "level": 823,
       "muted": false,
@@ -297,6 +301,7 @@
       ]
     },
     {
+      "channel": 5,
       "name": "ch5",
       "level": 823,
       "muted": false,
@@ -371,6 +376,7 @@
       ]
     },
     {
+      "channel": 6,
       "name": "ch6",
       "level": 823,
       "muted": false,
@@ -445,6 +451,7 @@
       ]
     },
     {
+      "channel": 7,
       "name": "ch7",
       "level": 823,
       "muted": false,
@@ -519,6 +526,7 @@
       ]
     },
     {
+      "channel": 8,
       "name": "ch8",
       "level": 823,
       "muted": false,
@@ -593,6 +601,7 @@
       ]
     },
     {
+      "channel": 9,
       "name": "ch9",
       "level": 823,
       "muted": false,
@@ -667,6 +676,7 @@
       ]
     },
     {
+      "channel": 10,
       "name": "ch10",
       "level": 823,
       "muted": false,
@@ -741,6 +751,7 @@
       ]
     },
     {
+      "channel": 11,
       "name": "ch11",
       "level": 823,
       "muted": false,
@@ -815,6 +826,7 @@
       ]
     },
     {
+      "channel": 12,
       "name": "ch12",
       "level": 823,
       "muted": false,
@@ -889,6 +901,7 @@
       ]
     },
     {
+      "channel": 13,
       "name": "ch13",
       "level": 823,
       "muted": false,
@@ -963,6 +976,7 @@
       ]
     },
     {
+      "channel": 14,
       "name": "ch14",
       "level": 823,
       "muted": false,
@@ -1037,6 +1051,7 @@
       ]
     },
     {
+      "channel": 15,
       "name": "ch15",
       "level": 823,
       "muted": false,
@@ -1111,6 +1126,7 @@
       ]
     },
     {
+      "channel": 16,
       "name": "ch16",
       "level": 823,
       "muted": false,
@@ -1185,6 +1201,7 @@
       ]
     },
     {
+      "channel": 17,
       "name": "ch17",
       "level": 823,
       "muted": false,
@@ -1259,6 +1276,7 @@
       ]
     },
     {
+      "channel": 18,
       "name": "ch18",
       "level": 823,
       "muted": false,
@@ -1333,6 +1351,7 @@
       ]
     },
     {
+      "channel": 19,
       "name": "ch19",
       "level": 823,
       "muted": false,
@@ -1407,6 +1426,7 @@
       ]
     },
     {
+      "channel": 20,
       "name": "ch20",
       "level": 823,
       "muted": false,
@@ -1481,6 +1501,7 @@
       ]
     },
     {
+      "channel": 21,
       "name": "ch21",
       "level": 823,
       "muted": false,
@@ -1555,6 +1576,7 @@
       ]
     },
     {
+      "channel": 22,
       "name": "ch22",
       "level": 823,
       "muted": false,
@@ -1629,6 +1651,7 @@
       ]
     },
     {
+      "channel": 23,
       "name": "ch23",
       "level": 823,
       "muted": false,
@@ -1703,6 +1726,7 @@
       ]
     },
     {
+      "channel": 24,
       "name": "ch24",
       "level": 823,
       "muted": false,
@@ -1777,6 +1801,7 @@
       ]
     },
     {
+      "channel": 25,
       "name": "ch25",
       "level": 823,
       "muted": false,
@@ -1851,6 +1876,7 @@
       ]
     },
     {
+      "channel": 26,
       "name": "ch26",
       "level": 823,
       "muted": false,
@@ -1925,6 +1951,7 @@
       ]
     },
     {
+      "channel": 27,
       "name": "ch27",
       "level": 823,
       "muted": false,
@@ -1999,6 +2026,7 @@
       ]
     },
     {
+      "channel": 28,
       "name": "ch28",
       "level": 823,
       "muted": false,
@@ -2073,6 +2101,7 @@
       ]
     },
     {
+      "channel": 29,
       "name": "ch29",
       "level": 823,
       "muted": false,
@@ -2147,6 +2176,7 @@
       ]
     },
     {
+      "channel": 30,
       "name": "ch30",
       "level": 823,
       "muted": false,
@@ -2221,6 +2251,7 @@
       ]
     },
     {
+      "channel": 31,
       "name": "ch31",
       "level": 823,
       "muted": false,
@@ -2295,6 +2326,7 @@
       ]
     },
     {
+      "channel": 32,
       "name": "ch32",
       "level": 823,
       "muted": false,
@@ -2369,6 +2401,7 @@
       ]
     },
     {
+      "channel": 33,
       "name": "ch33",
       "level": 823,
       "muted": false,
@@ -2443,6 +2476,7 @@
       ]
     },
     {
+      "channel": 34,
       "name": "ch34",
       "level": 823,
       "muted": false,
@@ -2517,6 +2551,7 @@
       ]
     },
     {
+      "channel": 35,
       "name": "ch35",
       "level": 823,
       "muted": false,
@@ -2591,6 +2626,7 @@
       ]
     },
     {
+      "channel": 36,
       "name": "ch36",
       "level": 823,
       "muted": false,
@@ -2665,6 +2701,7 @@
       ]
     },
     {
+      "channel": 37,
       "name": "ch37",
       "level": 823,
       "muted": false,
@@ -2739,6 +2776,7 @@
       ]
     },
     {
+      "channel": 38,
       "name": "ch38",
       "level": 823,
       "muted": false,
@@ -2813,6 +2851,7 @@
       ]
     },
     {
+      "channel": 39,
       "name": "ch39",
       "level": 823,
       "muted": false,
@@ -2887,6 +2926,7 @@
       ]
     },
     {
+      "channel": 40,
       "name": "ch40",
       "level": 823,
       "muted": false,
@@ -2961,6 +3001,7 @@
       ]
     },
     {
+      "channel": 41,
       "name": "ch41",
       "level": 823,
       "muted": false,
@@ -3035,6 +3076,7 @@
       ]
     },
     {
+      "channel": 42,
       "name": "ch42",
       "level": 823,
       "muted": false,
@@ -3109,6 +3151,7 @@
       ]
     },
     {
+      "channel": 43,
       "name": "ch43",
       "level": 823,
       "muted": false,
@@ -3183,6 +3226,7 @@
       ]
     },
     {
+      "channel": 44,
       "name": "ch44",
       "level": 823,
       "muted": false,
@@ -3257,6 +3301,7 @@
       ]
     },
     {
+      "channel": 45,
       "name": "ch45",
       "level": 823,
       "muted": false,
@@ -3331,6 +3376,7 @@
       ]
     },
     {
+      "channel": 46,
       "name": "ch46",
       "level": 823,
       "muted": false,
@@ -3405,6 +3451,7 @@
       ]
     },
     {
+      "channel": 47,
       "name": "ch47",
       "level": 823,
       "muted": false,
@@ -3479,6 +3526,7 @@
       ]
     },
     {
+      "channel": 48,
       "name": "ch48",
       "level": 823,
       "muted": false,
@@ -3553,6 +3601,7 @@
       ]
     },
     {
+      "channel": 49,
       "name": "ch49",
       "level": 823,
       "muted": false,
@@ -3627,6 +3676,7 @@
       ]
     },
     {
+      "channel": 50,
       "name": "ch50",
       "level": 823,
       "muted": false,
@@ -3701,6 +3751,7 @@
       ]
     },
     {
+      "channel": 51,
       "name": "ch51",
       "level": 823,
       "muted": false,
@@ -3775,6 +3826,7 @@
       ]
     },
     {
+      "channel": 52,
       "name": "ch52",
       "level": 823,
       "muted": false,
@@ -3849,6 +3901,7 @@
       ]
     },
     {
+      "channel": 53,
       "name": "ch53",
       "level": 823,
       "muted": false,
@@ -3923,6 +3976,7 @@
       ]
     },
     {
+      "channel": 54,
       "name": "ch54",
       "level": 823,
       "muted": false,
@@ -3997,6 +4051,7 @@
       ]
     },
     {
+      "channel": 55,
       "name": "ch55",
       "level": 823,
       "muted": false,
@@ -4071,6 +4126,7 @@
       ]
     },
     {
+      "channel": 56,
       "name": "ch56",
       "level": 823,
       "muted": false,
@@ -4145,6 +4201,7 @@
       ]
     },
     {
+      "channel": 57,
       "name": "ch57",
       "level": 823,
       "muted": false,
@@ -4219,6 +4276,7 @@
       ]
     },
     {
+      "channel": 58,
       "name": "ch58",
       "level": 823,
       "muted": false,
@@ -4293,6 +4351,7 @@
       ]
     },
     {
+      "channel": 59,
       "name": "ch59",
       "level": 823,
       "muted": false,
@@ -4367,6 +4426,7 @@
       ]
     },
     {
+      "channel": 60,
       "name": "ch60",
       "level": 823,
       "muted": false,
@@ -4441,6 +4501,7 @@
       ]
     },
     {
+      "channel": 61,
       "name": "ch61",
       "level": 823,
       "muted": false,
@@ -4515,6 +4576,7 @@
       ]
     },
     {
+      "channel": 62,
       "name": "ch62",
       "level": 823,
       "muted": false,
@@ -4589,6 +4651,7 @@
       ]
     },
     {
+      "channel": 63,
       "name": "ch63",
       "level": 823,
       "muted": false,
@@ -4663,6 +4726,7 @@
       ]
     },
     {
+      "channel": 64,
       "name": "ch64",
       "level": 823,
       "muted": false,
@@ -4739,96 +4803,112 @@
   ],
   "mixes": [
     {
+      "mix": 1,
       "name": "MX1",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 2,
       "name": "MX2",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 3,
       "name": "MX3",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 4,
       "name": "MX4",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 5,
       "name": "MX5",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 6,
       "name": "MX6",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 7,
       "name": "MX7",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 8,
       "name": "MX8",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 9,
       "name": "MX9",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 10,
       "name": "MX10",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 11,
       "name": "MX11",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 12,
       "name": "MX12",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 13,
       "name": "MX13",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 14,
       "name": "MX14",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 15,
       "name": "MX15",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
+      "mix": 16,
       "name": "MX16",
       "level": 823,
       "muted": false,
