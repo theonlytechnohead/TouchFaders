@@ -34,6 +34,106 @@ namespace TouchFaders_MIDI {
 
 	}
 
+
+
+	public class Data {
+		public static event EventHandler sendLevelChanged;
+		public static event EventHandler sendMuteChanged;
+		public static event EventHandler channelLevelChanged;
+		public static event EventHandler channelMuteChanged;
+		public static event EventHandler mixLevelChanged;
+		public static event EventHandler mixMuteChanged;
+
+		public static string kNameShortToString (byte[] kNameShort) {
+			string raw = string.Concat(kNameShort.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))); // convert the byte array to a string of 0's and 1's
+			string decoded = "";
+			for (int i = 0; i < raw.Length; i++) {
+				if (i % 8 != 0) { // if it's not the 8th bit in a byte
+					decoded += raw[i]; // add it to the new string, reforming the original 8-bit encoding
+				}
+			}
+			decoded = decoded.Substring(3); // skip the first nibble-ish, it's a leftover artifact of the 7b/8b encoding
+			List<byte> name = new List<byte>();
+			for (int i = 0; i < decoded.Length; i += 8) {
+				name.Add(Convert.ToByte(decoded.Substring(i, 8), 2)); // convert segments 8 bits to a byte, and put in a list
+			}
+			return Encoding.ASCII.GetString(name.ToArray());
+		}
+
+		public List<Channel> channels { get; set; }
+		public List<Mix> mixes { get; set; }
+
+		public Data() {
+			channels = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select new Channel(channel)).ToList();
+			mixes = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select new Mix(mix)).ToList();
+        }
+
+		public class Channel {
+			private int fader;
+			private bool mute;
+
+			public class ChannelLevelArgs : EventArgs {
+				public char linkGroup;
+			}
+
+			public string name { get; set; }
+			public int level { get => fader; set { fader = value; channelLevelChanged?.Invoke(this, new ChannelLevelArgs() { linkGroup = linkGroup }); } }
+            public bool muted { get => mute; set { mute = value; channelMuteChanged?.Invoke(this, new EventArgs()); } }
+			public int bgColourId { get; set; }
+			public char linkGroup { get; set; }
+			public int patch { get; set; }
+
+			public List<Send> sends { get; set; }
+
+			public Channel(int channel) {
+				name = $"ch{channel}";
+				// Initialised to 0dB
+				level = 823;
+				// Initialised to unmuted (ON)
+				muted = false;
+				bgColourId = 0;
+				linkGroup = ' ';
+				patch = channel;
+				sends = (from send in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select new Send()).ToList();
+			}
+		}
+
+		public class Send {
+			private int fader;
+			private bool mute;
+
+			public int level { get => fader; set { fader = value; sendLevelChanged?.Invoke(this, new EventArgs()); } }
+			public bool muted { get => mute; set { mute = value; sendMuteChanged?.Invoke(this, new EventArgs()); } }
+
+			public Send() {
+				// Initalised to -10dB
+				level = 623;
+				// Initialised to unmuted (ON)
+				muted = false;
+            }
+		}
+
+		public class Mix {
+			private int fader;
+			private bool mute;
+
+			public string name { get; set; }
+			public int level { get => fader; set { fader = value; mixLevelChanged?.Invoke(this, new EventArgs()); } }
+			public bool muted { get => mute; set { mute = value; mixMuteChanged?.Invoke(this, new EventArgs()); } }
+			public int bgColourId { get; set; }
+
+			public Mix(int mix) {
+				name = $"MX{mix}";
+				// Initialised to 0dB
+				level = 823;
+				// Initialised to unmuted (ON)
+				muted = false;
+				bgColourId = 0;
+            }
+		}
+
+	}
+
 	public class SendsToMix {
 		public event EventHandler sendsChanged;
 		
@@ -43,7 +143,7 @@ namespace TouchFaders_MIDI {
 			set { sendLevel[mix][channel] = value; sendsChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<List<int>> levels = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select 623).ToList()).ToList(); // Initalized to -10dB
+		private List<List<int>> levels = (from mix in Enumerable.Range(1, 16) select (from channel in Enumerable.Range(1, 64) select 623).ToList()).ToList(); // Initalized to -10dB
 		
 
 		public List<List<int>> sendLevel {
@@ -60,7 +160,7 @@ namespace TouchFaders_MIDI {
 			set { mutes[mix][channel] = value; mutesChanged?.Invoke(this, new EventArgs()); }
 		}
 
-		private List<List<bool>> mutes = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select false).ToList()).ToList(); // Initalized to ON (unmuted)
+		private List<List<bool>> mutes = (from mix in Enumerable.Range(1, 16) select (from channel in Enumerable.Range(1, 64) select false).ToList()).ToList(); // Initalized to ON (unmuted)
 
 		public List<List<bool>> sendMute {
 			get { return mutes; }

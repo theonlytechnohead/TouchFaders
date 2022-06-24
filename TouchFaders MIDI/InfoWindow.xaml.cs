@@ -54,10 +54,10 @@ namespace TouchFaders_MIDI {
 			};
 			//MainWindow.instance.channelNames.channelNamesChanged += channelNamesChanged;// TODO: fix this
 			for (int i = 0; i < 16; i++) {
-				MainWindow.instance.channelConfig.channels[i].channelLevelChanged += channelLevelChanged;
+				//MainWindow.instance.channelConfig.channels[i].channelLevelChanged += channelLevelChanged;
 			}
-			SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
-			SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
+			//SetLabelsText(MainWindow.instance.channelConfig.GetChannelNames());
+			//SetFadersValue(MainWindow.instance.channelConfig.GetFaderLevels());
 		}
 
 		protected override void OnClosing (CancelEventArgs e) {

@@ -41,11 +41,11 @@ namespace TouchFaders_MIDI {
 		Timer meteringTimer;
 		public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
-		public SendsToMix sendsToMix;
-		public MutesToMix mutesToMix;
+		public SendsToMix sendsToMix = new SendsToMix();
+		public MutesToMix mutesToMix = new MutesToMix();
 
-		public ChannelConfig channelConfig; // Replaces ChannelNames and ChannelFaders
-		public MixConfig mixConfig;
+		public ChannelConfig channelConfig = new ChannelConfig(); // Replaces ChannelNames and ChannelFaders
+		public MixConfig mixConfig = new MixConfig();
 		public ChannelConfig.SelectedChannel selectedChannel;
 		List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
 		Stack<int> selectedChannelIndexToGet = new Stack<int>();
@@ -89,34 +89,36 @@ namespace TouchFaders_MIDI {
 			devicesListBox.ItemsSource = uiDevices;
 		}
 
-		protected override async void OnClosed (EventArgs e) {
-			Console.WriteLine("Closing...");
+        protected async override void OnClosed (EventArgs e) {
+            Console.WriteLine("Closing...");
+            base.OnClosed(e);
 
-			foreach (oscDevice device in devices) {
-				device.SendDisconnect();
+            foreach (oscDevice device in devices) {
+                device.SendDisconnect();
             }
 
-			infoWindow.Visibility = Visibility.Hidden;
-			infoWindow.Close();
-			audioMixerWindow.Visibility = Visibility.Hidden;
-			audioMixerWindow.Close();
-			stopMIDIButton_Click(null, null);
-			advertisingTimer?.Dispose();
-			await AppConfiguration.Save(config);
-			HandleIO.FileData fileData = new HandleIO.FileData() {
-				sendsToMix = this.sendsToMix,
-				mutesToMix = this.mutesToMix,
-				channelConfig = this.channelConfig,
-				mixConfig = this.mixConfig
-			};
-			await HandleIO.SaveAll(fileData);
-			base.OnClosed(e);
-		}
-		#endregion
+            if (infoWindow != null) {
+                infoWindow.Visibility = Visibility.Hidden;
+                infoWindow.Close();
+            }
+            if (audioMixerWindow != null) {
+                audioMixerWindow.Visibility = Visibility.Hidden;
+                audioMixerWindow.Close();
+            }
+            stopMIDIButton_Click(null, null);
+            advertisingTimer?.Dispose();
+            await AppConfiguration.Save(config);
+            HandleIO.FileData fileData = new HandleIO.FileData() {
+                data = new Data()
+            };
+            await HandleIO.SaveAll(fileData);
+            base.OnClosed(e);
+        }
+        #endregion
 
-		#region Scaling
-		// This section smoothly scales everything within the mainGrid
-		public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
+        #region Scaling
+        // This section smoothly scales everything within the mainGrid
+        public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
 			typeof(double),
 			typeof(MainWindow),
 			new UIPropertyMetadata(1.0,
@@ -174,14 +176,14 @@ namespace TouchFaders_MIDI {
 		#region File & network I/O (and setup)
 		void DataLoaded (HandleIO.FileData fileData) {
 			// Lists and config
-			Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
-			Dispatcher.Invoke(() => { mutesToMix = fileData.mutesToMix; });
-			Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
-			for (int i = 0; i < config.mixer.channelCount; i++) {
+			//Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
+            //Dispatcher.Invoke(() => { mutesToMix = fileData.mutesToMix; });
+            //Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
+            for (int i = 0; i < config.mixer.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
 			}
 
-			Dispatcher.Invoke(() => { mixConfig = fileData.mixConfig; });
+			//Dispatcher.Invoke(() => { mixConfig = fileData.mixConfig; });
 
 			// MIDI
 			Dispatcher.Invoke(() => displayMIDIDevices());
@@ -194,8 +196,8 @@ namespace TouchFaders_MIDI {
 			// Supplementary windows...
 			Dispatcher.Invoke(() => {
 				infoWindow = new InfoWindow();
-				infoWindow.DataContext = this.DataContext;
-				audioMixerWindow = new AudioMixerWindow();
+                infoWindow.DataContext = this.DataContext;
+                audioMixerWindow = new AudioMixerWindow();
 				audioMixerWindow.Visibility = Visibility.Hidden;
 
 				infoWindow.KeyDown += MainWindow_KeyDown;
