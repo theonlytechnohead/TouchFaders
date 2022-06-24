@@ -14,10 +14,10 @@ using System.Windows.Media;
 using Windows.UI.ViewManagement;
 
 namespace TouchFaders_MIDI {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window {
 
 		public class Device {
 			public string Name { get; set; }
@@ -46,7 +46,6 @@ namespace TouchFaders_MIDI {
 		public MutesToMix mutesToMix = new MutesToMix();
 
 		public ChannelConfig channelConfig = new ChannelConfig(); // Replaces ChannelNames and ChannelFaders
-		public MixConfig mixConfig = new MixConfig();
 		public ChannelConfig.SelectedChannel selectedChannel;
 		List<ChannelConfig.SelectedChannel> selectedChannelCache = new List<ChannelConfig.SelectedChannel>();
 		Stack<int> selectedChannelIndexToGet = new Stack<int>();
@@ -296,14 +295,14 @@ namespace TouchFaders_MIDI {
 				sendArray.Add(oscSend);
 				sendArray.Add(oscReceive);
 				sendArray.Add(Convert.ToByte(config.NUM_CHANNELS));
-				foreach (ChannelConfig.Channel channel in channelConfig.channels) {
+				foreach (var channel in data.channels) {
 					sendArray.Add(Convert.ToByte(channel.bgColourId));
 				}
 				sendArray.Add(Convert.ToByte(config.NUM_MIXES));
-				foreach (MixConfig.Mix mix in mixConfig.mixes) {
+				foreach (var mix in data.mixes) {
 					sendArray.Add(Convert.ToByte(mix.bgColourId));
                 }
-				foreach (MixConfig.Mix mix in mixConfig.mixes) {
+				foreach (var mix in data.mixes) {
 					for (int i = 0; i < 6; i++) {
 						if (i < mix.name.Length) {
 							sendArray.Add(Convert.ToByte(mix.name[i]));
