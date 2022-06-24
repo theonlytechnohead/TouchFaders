@@ -174,7 +174,7 @@ namespace TouchFaders_MIDI {
 		#region File & network I/O (and setup)
 		void DataLoaded (Data data) {
 			Dispatcher.Invoke(() => { this.data = data; });
-            for (int i = 0; i < config.mixer.channelCount; i++) {
+            for (int i = 0; i < config.MIXER.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
 			}
 
@@ -453,7 +453,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetFaderValuesForMix (byte mix) {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				NormalSysExEvent sysExEvent = new NormalSysExEvent();
 				byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mix, 0x00, Convert.ToByte(channel), 0xF7 };
@@ -483,7 +483,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetChannelFaders () {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				NormalSysExEvent kFader = new NormalSysExEvent();
 				byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
@@ -494,7 +494,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetChannelNames () {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
 				await GetChannelName(channel);
 			}
@@ -502,7 +502,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetChannelName (int channel) {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent kNameShort1 = new NormalSysExEvent();
 			byte[] data1 = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x14, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 			kNameShort1.Data = data1;
@@ -515,7 +515,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetChannelIcon (int channel) {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent kIconID = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x15, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 			kIconID.Data = data;
@@ -524,7 +524,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetChannelColour (int channel) {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent kIconBgColour = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x15, 0x00, 0x01, 0x00, Convert.ToByte(channel), 0xF7 };
 			kIconBgColour.Data = data;
@@ -539,7 +539,7 @@ namespace TouchFaders_MIDI {
 
 		async Task RequestChannelPatch (int channel) {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent kPatchInInput = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x0B, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 			kPatchInInput.Data = data;
@@ -554,7 +554,7 @@ namespace TouchFaders_MIDI {
 
 		async Task GetChannelLinkGroup (int channel) {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x06, 0x00, 0x00, 0x00, Convert.ToByte(channel), 0xF7 };
 			kGroupID_Input.Data = data;
@@ -568,7 +568,7 @@ namespace TouchFaders_MIDI {
 			});
 			if (!get) return;
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent mixesMeteringPost = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x21, 0x01, 0x03, 0x7F, 0x00, 0x00, 0xF7 };
 			mixesMeteringPost.Data = data;
@@ -577,7 +577,7 @@ namespace TouchFaders_MIDI {
 
 		async Task StopMetering () {
 			byte device_byte = 0x30;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			NormalSysExEvent stopMeteringEvent = new NormalSysExEvent();
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x21, 0x7F, 0xF7 };
 			stopMeteringEvent.Data = data;
@@ -609,7 +609,7 @@ namespace TouchFaders_MIDI {
 			byte data1 = bytes[15];
 
 			byte device_byte = 0x10;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 
 			if (manufacturerID == 0x43 &&       // YAMAHA
 				deviceNumber == device_byte &&  // 1 = parameter send; 3 = parameter request, device ID 1
@@ -735,8 +735,8 @@ namespace TouchFaders_MIDI {
 
 			byte on = bytes[15];
 
-			if (channel >= config.mixer.channelCount - 8) {
-				int index = config.mixer.channelCount - channel - 1;
+			if (channel >= config.MIXER.channelCount - 8) {
+				int index = config.MIXER.channelCount - channel - 1;
 				bool mute;
 				if (on == 0) {
 					mute = true;
@@ -770,7 +770,7 @@ namespace TouchFaders_MIDI {
 			ushort level = (ushort)(data2 << 7);
 			level += data1;
 
-			if (channel < config.mixer.channelCount - 8) { // TODO: make this proper and UI and stuff
+			if (channel < config.MIXER.channelCount - 8) { // TODO: make this proper and UI and stuff
 				channelConfig.channels[channel].level = level;
 
 				selectedChannelCache[channel].level = level;
@@ -792,7 +792,7 @@ namespace TouchFaders_MIDI {
 				bool canUpdate = false;
 				Dispatcher.Invoke(() => canUpdate = midiProgressBar.Value >= midiProgressBar.Maximum);
 				if (canUpdate) {
-					int index = config.mixer.channelCount - channel - 1;
+					int index = config.MIXER.channelCount - channel - 1;
 					float volume = level / 1023f;
 					audioMixerWindow.UpdateSession(index, volume);
 					//Console.WriteLine($"Updating audio session (index): {index}");
@@ -903,8 +903,8 @@ namespace TouchFaders_MIDI {
 					UL == 0x01 &&
 					LU == 0x03 &&
 					LL == 0x00) {
-					byte[] meteringData = new byte[config.mixer.mixCount];
-					for (int i = 0; i < config.mixer.mixCount; i++) {
+					byte[] meteringData = new byte[config.MIXER.mixCount];
+					for (int i = 0; i < config.MIXER.mixCount; i++) {
 						meteringData[i] = bytes[i + 8];
 					}
 					//Console.WriteLine("Got metering data!");
@@ -948,7 +948,7 @@ namespace TouchFaders_MIDI {
 
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  db		dB
 			byte device_byte = 0x10;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 			bool enabled = false;
@@ -966,7 +966,7 @@ namespace TouchFaders_MIDI {
 
 		public void SendChannelLinkGroup (int channel, char linkGroup) {
 			byte device_byte = 0x10;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 
 			ushort channel_int = Convert.ToUInt16(channel);
 			byte channelLSB = (byte)(channel_int & 0x7Fu);
@@ -995,9 +995,9 @@ namespace TouchFaders_MIDI {
 
 		public void SendAudioSession (int index, float volume, bool mute, bool sendIt = false) {
 			byte device_byte = 0x10;
-			device_byte |= Convert.ToByte(config.device_ID - 1);
+			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
 
-			int channel = config.mixer.channelCount - index - 1;
+			int channel = config.MIXER.channelCount - index - 1;
 			ushort channel_int = Convert.ToUInt16(channel);
 			byte channelLSB = (byte)(channel_int & 0x7Fu);
 			ushort shiftedChannel = (ushort)(channel_int >> 7);

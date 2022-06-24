@@ -46,10 +46,6 @@
               "target": "Package",
               "version": "[10.0.19041.1, )"
             },
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.1, )"
-            },
             "System.Text.Json": {
               "target": "Package",
               "version": "[4.7.2, )"

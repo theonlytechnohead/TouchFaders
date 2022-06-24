@@ -1,14 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TouchFaders_MIDI {
-	public class AppConfiguration {
+    public class AppConfiguration {
 
 		public const string CONFIG_DIR = "config";
 		public const string CONFIG_FILE = "config";
@@ -16,15 +13,15 @@ namespace TouchFaders_MIDI {
 
 		// Constants and stuff goes here
 		public class Config {
-			public Mixer mixer { get; set; }
-			public int device_ID { get; set; }
+			public Mixer MIXER { get; set; }
+			public int DEVICE_ID { get; set; }
 			public int NUM_CHANNELS { get; set; }
 			public int NUM_MIXES { get; set; }
 
 			public static Config defaultValues () {
 				return new Config() {
-					mixer = Mixer.LS932,
-					device_ID = 1,
+					MIXER = Mixer.LS932,
+					DEVICE_ID = 1,
 					NUM_MIXES = 8,
 					NUM_CHANNELS = 32
 				};
@@ -43,11 +40,11 @@ namespace TouchFaders_MIDI {
 				if (config.NUM_CHANNELS == 0) {
 					config.NUM_CHANNELS = Config.defaultValues().NUM_CHANNELS;
 				}
-				if (config.device_ID == 0) {
-					config.device_ID = Config.defaultValues().device_ID;
+				if (config.DEVICE_ID == 0) {
+					config.DEVICE_ID = Config.defaultValues().DEVICE_ID;
 				}
-				if (config.mixer == null) {
-					config.mixer = Config.defaultValues().mixer;
+				if (config.MIXER == null) {
+					config.MIXER = Config.defaultValues().MIXER;
 				}
 			} else {
 				config = Config.defaultValues();
@@ -65,14 +62,16 @@ namespace TouchFaders_MIDI {
         }
 
 		public static Data LoadData () {
-			Data data = new Data();
+			Data data;
 			try {
 				string dataFile = File.ReadAllText($"{CONFIG_DIR}/{DATA_FILE}.json");
-				var values = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(dataFile);
+				data = JsonSerializer.Deserialize<Data>(dataFile);
 			} catch (FileNotFoundException) {
+				data = new Data();
 				_ = SaveData(data);
 			} catch (Exception ex) {
 				Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
+				data = new Data();
 			}
 			return data;
 		}

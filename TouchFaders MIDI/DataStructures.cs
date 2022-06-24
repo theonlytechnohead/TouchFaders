@@ -94,6 +94,8 @@ namespace TouchFaders_MIDI {
 
 			public List<Send> sends { get; set; }
 
+			public Channel() { }
+
 			public Channel(int channel) {
 				this.channel = channel;
 				name = $"ch{channel}";
@@ -133,6 +135,8 @@ namespace TouchFaders_MIDI {
 			public int level { get => fader; set { fader = value; mixLevelChanged?.Invoke(this, new EventArgs()); } }
 			public bool muted { get => mute; set { mute = value; mixMuteChanged?.Invoke(this, new EventArgs()); } }
 			public int bgColourId { get; set; }
+
+			public Mix() { }
 
 			public Mix(int mix) {
 				this.mix = mix;
