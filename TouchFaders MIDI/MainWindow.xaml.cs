@@ -29,6 +29,7 @@ namespace TouchFaders_MIDI {
 
 		public static MainWindow instance;
 		public AppConfiguration.appconfig config;
+		public Data data;
 
 		List<oscDevice> devices = new List<oscDevice>();
 		ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
@@ -63,7 +64,7 @@ namespace TouchFaders_MIDI {
 			Title = "TouchFaders MIDI | MIDI not started";
 
 			config = AppConfiguration.Load();
-			Task.Run(() => { DataLoaded(HandleIO.LoadAll()); });
+			Task.Run(() => { DataLoaded(HandleIO.LoadData()); });
 
 			UISettings settings = new UISettings();
 			Windows.UI.Color foreground = settings.GetColorValue(UIColorType.Foreground);
@@ -172,15 +173,10 @@ namespace TouchFaders_MIDI {
 
 		#region File & network I/O (and setup)
 		void DataLoaded (Data data) {
-			// Lists and config
-			//Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
-            //Dispatcher.Invoke(() => { mutesToMix = fileData.mutesToMix; });
-            //Dispatcher.Invoke(() => { channelConfig = fileData.channelConfig; });
+			Dispatcher.Invoke(() => { this.data = data; });
             for (int i = 0; i < config.mixer.channelCount; i++) {
 				selectedChannelCache.Add(new ChannelConfig.SelectedChannel() { name = $"Ch {i + 1}", channelIndex = i });
 			}
-
-			//Dispatcher.Invoke(() => { mixConfig = fileData.mixConfig; });
 
 			// MIDI
 			Dispatcher.Invoke(() => displayMIDIDevices());

@@ -10,7 +10,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace TouchFaders_MIDI {
 	class HandleIO {
 
-		public static Data LoadAll () {
+		public static Data LoadData () {
 			Data data = new Data ();
 			try {
 				string dataFile = File.ReadAllText($"{AppConfiguration.CONFIG_DIR}/{AppConfiguration.DATA_FILE}.json");
