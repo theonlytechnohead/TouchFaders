@@ -108,10 +108,7 @@ namespace TouchFaders_MIDI {
             stopMIDIButton_Click(null, null);
             advertisingTimer?.Dispose();
             await AppConfiguration.Save(config);
-            HandleIO.FileData fileData = new HandleIO.FileData() {
-                data = new Data()
-            };
-            await HandleIO.SaveAll(fileData);
+            await HandleIO.SaveAll(new Data());
             base.OnClosed(e);
         }
         #endregion
@@ -174,7 +171,7 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region File & network I/O (and setup)
-		void DataLoaded (HandleIO.FileData fileData) {
+		void DataLoaded (Data data) {
 			// Lists and config
 			//Dispatcher.Invoke(() => { sendsToMix = fileData.sendsToMix; });
             //Dispatcher.Invoke(() => { mutesToMix = fileData.mutesToMix; });
@@ -261,7 +258,7 @@ namespace TouchFaders_MIDI {
 					devices.Remove(deviceToRemove);
 					try {
 						Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
-					} catch (Exception ex) { }
+					} catch (Exception) { }
 				}
 				foreach (Device device in uiDevices) {
 					if (device.Name == name) {
