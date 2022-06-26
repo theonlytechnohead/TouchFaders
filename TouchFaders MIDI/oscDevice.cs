@@ -1,14 +1,11 @@
 using SharpOSC;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Windows.Threading;
 
 namespace TouchFaders_MIDI {
-	public class oscDevice {
+    public class oscDevice {
 
 		public const string CONNECT = "test";
 		public const string DISCONNECT = "disconnect";
@@ -91,17 +88,21 @@ namespace TouchFaders_MIDI {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					if (message.Arguments[0].ToString() == "1") {
 						currentMix = mix;
-						ResendMixFaders();
-						SendMixMutes(mix);
-                        SendChannelNames();
-						SendChannelPatches();
+						Refresh();
 						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
 			}
 		}
 
-		public void ResendMixFaders () {
+		public void Refresh () {
+			SendSendLevels();
+			SendSendMutes();
+			SendChannelNames();
+			SendChannelPatches();
+		}
+
+		public void SendSendLevels () {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
 				int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
 				sendOSCMessage(currentMix, channel, level);
@@ -109,23 +110,8 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public void ResendMixNames (int mix) { // TODO: rework
-			for (int label = 1; label <= MainWindow.instance.config.NUM_CHANNELS; label++) {
-				OscMessage message = new OscMessage($"/{MIX}{mix}/{NAME}{label}", MainWindow.instance.data.mixes[label - 1]);
-				output.Send(message);
-			}
-		}
-
-		public void ResendAllNames () { // TODO: remove
-			for (int mix = 1; mix <= MainWindow.instance.config.NUM_MIXES; mix++) {
-				ResendMixNames(mix);
-				Thread.Sleep(3);
-			}
-		}
-
 		public void SendChannelNames () {
-			Thread.Sleep(15);
-			for (int label = 1; label <= MainWindow.instance.data.channels.Count; label++) {
+            for (int label = 1; label <= MainWindow.instance.data.channels.Count; label++) {
 				SendChannelName(label, MainWindow.instance.data.channels[label - 1].name);
 				Thread.Sleep(3);
 			}
@@ -149,13 +135,13 @@ namespace TouchFaders_MIDI {
 			output.Send(message);
 		}
 
-		public void SendMixMutes (int mix) {
+		public void SendSendMutes () {
 			for (int channel = 1; channel <= MainWindow.instance.data.channels.Count; channel++) {
-				SendChannelMute(mix, channel);
+				SendSendMute(currentMix, channel);
 			}
         }
 
-		public void SendChannelMute (int mix, int channel) {
+		public void SendSendMute (int mix, int channel) {
 			bool muted = MainWindow.instance.data.channels[channel - 1].sends[mix - 1].muted;
 			SendChannelMute(mix, channel, muted);
 		}

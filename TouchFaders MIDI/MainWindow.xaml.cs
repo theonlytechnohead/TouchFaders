@@ -336,11 +336,7 @@ namespace TouchFaders_MIDI {
 		async Task RefreshOSCDevices () {
 			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in devices) {
-				tasks.Add(Task.Run(() => {
-					device.ResendMixFaders();
-					Thread.Sleep(5);
-					device.ResendAllNames();
-				}));
+                tasks.Add(Task.Run(() => device.Refresh()));
 			}
 			await Task.WhenAll(tasks);
 		}
