@@ -6,7 +6,7 @@
       "level": 823,
       "muted": false,
       "patch": 1,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "sends": [
         {
@@ -81,7 +81,7 @@
       "level": 823,
       "muted": false,
       "patch": 2,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "sends": [
         {
@@ -156,7 +156,7 @@
       "level": 823,
       "muted": false,
       "patch": 3,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "sends": [
         {
@@ -231,7 +231,7 @@
       "level": 823,
       "muted": false,
       "patch": 4,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "sends": [
         {
@@ -306,7 +306,7 @@
       "level": 823,
       "muted": false,
       "patch": 5,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "sends": [
         {
@@ -381,7 +381,7 @@
       "level": 823,
       "muted": false,
       "patch": 6,
-      "bgColourId": 0,
+      "bgColourId": 7,
       "linkGroup": " ",
       "sends": [
         {
@@ -456,7 +456,7 @@
       "level": 823,
       "muted": false,
       "patch": 7,
-      "bgColourId": 0,
+      "bgColourId": 6,
       "linkGroup": " ",
       "sends": [
         {
@@ -531,7 +531,7 @@
       "level": 823,
       "muted": false,
       "patch": 8,
-      "bgColourId": 0,
+      "bgColourId": 2,
       "linkGroup": " ",
       "sends": [
         {
@@ -606,7 +606,7 @@
       "level": 823,
       "muted": false,
       "patch": 9,
-      "bgColourId": 0,
+      "bgColourId": 2,
       "linkGroup": " ",
       "sends": [
         {
@@ -681,7 +681,7 @@
       "level": 823,
       "muted": false,
       "patch": 10,
-      "bgColourId": 0,
+      "bgColourId": 5,
       "linkGroup": " ",
       "sends": [
         {
@@ -756,7 +756,7 @@
       "level": 823,
       "muted": false,
       "patch": 11,
-      "bgColourId": 0,
+      "bgColourId": 3,
       "linkGroup": " ",
       "sends": [
         {
@@ -831,7 +831,7 @@
       "level": 823,
       "muted": false,
       "patch": 12,
-      "bgColourId": 0,
+      "bgColourId": 3,
       "linkGroup": " ",
       "sends": [
         {
@@ -1131,7 +1131,7 @@
       "level": 823,
       "muted": false,
       "patch": 16,
-      "bgColourId": 0,
+      "bgColourId": 6,
       "linkGroup": " ",
       "sends": [
         {
@@ -1206,7 +1206,7 @@
       "level": 823,
       "muted": false,
       "patch": 17,
-      "bgColourId": 0,
+      "bgColourId": 6,
       "linkGroup": " ",
       "sends": [
         {
@@ -1731,7 +1731,7 @@
       "level": 823,
       "muted": false,
       "patch": 24,
-      "bgColourId": 0,
+      "bgColourId": 5,
       "linkGroup": " ",
       "sends": [
         {
@@ -1806,7 +1806,7 @@
       "level": 823,
       "muted": false,
       "patch": 25,
-      "bgColourId": 0,
+      "bgColourId": 4,
       "linkGroup": " ",
       "sends": [
         {
@@ -1881,7 +1881,7 @@
       "level": 823,
       "muted": false,
       "patch": 26,
-      "bgColourId": 0,
+      "bgColourId": 1,
       "linkGroup": " ",
       "sends": [
         {
@@ -4807,28 +4807,28 @@
       "name": "MX1",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 1
     },
     {
       "mix": 2,
       "name": "MX2",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 1
     },
     {
       "mix": 3,
       "name": "MX3",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 1
     },
     {
       "mix": 4,
       "name": "MX4",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 1
     },
     {
       "mix": 5,
@@ -4863,56 +4863,56 @@
       "name": "MX9",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 4
     },
     {
       "mix": 10,
       "name": "MX10",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 4
     },
     {
       "mix": 11,
       "name": "MX11",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 4
     },
     {
       "mix": 12,
       "name": "MX12",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 4
     },
     {
       "mix": 13,
       "name": "MX13",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 3
     },
     {
       "mix": 14,
       "name": "MX14",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 3
     },
     {
       "mix": 15,
       "name": "MX15",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 3
     },
     {
       "mix": 16,
       "name": "MX16",
       "level": 823,
       "muted": false,
-      "bgColourId": 0
+      "bgColourId": 3
     }
   ]
 }

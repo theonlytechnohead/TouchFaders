@@ -91,7 +91,6 @@ namespace TouchFaders_MIDI {
 					if (message.Arguments[0].ToString() == "1") {
 						currentMix = mix;
 						Refresh();
-						//ResendMixNames(mix, MainWindow.instance.channelConfig.GetChannelNames());
 					}
 				}
 			}
@@ -103,16 +102,20 @@ namespace TouchFaders_MIDI {
 
 		public void SendChannelStrips() {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
-				int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
-				bool muted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
-				string name = MainWindow.instance.data.channels[channel - 1].name;
-				string patch = "IN " + MainWindow.instance.data.channels[channel - 1].patch;
-				int colourIndex = MainWindow.instance.data.channels[channel - 1].bgColourId;
-				OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, name, patch, colourIndex);
-				output.Send(message);
+				SendChannelStrip(channel);
 				Thread.Sleep(3);
 			}
         }
+
+		public void SendChannelStrip(int channel) {
+			int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
+			bool muted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
+			string name = MainWindow.instance.data.channels[channel - 1].name;
+			string patch = "IN " + MainWindow.instance.data.channels[channel - 1].patch;
+			int colourIndex = MainWindow.instance.data.channels[channel - 1].bgColourId;
+			OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, name, patch, colourIndex);
+			output.Send(message);
+		}
 
 		public void SendSendLevels () {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
