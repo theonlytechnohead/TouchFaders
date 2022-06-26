@@ -171,6 +171,7 @@ namespace TouchFaders_MIDI {
 			Dispatcher.Invoke(() => { this.data = data; });
             Data.channelNameChanged += Data_channelNameChanged;
 			Data.channelPatchChanged += Data_channelPatchChanged;
+			Data.channelColourChanged += Data_channelColourChanged;
 			Data.mixNameChanged += Data_mixNameChanged;
             for (int i = 0; i < config.MIXER.channelCount; i++) {
 				selectedChannelCache.Add(new Data.SelectedChannel() { name = $"ch {i + 1}", channelIndex = i });
@@ -379,6 +380,13 @@ namespace TouchFaders_MIDI {
 				device.SendChannelPatch(args.channel, args.patch);
 			}
 		}
+
+		private void Data_channelColourChanged(object sender, EventArgs e) {
+			var args = e as Data.Channel.ColourArgs;
+			foreach (var device in devices) {
+				device.SendChannelColour(args.channel, args.bgColourId);
+            }
+        }
 
 		private void Data_mixNameChanged (object sender, EventArgs e) {
 			var args = e as Data.Mix.NameArgs;

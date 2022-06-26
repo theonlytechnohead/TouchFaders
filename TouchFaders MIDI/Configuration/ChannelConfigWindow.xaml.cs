@@ -28,6 +28,11 @@ namespace TouchFaders_MIDI {
 				public int patch;
 			}
 
+			public class ColourArgs : EventArgs {
+				public int channel;
+				public string colourName;
+            }
+
 			public int channel;
 			private string name;
             public string ChannelName { get => name; set { name = value; PropertyChanged?.Invoke(this, new NameArgs() { channel = channel, name = ChannelName }); } }
@@ -41,7 +46,7 @@ namespace TouchFaders_MIDI {
 				get { return channelColour; }
 				set {
 					channelColour = value;
-					PropertyChanged?.Invoke(this, new EventArgs());
+					PropertyChanged?.Invoke(this, new ColourArgs() { channel = channel, colourName = ChannelColour});
 				}
 			}
 			private char group;
@@ -112,6 +117,9 @@ namespace TouchFaders_MIDI {
 			} else if (e is ChannelConfigUI.PatchArgs) {
 				ChannelConfigUI.PatchArgs args = e as ChannelConfigUI.PatchArgs;
 				MainWindow.instance.data.channels[args.channel - 1].patch = args.patch;
+			} else if (e is ChannelConfigUI.ColourArgs) {
+				ChannelConfigUI.ColourArgs args = e as ChannelConfigUI.ColourArgs;
+				MainWindow.instance.data.channels[args.channel - 1].bgColourId = DataStructures.bgColourNames.IndexOf(args.colourName);
 			} else {
 				int index = channelConfigUI.IndexOf(channelConfig);
 				char group = channelConfig.ChannelGroup;

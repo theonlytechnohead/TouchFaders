@@ -16,6 +16,8 @@ namespace TouchFaders_MIDI {
 		public const string PATCH = "patch";
 		public const string MUTE = "mute";
 
+		public const string COLOUR = "colour";
+
 		public string deviceName;
 		private int currentMix;
 
@@ -105,7 +107,8 @@ namespace TouchFaders_MIDI {
 				bool muted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
 				string name = MainWindow.instance.data.channels[channel - 1].name;
 				string patch = "IN " + MainWindow.instance.data.channels[channel - 1].patch;
-				OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, name, patch);
+				int colourIndex = MainWindow.instance.data.channels[channel - 1].bgColourId;
+				OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, name, patch, colourIndex);
 				output.Send(message);
 				Thread.Sleep(3);
 			}
@@ -159,6 +162,18 @@ namespace TouchFaders_MIDI {
 			OscMessage message = new OscMessage($"/{MIX}{mix}/{CHANNEL}{channel}/{MUTE}", muted ? 1 : 0);
 			output.Send(message);
         }
+
+		public void SendChannelColours () {
+			for (int channel = 1; channel <= MainWindow.instance.data.channels.Count; channel++) {
+				int colourIndex = MainWindow.instance.data.channels[channel - 1].bgColourId;
+				SendChannelColour(channel, colourIndex);
+			}
+		}
+
+		public void SendChannelColour (int channel, int colourIndex) {
+			OscMessage message = new OscMessage($"/{CHANNEL}{channel}/{COLOUR}", colourIndex);
+			output.Send(message);
+		}
 
 		public void SendDisconnect () {
 			OscMessage message = new OscMessage($"/{DISCONNECT}");

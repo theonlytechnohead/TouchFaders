@@ -58,7 +58,7 @@
                     <DataGridTemplateColumn Header="Channel colour">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding Colours}" SelectedValue="{Binding ChannelColour}" SelectedValuePath="Key" Foreground="{Binding ChannelColour}">
+                                <ComboBox ItemsSource="{Binding Colours}" SelectedValue="{Binding ChannelColour, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" Foreground="{Binding ChannelColour}">
                                     <ComboBox.ItemContainerStyle>
                                         <Style TargetType="ComboBoxItem">
                                             <Setter Property="Background" Value="{Binding Value}" />
@@ -76,7 +76,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding Colours}" SelectedValue="{Binding ChannelColour}" SelectedValuePath="Key" Foreground="{Binding ChannelColour}">
+                                <ComboBox ItemsSource="{Binding Colours}" SelectedValue="{Binding ChannelColour, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" Foreground="{Binding ChannelColour}">
                                     <ComboBox.ItemContainerStyle>
                                         <Style TargetType="ComboBoxItem">
                                             <Setter Property="Background" Value="{Binding Value}" />
