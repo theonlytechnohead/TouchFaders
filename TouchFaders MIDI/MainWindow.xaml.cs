@@ -170,6 +170,7 @@ namespace TouchFaders_MIDI {
 		void DataLoaded (Data data) {
 			Dispatcher.Invoke(() => { this.data = data; });
             Data.channelNameChanged += Data_channelNameChanged;
+			Data.channelMuteChanged += Data_channelMuteChanged;
 			Data.channelPatchChanged += Data_channelPatchChanged;
 			Data.channelColourChanged += Data_channelColourChanged;
 			Data.mixNameChanged += Data_mixNameChanged;
@@ -373,6 +374,13 @@ namespace TouchFaders_MIDI {
 				device.SendChannelName(args.channel, args.name);
             }
 		}
+
+		private void Data_channelMuteChanged (object sender, EventArgs e) {
+			var args = e as Data.Channel.MuteArgs;
+			foreach (var device in devices) {
+				device.SendChannelMute(args.channel, args.muted);
+            }
+        }
 
 		private void Data_channelPatchChanged (object sender, EventArgs e) {
 			var args = e as Data.Channel.PatchArgs;
@@ -1073,7 +1081,7 @@ namespace TouchFaders_MIDI {
 			Task.Run(() => {
 				foreach (oscDevice device in devices) {
 					if (device != sender) { // Avoid feedback loop!
-						device.SendChannelMute(mix, channel, muted);
+						device.SendSendMute(mix, channel, muted);
 					}
 				}
 			});

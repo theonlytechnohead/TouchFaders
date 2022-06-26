@@ -23,6 +23,11 @@ namespace TouchFaders_MIDI {
 				public string name;
 			}
 
+			public class MutedArgs : EventArgs {
+				public int channel;
+				public bool muted;
+            }
+
 			public class PatchArgs : EventArgs {
 				public int channel;
 				public int patch;
@@ -36,6 +41,8 @@ namespace TouchFaders_MIDI {
 			public int channel;
 			private string name;
             public string ChannelName { get => name; set { name = value; PropertyChanged?.Invoke(this, new NameArgs() { channel = channel, name = ChannelName }); } }
+			private bool muted;
+			public bool ChannelMuted { get => muted; set { muted = value; PropertyChanged?.Invoke(this, new MutedArgs() { channel = channel, muted = ChannelMuted }); } }
 			private string channelColour;
 			public Dictionary<string, SolidColorBrush> Colours {
 				get {
@@ -68,11 +75,12 @@ namespace TouchFaders_MIDI {
 
 			public ChannelConfigUI (Data.Channel channel) {
 				this.channel = channel.channel;
+				ChannelPatch = channel.patch;
 				ChannelName = channel.name;
+				ChannelMuted = channel.muted;
 				ChannelColour = DataStructures.bgColourNames[channel.bgColourId];
 				ChannelGroup = channel.linkGroup;
 				ChannelGroups = DataStructures.ChannelGroupChars;
-				ChannelPatch = channel.patch;
 				ChannelPatches = (from port in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select port).ToList();
 			}
         }
@@ -117,6 +125,9 @@ namespace TouchFaders_MIDI {
 			} else if (e is ChannelConfigUI.PatchArgs) {
 				ChannelConfigUI.PatchArgs args = e as ChannelConfigUI.PatchArgs;
 				MainWindow.instance.data.channels[args.channel - 1].patch = args.patch;
+			} else if (e is ChannelConfigUI.MutedArgs) {
+				ChannelConfigUI.MutedArgs args = e as ChannelConfigUI.MutedArgs;
+				MainWindow.instance.data.channels[args.channel - 1].muted = args.muted;
 			} else if (e is ChannelConfigUI.ColourArgs) {
 				ChannelConfigUI.ColourArgs args = e as ChannelConfigUI.ColourArgs;
 				MainWindow.instance.data.channels[args.channel - 1].bgColourId = DataStructures.bgColourNames.IndexOf(args.colourName);
@@ -130,10 +141,11 @@ namespace TouchFaders_MIDI {
 
 		protected override void OnClosed (EventArgs e) {
 			foreach (var channelConfig in channelConfigUI) {
+				MainWindow.instance.data.channels[channelConfig.channel - 1].patch = channelConfig.ChannelPatch;
 				MainWindow.instance.data.channels[channelConfig.channel - 1].name = channelConfig.ChannelName;
+				MainWindow.instance.data.channels[channelConfig.channel - 1].muted = channelConfig.ChannelMuted;
 				MainWindow.instance.data.channels[channelConfig.channel - 1].bgColourId = DataStructures.bgColourNames.IndexOf(channelConfig.ChannelColour);
 				MainWindow.instance.data.channels[channelConfig.channel - 1].linkGroup = channelConfig.ChannelGroup;
-				MainWindow.instance.data.channels[channelConfig.channel - 1].patch = channelConfig.ChannelPatch;
 			}
 			base.OnClosed(e);
 		}

@@ -11,22 +11,22 @@ namespace TouchFaders_MIDI {
 		public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {
 			new SolidColorBrush(Color.FromRgb(1, 1, 253)), // blue, default
 			new SolidColorBrush(Color.FromRgb(255, 102, 1)), // orange
-			new SolidColorBrush(Color.FromRgb(153, 102, 1)), // brown
+			new SolidColorBrush(Color.FromRgb(153, 102, 1)), // brown (gold)
 			new SolidColorBrush(Color.FromRgb(102, 1, 153)), // purple
 			new SolidColorBrush(Color.FromRgb(1, 153, 255)), // cyan
 			new SolidColorBrush(Color.FromRgb(255, 102, 153)), // pink
-			new SolidColorBrush(Color.FromRgb(102, 1, 1)), // bergundy
+			new SolidColorBrush(Color.FromRgb(102, 1, 1)), // bergundy (brown)
 			new SolidColorBrush(Color.FromRgb(1, 102, 51)) // green
 		};
 
 		public static ObservableCollection<string> bgColourNames = new ObservableCollection<string>() {
 			"blue",
 			"orange",
-			"brown",
+			"gold",
 			"purple",
 			"cyan",
 			"pink",
-			"bergundy",
+			"brown",
 			"green"
 		};
 
@@ -125,6 +125,11 @@ namespace TouchFaders_MIDI {
 				public char linkGroup;
 			}
 
+			public class MuteArgs : EventArgs {
+				public int channel;
+				public bool muted;
+			}
+
 			public class PatchArgs : EventArgs {
 				public int channel;
 				public int patch;
@@ -138,7 +143,7 @@ namespace TouchFaders_MIDI {
 			public int channel { get; set; }
 			public string name { get => label; set { label = value; channelNameChanged?.Invoke(this, new NameArgs() { channel = channel, name = name }); } }
 			public int level { get => fader; set { fader = value; channelLevelChanged?.Invoke(this, new LevelArgs() { channel = channel, level = level, linkGroup = linkGroup }); } }
-            public bool muted { get => mute; set { mute = value; channelMuteChanged?.Invoke(this, new EventArgs()); } }
+            public bool muted { get => mute; set { mute = value; channelMuteChanged?.Invoke(this, new MuteArgs() { channel = channel, muted = muted}); } }
 			public int patch { get => port; set { port = value; channelPatchChanged?.Invoke(this, new PatchArgs() { channel = channel, patch = patch }); } }
 			public int bgColourId { get => colourIndex; set { colourIndex = value; channelColourChanged?.Invoke(this, new ColourArgs() { channel = channel, bgColourId = bgColourId }); } }
 			public char linkGroup { get; set; }

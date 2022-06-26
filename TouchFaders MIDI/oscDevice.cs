@@ -109,11 +109,12 @@ namespace TouchFaders_MIDI {
 
 		public void SendChannelStrip(int channel) {
 			int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
-			bool muted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
+			bool sendMuted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
 			string name = MainWindow.instance.data.channels[channel - 1].name;
+			bool channelMuted = MainWindow.instance.data.channels[channel - 1].muted;
 			string patch = "IN " + MainWindow.instance.data.channels[channel - 1].patch;
 			int colourIndex = MainWindow.instance.data.channels[channel - 1].bgColourId;
-			OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, name, patch, colourIndex);
+			OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, sendMuted, name, channelMuted, patch, colourIndex);
 			output.Send(message);
 		}
 
@@ -158,13 +159,25 @@ namespace TouchFaders_MIDI {
 
 		public void SendSendMute (int mix, int channel) {
 			bool muted = MainWindow.instance.data.channels[channel - 1].sends[mix - 1].muted;
-			SendChannelMute(mix, channel, muted);
+			SendSendMute(mix, channel, muted);
 		}
 
-		public void SendChannelMute (int mix, int channel, bool muted) {
+		public void SendSendMute (int mix, int channel, bool muted) {
 			OscMessage message = new OscMessage($"/{MIX}{mix}/{CHANNEL}{channel}/{MUTE}", muted ? 1 : 0);
 			output.Send(message);
         }
+
+		public void SendChannelMutes () {
+			for (int channel = 1; channel <= MainWindow.instance.data.channels.Count; channel++) {
+				bool muted = MainWindow.instance.data.channels[channel - 1].muted;
+				SendChannelMute(channel, muted);
+            }
+        }
+
+		public void SendChannelMute (int channel, bool muted) {
+			OscMessage message = new OscMessage($"/{CHANNEL}{channel}/{MUTE}", muted);
+			output.Send(message);
+		}
 
 		public void SendChannelColours () {
 			for (int channel = 1; channel <= MainWindow.instance.data.channels.Count; channel++) {

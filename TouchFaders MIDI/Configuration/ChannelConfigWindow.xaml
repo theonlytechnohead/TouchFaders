@@ -55,6 +55,18 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Channel muted">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding ChannelMuted, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Style="{StaticResource DataGridCheckBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding ChannelMuted, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Style="{StaticResource DataGridCheckBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Channel colour">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
