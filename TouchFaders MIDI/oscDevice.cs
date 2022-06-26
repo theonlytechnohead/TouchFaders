@@ -96,11 +96,20 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void Refresh () {
-			SendSendLevels();
-			SendSendMutes();
-			SendChannelNames();
-			SendChannelPatches();
+			SendChannelStrips();
 		}
+
+		public void SendChannelStrips() {
+			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
+				int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
+				bool muted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
+				string label = MainWindow.instance.data.channels[channel - 1].name;
+				string patch = "IN " + MainWindow.instance.data.channels[channel - 1].patch;
+				OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, label, patch);
+				output.Send(message);
+				Thread.Sleep(3);
+			}
+        }
 
 		public void SendSendLevels () {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
