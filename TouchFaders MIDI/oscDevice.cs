@@ -10,9 +10,9 @@ namespace TouchFaders_MIDI {
 		public const string CONNECT = "test";
 		public const string DISCONNECT = "disconnect";
 
-		public const string CHANNEL = "fader";
+		public const string CHANNEL = "channel";
 		public const string MIX = "mix";
-		public const string NAME = "label";
+		public const string NAME = "name";
 		public const string PATCH = "patch";
 		public const string MUTE = "mute";
 
@@ -103,9 +103,9 @@ namespace TouchFaders_MIDI {
 			for (int channel = 1; channel <= MainWindow.instance.config.NUM_CHANNELS; channel++) {
 				int level = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].level;
 				bool muted = MainWindow.instance.data.channels[channel - 1].sends[currentMix - 1].muted;
-				string label = MainWindow.instance.data.channels[channel - 1].name;
+				string name = MainWindow.instance.data.channels[channel - 1].name;
 				string patch = "IN " + MainWindow.instance.data.channels[channel - 1].patch;
-				OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, label, patch);
+				OscMessage message = new OscMessage($"/{MIX}{currentMix}/{CHANNEL}{channel}", level, muted, name, patch);
 				output.Send(message);
 				Thread.Sleep(3);
 			}
@@ -120,8 +120,8 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void SendChannelNames () {
-            for (int label = 1; label <= MainWindow.instance.data.channels.Count; label++) {
-				SendChannelName(label, MainWindow.instance.data.channels[label - 1].name);
+            for (int channel = 1; channel <= MainWindow.instance.data.channels.Count; channel++) {
+				SendChannelName(channel, MainWindow.instance.data.channels[channel - 1].name);
 				Thread.Sleep(3);
 			}
 		}
