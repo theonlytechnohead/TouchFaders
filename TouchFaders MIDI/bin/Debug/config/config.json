@@ -2,7 +2,8 @@
   "MIXER": {
     "model": "LS9-32",
     "channelCount": 64,
-    "mixCount": 16
+    "mixCount": 16,
+    "id": 18
   },
   "DEVICE_ID": 1,
   "NUM_CHANNELS": 64,

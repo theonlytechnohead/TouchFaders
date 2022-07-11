@@ -43,17 +43,19 @@ namespace TouchFaders_MIDI {
 	}
 
 	public class Mixer {
-		public Mixer () { model = "NONE"; channelCount = 0; mixCount = 0; }
-		private Mixer (string value, int channels, int mixes, Dictionary<SysExCommand.CommandType, SysExCommand> commandList) {
+		public Mixer () { model = "NONE"; channelCount = 0; mixCount = 0; id = 0; }
+		private Mixer (string value, int channels, int mixes, byte midi_id, Dictionary<SysExCommand.CommandType, SysExCommand> commandList) {
 			model = value;
 			channelCount = channels;
 			mixCount = mixes;
+			id = midi_id;
 			commands = commandList;
 		}
 
 		public string model { get; set; }
 		public int channelCount { get; set; }
 		public int mixCount { get; set; }
+		public byte id { get; set; }
 		public Dictionary<SysExCommand.CommandType, SysExCommand> commands;
 
 		public override string ToString () {
@@ -81,32 +83,48 @@ namespace TouchFaders_MIDI {
 			get {
 				Dictionary<SysExCommand.CommandType, SysExCommand> commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
 					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x33, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x43, 0x00, 0x05}) },
+					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x01, 0x06, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x01, 0x0B, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x14, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x15, 0x00, 0x00}) },
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
-				return new Mixer("LS9-32", 64, 16, commands);
+				return new Mixer("LS9-32", 64, 16, 0x12, commands);
 			}
 		}
 		public static Mixer LS916 {
 			get {
 				Dictionary<SysExCommand.CommandType, SysExCommand> commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
 					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x33, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x43, 0x00, 0x05}) },
+					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x01, 0x06, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x01, 0x0B, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x14, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x15, 0x00, 0x00}) },
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
-				return new Mixer("LS9-16", 32, 16, commands);
+				return new Mixer("LS9-16", 32, 16, 0x12, commands);
 			}
 		}
+
+		public static Mixer QL5 {
+			get {
+				Dictionary<SysExCommand.CommandType, SysExCommand> commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
+					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x35, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x37, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x49, 0x00, 0x05}) },
+					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x01, 0x0F, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x01, 0x14, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x1D, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x1E, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
+				};
+				return new Mixer("QL5", 64, 16, 0x19, commands);
+            }
+        }
 
 	}
 
