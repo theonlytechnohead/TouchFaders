@@ -629,7 +629,7 @@ namespace TouchFaders_MIDI {
 			byte manufacturerID = bytes[0]; // YAMAHA is 0x43
 			byte deviceNumber = bytes[1];   // device number is 0x1n where n is 0-15
 			byte groupID = bytes[2];        // Digital mixer is 0x3E
-			byte modelID = bytes[3];        // LS9 is 0x12
+			byte modelID = bytes[3];        // LS9 is 0x12, CL/QL is 0x19
 			byte dataCategory = bytes[4];
 			byte elementMSB = bytes[5];
 			byte elementLSB = bytes[6];

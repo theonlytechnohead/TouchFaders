@@ -3,14 +3,13 @@ using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace TouchFaders_MIDI {
-	class MIDI_Functions {
+    class MIDI_Functions {
 
 		OutputDevice console_in;
 		InputDevice console_out;
