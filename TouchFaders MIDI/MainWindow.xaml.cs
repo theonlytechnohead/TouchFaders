@@ -854,16 +854,19 @@ namespace TouchFaders_MIDI {
 				byte channelMSB = bytes[9];     // Channel MSB per channel
 				byte channelLSB = bytes[10];    // Channel LSB with a 0 in the 8th bit
 
+				ushort element = (ushort)(elementMSB << 7);
+				element += elementLSB;
+
+				ushort index = (ushort)(indexMSB << 8);
+				index += indexLSB;
+
 				ushort channel = (ushort)(channelMSB << 7);
 				channel += channelLSB;
 
-				if (dataCategory == 0x01 &&     // kInput
-					elementMSB == 0x00 &&       // kInputToMix
-					elementLSB == 0x43 &&       // kInputToMix
+				if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kInputToMix].DataCategory &&
+					element == config.MIXER.commands[SysExCommand.CommandType.kInputToMix].Element &&
 					0 <= channel &&
 					channel < config.NUM_CHANNELS) {
-					ushort index = (ushort)(indexMSB << 7);
-					index += indexLSB;
 					switch (index) { // the index number must be for Mix1-6 send level
 						case 0x05:  // Mix 1 ...
 						case 0x08:
@@ -884,45 +887,36 @@ namespace TouchFaders_MIDI {
 							HandleMixSendMIDI(midiEvent);
 							return;
 					}
-				} else if (dataCategory == 0x01 &&  // kNameInputChannel
-						   elementMSB == 0x01 &&    // kNameShort
-						   elementLSB == 0x14 &&    // kNameShort
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel].DataCategory &&
+						   element == config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel].Element &&
 						   0 <= channel &&
 						   channel < config.NUM_CHANNELS) {
 					HandleChannelName(bytes);
-				} else if (dataCategory == 0x01 &&
-						   elementMSB == 0x00 &&
-						   elementLSB == 0x31) {
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kInputOn].DataCategory &&
+						   element == config.MIXER.commands[SysExCommand.CommandType.kInputOn].Element) {
 					HandleChannelOn(bytes);
-				} else if (dataCategory == 0x01 &&  // kInput
-							elementMSB == 0x00 &&    // kFader
-							elementLSB == 0x33 &&    // kFader
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kInputFader].DataCategory &&
+							element == config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel].Element &&
 							0 <= channel &&
 							channel < config.NUM_CHANNELS) {
 					HandleChannelFader(bytes);
-				} else if (dataCategory == 0x01 &&
-						   elementMSB == 0x01 &&
-						   elementLSB == 0x06) { // kGroupID_Input
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input].DataCategory &&
+						   element == config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input].Element) {
 					HandleChannelLinkGroup(bytes);
-				} else if (dataCategory == 0x01 &&
-						   elementMSB == 0x01 &&
-						   elementLSB == 0x0B) { // kPatchInInput
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kPatchInInput].DataCategory &&
+						   element == config.MIXER.commands[SysExCommand.CommandType.kPatchInInput].Element) {
 					HandleChannelPatch(bytes);
-				} else if (dataCategory == 0x01 &&  // kIconInputChannel
-						   elementMSB == 0x01 &&
-						   elementLSB == 0x15 &&
-						   indexMSB == 0x00 &&
-						   indexLSB == 0x00) {    // kIconID
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].DataCategory &&
+						   element == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Element &&
+						   index == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Index) {
 					if (channel == selectedChannel.channelIndex) {
 						selectedChannel.iconID = bytes[15];
 						UpdateSelectedChannel();
 					}
 					selectedChannelCache[channel].iconID = bytes[15];
-				} else if (dataCategory == 0x01 &&  // kIconInputChannel
-						   elementMSB == 0x01 &&
-						   elementLSB == 0x15 &&
-						   indexMSB == 0x00 &&
-						   indexLSB == 0x01) {    // KIconBgColor
+				} else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].DataCategory &&
+						   element == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Element &&
+						   index == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Index + 1) {    // KIconBgColor
 					if (channel == selectedChannel.channelIndex) {
 						selectedChannel.bgColourID = bytes[15];
 						UpdateSelectedChannel();

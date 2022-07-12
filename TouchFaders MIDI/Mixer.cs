@@ -110,7 +110,7 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		public static Mixer QL5 {
+		public static Mixer QL {
 			get {
 				Dictionary<SysExCommand.CommandType, SysExCommand> commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
 					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x35, 0x00, 0x00}) },
@@ -122,9 +122,25 @@ namespace TouchFaders_MIDI {
 					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x1E, 0x00, 0x00}) },
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
-				return new Mixer("QL5", 64, 16, 0x19, commands);
+				return new Mixer("QL5/1", 64, 16, 0x19, commands);
             }
         }
+
+		public static Mixer CL {
+			get {
+				Dictionary<SysExCommand.CommandType, SysExCommand> commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
+					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x35, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x37, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x49, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x01, 0x0F, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x01, 0x14, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x1D, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x1E, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
+				};
+				return new Mixer("CL5/3/1", 72, 24, 0x19, commands);
+			}
+		}
 
 	}
 
