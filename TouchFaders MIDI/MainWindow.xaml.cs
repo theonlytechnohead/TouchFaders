@@ -975,10 +975,12 @@ namespace TouchFaders_MIDI {
 			ushort shiftedValue = (ushort)(value_int >> 7);
 			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
 
+			SysExCommand kInputToMix = config.MIXER.commands[SysExCommand.CommandType.kInputToMix];
+
 			NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  db		dB
 			byte device_byte = 0x10;
 			device_byte |= Convert.ToByte(config.DEVICE_ID - 1);
-			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x43, 0x00, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
+			byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputToMix.DataCategoryByte, kInputToMix.ElementMSB, kInputToMix.ElementLSB, kInputToMix.IndexMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 			bool enabled = false;
 			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
@@ -1005,8 +1007,10 @@ namespace TouchFaders_MIDI {
 			byte group = Convert.ToByte(DataStructures.ChannelGroupChars.IndexOf(linkGroup));
 			//Console.WriteLine($"Setting channel {channel + 1} link group to {linkGroup}");
 
+			SysExCommand kGroupdId = config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input];
+
 			NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
-			byte[] data = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x01, 0x06, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, group, 0xF7 };
+			byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kGroupdId.DataCategoryByte, kGroupdId.ElementMSB, kGroupdId.ElementLSB, kGroupdId.IndexMSB, kGroupdId.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, group, 0xF7 };
 			kGroupID_Input.Data = data;
 			bool enabled = false;
 			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
@@ -1038,9 +1042,13 @@ namespace TouchFaders_MIDI {
 			ushort shiftedValue = (ushort)(value_int >> 7);
 			byte valueMSB = (byte)(shiftedValue & 0x7Fu);
 
+			SysExCommand kInputFader = config.MIXER.commands[SysExCommand.CommandType.kInputFader];
+
 			NormalSysExEvent sessionVolume = new NormalSysExEvent();
-			byte[] dataVolume = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x33, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
+			byte[] dataVolume = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputFader.DataCategoryByte, kInputFader.ElementMSB, kInputFader.ElementLSB, kInputFader.IndexMSB, kInputFader.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sessionVolume.Data = dataVolume;
+
+			SysExCommand kInputOn = config.MIXER.commands[SysExCommand.CommandType.kInputOn];
 
 			byte on;
 			if (mute) {
@@ -1049,7 +1057,7 @@ namespace TouchFaders_MIDI {
 				on = 0x01;
 			}
 			NormalSysExEvent sessionOn = new NormalSysExEvent();
-			byte[] dataOn = { 0x43, device_byte, 0x3E, 0x12, 0x01, 0x00, 0x31, 0x00, 0x00, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, on, 0xF7 };
+			byte[] dataOn = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputOn.DataCategoryByte, kInputOn.ElementMSB, kInputOn.ElementLSB, kInputOn.IndexMSB, kInputOn.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, on, 0xF7 };
 			sessionOn.Data = dataOn;
 
 			bool canContinue = false;

@@ -12,6 +12,12 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		public byte DataCategoryByte {
+			get {
+				return dataBytes[0];
+			}
+		}
+
 		public int Element {
 			get {
 				int element = dataBytes[1] << 7;
@@ -19,12 +25,28 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		public byte ElementMSB {
+			get => dataBytes[1];
+        }
+
+		public byte ElementLSB {
+			get => dataBytes[2];
+        }
+
 		public int Index {
 			get {
 				int index = dataBytes[3] << 7;
 				return index + dataBytes[4];
 			}
 		}
+
+		public byte IndexMSB {
+			get => dataBytes[3];
+        }
+
+		public byte IndexLSB {
+			get => dataBytes[4];
+        }
 
 		public SysExCommand (byte[] data) {
 			dataBytes = data;
