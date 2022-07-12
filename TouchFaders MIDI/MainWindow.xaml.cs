@@ -649,7 +649,7 @@ namespace TouchFaders_MIDI {
 			if (manufacturerID == 0x43 &&       // YAMAHA
 				deviceNumber == device_byte &&  // 1 = parameter send; 3 = parameter request, device ID 1
 				groupID == 0x3E &&              // Digital mixer
-				modelID == 0x12) {              // LS9
+				modelID == config.MIXER.id) {	// 0x12 for LS9, 0x19 for CL/QL series
 				return true;
 			}
 			return false;
