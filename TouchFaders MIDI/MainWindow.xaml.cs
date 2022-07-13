@@ -250,7 +250,6 @@ namespace TouchFaders_MIDI {
 					}
 				}
 				if (deviceToRemove != null) {
-					deviceToRemove.Close();
 					devices.Remove(deviceToRemove);
 					try {
 						Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));

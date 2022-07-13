@@ -7,7 +7,7 @@ using System.Threading;
 namespace TouchFaders_MIDI {
     public class oscDevice {
 
-		public const string CONNECT = "test";
+		public const string CONNECT = "connect";
 		public const string DISCONNECT = "disconnect";
 
 		public const string CHANNEL = "channel";
@@ -26,19 +26,8 @@ namespace TouchFaders_MIDI {
 
 		public oscDevice (string name, IPAddress address, int sendPort, int receivePort) {
 			deviceName = name;
-			(input as IDisposable)?.Dispose(); // TODO: I don't need to do this, right?
-			(output as IDisposable)?.Dispose();
 			input = new UDPListener(receivePort, parseOSCMessage);
 			output = new UDPSender(address.ToString(), sendPort);
-		}
-
-		~oscDevice () {
-			Close();
-		}
-
-		public void Close () {
-			(input as IDisposable)?.Dispose();
-			(output as IDisposable)?.Dispose();
 		}
 
 		void parseOSCMessage (OscPacket packet) {
@@ -46,7 +35,8 @@ namespace TouchFaders_MIDI {
 				OscBundle messageBundle = (OscBundle)packet;
 				foreach (OscMessage message in messageBundle.Messages) {
 					try {
-						handleOSCMessage(message);
+                        Console.WriteLine($"Got an OSC bundle!");
+						processOSC(message);
                     } catch (NullReferenceException) {
                         Console.WriteLine("Got a null reference exception whilst reading/handling an OSC bundle");
                     }
@@ -54,13 +44,35 @@ namespace TouchFaders_MIDI {
 			} else {
 				OscMessage message = (OscMessage)packet;
 				try {
-					handleOSCMessage(message);
+					processOSC(message);
 				} catch (NullReferenceException) {
                     Console.WriteLine("Got a null reference exception whilst reading/handling an OSC mesage");
 					return;
 				}
 			}
 		}
+
+		void processOSC (OscMessage message) {
+            Console.WriteLine($"OSC: {message.Address}");
+			if (message.Address.Contains($"/{CONNECT}")) {
+				output.Send(new OscMessage($"/{CONNECT}/{CONNECT}", 1));
+            }
+			if (message.Address.Contains($"/{DISCONNECT}")) {
+                // nothing to do
+            }
+			if (message.Address.Contains($"/{MIX}")) {
+                string mix = message.Address.Split('/')[1];
+                int current = int.Parse(String.Join("", mix.Where(char.IsDigit)));
+                currentMix = current;
+                if (0 < message.Arguments.Count) {
+                    if (message.Arguments[0] is int) {
+                        if ((int)message.Arguments[0] == 1) {
+                            Refresh();
+                        }
+                    }
+                }
+            }
+        }
 
 		void handleOSCMessage (OscMessage message) {
 			//Console.WriteLine($"OSC from {deviceName}: {message.Address} {message.Arguments[0]}");
