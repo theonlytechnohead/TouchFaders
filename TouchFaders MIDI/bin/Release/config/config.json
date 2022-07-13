@@ -7,6 +7,6 @@
     "id": 18
   },
   "DEVICE_ID": 1,
-  "NUM_CHANNELS": 64,
-  "NUM_MIXES": 16
+  "NUM_CHANNELS": 32,
+  "NUM_MIXES": 8
 }

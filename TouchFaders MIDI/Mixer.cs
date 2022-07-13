@@ -65,16 +65,39 @@ namespace TouchFaders_MIDI {
 	}
 
 	public class Mixer {
-		public Mixer () { model = "NONE"; channelCount = 0; mixCount = 0; id = 0; }
-		private Mixer (string value, int channels, int mixes, byte midi_id, Dictionary<SysExCommand.CommandType, SysExCommand> commandList) {
+
+		public enum Type {
+			LS, CL_QL
+        }
+
+		public Mixer () { model = "NONE"; type = Type.LS; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
+		private Mixer (string value, int channels, int mixes, byte midi_id, Type type) {
 			model = value;
 			channelCount = channels;
 			mixCount = mixes;
 			id = midi_id;
-			commands = commandList;
+			switch (type) {
+				case Type.LS:
+					commands = LS9_commands;
+					break;
+				case Type.CL_QL:
+					commands = CL_QL_commands;
+					break;
+			}
 		}
 
 		public string model { get; set; }
+		private Type t;
+		public Type type { get => t; set {
+                t = value; switch (type) {
+					case Type.LS:
+						commands = LS9_commands;
+						break;
+					case Type.CL_QL:
+						commands = CL_QL_commands;
+						break;
+				}
+			} }
 		public int channelCount { get; set; }
 		public int mixCount { get; set; }
 		public byte id { get; set; }
@@ -123,15 +146,15 @@ namespace TouchFaders_MIDI {
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
 
-		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, LS9_commands);
-        public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, LS9_commands);
+		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, Type.LS);
+        public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, Type.LS);
 
-        public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, CL_QL_commands);
-        public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, CL_QL_commands);
+        public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, Type.CL_QL);
+        public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, Type.CL_QL);
 
-        public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, CL_QL_commands);
-        public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, CL_QL_commands);
-        public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, CL_QL_commands);
+        public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, Type.CL_QL);
+        public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, Type.CL_QL);
+        public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, Type.CL_QL);
 
     }
 

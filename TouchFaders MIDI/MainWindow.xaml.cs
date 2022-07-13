@@ -159,7 +159,7 @@ namespace TouchFaders_MIDI {
 
 		private void CalculateScale () {
 			double xScale = ActualWidth / 600f; // must be set to initial window sizing for proper scaling!!!
-			double yScale = ActualHeight / 350f; // must be set to initial window sizing for proper scaling!!!
+			double yScale = ActualHeight / 375f; // must be set to initial window sizing for proper scaling!!!
 			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
 			ScaleValue = (double)OnCoerceScaleValue(mainWindow, value); // Update the actual scale for the main window
 		}
@@ -433,16 +433,16 @@ namespace TouchFaders_MIDI {
 					Console.WriteLine("Started MIDI");
 				});
 				queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
-				await GetAllFaderValues();
-				await GetChannelFaders();
-				await GetAllChannelsLinkGroup();
-				await RequestChannelsPatch();
-				selectedChannelIndexToGet.Push(0);
-				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000);
-				selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
-				SendAllAudioSessions();
-				//await GetChannelNames();
-			}
+                await GetAllFaderValues();
+                await GetChannelFaders();
+                await GetAllChannelsLinkGroup();
+                await RequestChannelsPatch();
+                selectedChannelIndexToGet.Push(0);
+                meteringTimer = new Timer(GetMixesMetering, null, 100, 2000); // must be requested "at least every 10 seconds" according to OM
+                selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
+                SendAllAudioSessions();
+                //await GetChannelNames();
+            }
 		}
 
 		void sendQueueItem (object state) {
@@ -468,23 +468,23 @@ namespace TouchFaders_MIDI {
 		}
 
 		async Task GetAllFaderValues () {
-			await GetFaderValuesForMix(0x05); // Mix 1 level...
+			await GetFaderValuesForMix(0x05);
 			await GetFaderValuesForMix(0x08);
-			await GetFaderValuesForMix(0x0B);
-			await GetFaderValuesForMix(0x0E);
-			await GetFaderValuesForMix(0x11);
-			await GetFaderValuesForMix(0x14); // Mix 6
-			await GetFaderValuesForMix(0x17);
-			await GetFaderValuesForMix(0x1A); // Mix8
-			await GetFaderValuesForMix(0x1D);
-			await GetFaderValuesForMix(0x20);
-			await GetFaderValuesForMix(0x23);
-			await GetFaderValuesForMix(0x26);
-			await GetFaderValuesForMix(0x29);
-			await GetFaderValuesForMix(0x2C);
-			await GetFaderValuesForMix(0x2F);
-			await GetFaderValuesForMix(0x32); // Mix 16
-		}
+            await GetFaderValuesForMix(0x0B);
+            await GetFaderValuesForMix(0x0E);
+            await GetFaderValuesForMix(0x11);
+            await GetFaderValuesForMix(0x14);
+            await GetFaderValuesForMix(0x17);
+            await GetFaderValuesForMix(0x1A);
+            await GetFaderValuesForMix(0x1D);
+            await GetFaderValuesForMix(0x20);
+            await GetFaderValuesForMix(0x23);
+            await GetFaderValuesForMix(0x26);
+            await GetFaderValuesForMix(0x29);
+            await GetFaderValuesForMix(0x2C);
+            await GetFaderValuesForMix(0x2F);
+            await GetFaderValuesForMix(0x32);
+        }
 
 		async Task GetFaderValuesForMix (byte mix) {
 			SysExCommand kInputToMix = config.MIXER.commands[SysExCommand.CommandType.kInputToMix];
@@ -496,7 +496,7 @@ namespace TouchFaders_MIDI {
 				byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputToMix.DataCategoryByte, kInputToMix.ElementMSB, kInputToMix.ElementLSB, kInputToMix.IndexMSB, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
 				await SendSysEx(sysExEvent);
-			}
+            }
 		}
 
 		void GetSelectedChannelInfo (object state) {
@@ -1122,13 +1122,13 @@ namespace TouchFaders_MIDI {
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
 				CalculateSysExCommands();
-				Dispatcher.Invoke(() => {
+                Dispatcher.Invoke(() => {
 					startMIDIButton.IsEnabled = false;
 					midiProgressBar.Value = 0;
 				});
 				Task.Run(async () => {
 					await InitializeMIDI();
-					Dispatcher.Invoke(() => {
+                    Dispatcher.Invoke(() => {
 						refreshMIDIButton.IsEnabled = true;
 						stopMIDIButton.IsEnabled = true;
 					});
@@ -1142,7 +1142,7 @@ namespace TouchFaders_MIDI {
 			int total = config.NUM_CHANNELS * config.NUM_MIXES; // sends to mix levels
 			total += config.NUM_CHANNELS; // channel levels
 			total += config.NUM_CHANNELS; // channel link groups
-			total += config.NUM_CHANNELS; // channel patch in (inputs)
+			//total += config.NUM_CHANNELS; // channel patch in (inputs)
 										  //total += config.NUM_CHANNELS; // channel names?
 			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
 		}

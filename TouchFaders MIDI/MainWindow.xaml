@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TouchFaders_MIDI"
         mc:Ignorable="d" Icon="icon.ico"
-        Title="TouchFaders MIDI" Loaded="mainWindow_Loaded" WindowStartupLocation="CenterScreen" MinWidth="600" MinHeight="350" Width="600" Height="350" UseLayoutRounding="True">
+        Title="TouchFaders MIDI" Loaded="mainWindow_Loaded" WindowStartupLocation="CenterScreen" MinWidth="600" MinHeight="375" Width="600" Height="375" UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
