@@ -70,9 +70,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\CoreAudio.dll</HintPath>
     </Reference>
-    <Reference Include="SharpOSC">
-      <HintPath>..\SharpOSC.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -259,6 +256,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.Contracts">
       <Version>10.0.22621.1</Version>
+    </PackageReference>
+    <PackageReference Include="Rug.Osc">
+      <Version>1.2.5</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
       <Version>6.0.5</Version>

@@ -91,6 +91,7 @@ namespace TouchFaders_MIDI {
 
             foreach (oscDevice device in devices) {
                 device.SendDisconnect();
+				device.Close();
             }
 
             if (infoWindow != null) {
@@ -246,6 +247,7 @@ namespace TouchFaders_MIDI {
 				foreach (oscDevice device in devices) {
 					if (device.deviceName == name) {
 						deviceToRemove = device;
+						device.Close();
 						break;
 					}
 				}

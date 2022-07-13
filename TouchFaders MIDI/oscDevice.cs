@@ -1,4 +1,4 @@
-using SharpOSC;
+using Rug.Osc;
 using System;
 using System.Linq;
 using System.Net;
@@ -21,100 +21,101 @@ namespace TouchFaders_MIDI {
 		public string deviceName;
 		private int currentMix;
 
-		private UDPListener input = null;
-		private UDPSender output = null;
+		private OscAddressManager osc;
+
+		private OscReceiver input = null;
+		private OscSender output = null;
+
+		Thread listenThread;
 
 		public oscDevice (string name, IPAddress address, int sendPort, int receivePort) {
 			deviceName = name;
-			input = new UDPListener(receivePort, parseOSCMessage);
-			output = new UDPSender(address.ToString(), sendPort);
+
+			osc = new OscAddressManager();
+
+			input = new OscReceiver(receivePort);
+			input.Connect();
+			listenThread = new Thread(new ThreadStart(ListenLoop));
+			output = new OscSender(address, sendPort);
+			output.Connect();
+
+			AttachPatterns();
+
+			listenThread.Start();
 		}
 
-		void parseOSCMessage (OscPacket packet) {
-			if (packet is OscBundle) {
-				OscBundle messageBundle = (OscBundle)packet;
-				foreach (OscMessage message in messageBundle.Messages) {
-					try {
-                        Console.WriteLine($"Got an OSC bundle!");
-						processOSC(message);
-                    } catch (NullReferenceException) {
-                        Console.WriteLine("Got a null reference exception whilst reading/handling an OSC bundle");
-                    }
-				}
-			} else {
-				OscMessage message = (OscMessage)packet;
-				try {
-					processOSC(message);
-				} catch (NullReferenceException) {
-                    Console.WriteLine("Got a null reference exception whilst reading/handling an OSC mesage");
-					return;
-				}
-			}
-		}
-
-		void processOSC (OscMessage message) {
-            Console.WriteLine($"OSC: {message.Address}");
-			if (message.Address.Contains($"/{CONNECT}")) {
-				output.Send(new OscMessage($"/{CONNECT}/{CONNECT}", 1));
-            }
-			if (message.Address.Contains($"/{DISCONNECT}")) {
-                // nothing to do
-            }
-			if (message.Address.Contains($"/{MIX}")) {
-                string mix = message.Address.Split('/')[1];
-                int current = int.Parse(String.Join("", mix.Where(char.IsDigit)));
-                currentMix = current;
-                if (0 < message.Arguments.Count) {
-                    if (message.Arguments[0] is int) {
-                        if ((int)message.Arguments[0] == 1) {
-                            Refresh();
-                        }
-                    }
-                }
-            }
+		public void Close() {
+			input.Close();
+			output.Close();
+			listenThread.Join();
         }
 
-		void handleOSCMessage (OscMessage message) {
-			//Console.WriteLine($"OSC from {deviceName}: {message.Address} {message.Arguments[0]}");
-			if (message.Address == $"/{CONNECT}") {
-				output.Send(new OscMessage($"/{CONNECT}/{CONNECT}", 1));
-				//output.Send(new OscMessage("/mix1/fader1", 823));
-            }
-            if (message.Address.Contains($"/{MIX}")) {
-				string[] address = message.Address.Split('/');
-				address = address.Skip(1).ToArray(); // remove the empty string before the leading '/'
-				if (address.Length > 1) {
-					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
-					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
-					if (address.Length == 2) {
-						if (message.Arguments[0] is int) {
-							int value = (int)message.Arguments[0];
-							/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
-							if (linkedIndex != -1) {
-								sendOSCMessage(mix, linkedIndex + 1, value);
-								MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
-							}*/
-							value = Math.Max(0, Math.Min(value, 1023));
-                            MainWindow.instance.SendFaderValue(mix, channel, value, this);
-                        }
-					} else if (address.Length == 3 && message.Arguments[0] is int) {
-						bool muted = false;
-						if ((int)message.Arguments[0] == 1) {
-							muted = true;
-                        }
-						MainWindow.instance.SendChannelMute(mix, channel, muted, this);
-					}
-				} else {
-					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
-					if (message.Arguments[0].ToString() == "1") {
-						currentMix = mix;
-						Refresh();
-					}
+		void ListenLoop() {
+			try {
+				while (input.State != OscSocketState.Closed) {
+					if (input.State == OscSocketState.Connected) {
+						bool received = input.TryReceive(out OscPacket packet);
+						if (received) {
+							switch (osc.ShouldInvoke(packet)) {
+								case OscPacketInvokeAction.Invoke:
+									osc.Invoke(packet);
+									break;
+								case OscPacketInvokeAction.DontInvoke:
+									//Console.WriteLine($"Couldn't handle OSC: {packet}");
+									break;
+								case OscPacketInvokeAction.HasError:
+									//Console.WriteLine($"OSC packet has error: {packet.Error} {packet}");
+                                    break;
+								case OscPacketInvokeAction.Pospone:
+									//Console.WriteLine($"OSC packet was postponed: {packet}");
+									break;
+							}
+						}
+                    }
+                }
+            } catch (Exception ex) {
+				if (input.State == OscSocketState.Connected) {
+					Console.WriteLine("Exception in listen loop (to follow):");
+					Console.WriteLine(ex.Message);
 				}
 			}
-		}
+        }
 
-		public void Refresh () {
+        void AttachPatterns() {
+            osc.Attach($"/{CONNECT}", new OscMessageEvent((OscMessage message) => {
+				output.Send(new OscMessage($"/{CONNECT}/{CONNECT}", 1));
+			}));
+			osc.Attach($"/{DISCONNECT}", new OscMessageEvent((OscMessage message) => {
+                // nothing to do
+			}));
+			osc.Attach($"/{MIX}[0-9]", new OscMessageEvent((OscMessage message) => {
+				string mix = message.Address.Split('/')[1];
+				currentMix = int.Parse(String.Join("", mix.Where(char.IsDigit)));
+				Refresh();
+			}));
+			osc.Attach($"/{MIX}[0-9]/{CHANNEL}[0-9]", new OscMessageEvent((OscMessage message) => {
+				string mix = message.Address.Split('/')[1];
+				if (int.Parse(String.Join("", mix.Where(char.IsDigit))) == currentMix) {
+                    int channel = int.Parse(String.Join("", message.Address.Split('/')[2].Where(char.IsDigit)));
+					int value = (int)message[0];
+					value = Math.Max(0, Math.Min(value, 1023));
+					MainWindow.instance.SendFaderValue(currentMix, channel, value, this);
+				}
+			}));
+			osc.Attach($"/{MIX}[0-9]/{CHANNEL}[0-9]/{MUTE}", new OscMessageEvent((OscMessage message) => {
+				string mix = message.Address.Split('/')[1];
+				if (int.Parse(String.Join("", mix.Where(char.IsDigit))) == currentMix) {
+					int channel = int.Parse(String.Join("", message.Address.Split('/')[2].Where(char.IsDigit)));
+					bool muted = false;
+					if ((int)message[0] == 1) {
+						muted = true;
+					}
+					MainWindow.instance.SendChannelMute(currentMix, channel, muted, this);
+				}
+            }));
+        }
+
+        public void Refresh () {
 			SendChannelStrips();
 		}
 
@@ -219,5 +220,5 @@ namespace TouchFaders_MIDI {
             OscMessage message = new OscMessage($"/{MIX}{mix}/{CHANNEL}{channel}", value);
 			output.Send(message);
 		}
-	}
+    }
 }

@@ -102,7 +102,6 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Text.Jso
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.Threading.Tasks.Extensions.dll
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\System.ValueTuple.dll
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\CoreAudio.dll
-D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\SharpOSC.dll
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.AssemblyReference.cache
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.SuggestedBindingRedirects.cache
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe.config
@@ -132,3 +131,4 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MID
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.csproj.CopyComplete
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\Rug.Osc.dll
