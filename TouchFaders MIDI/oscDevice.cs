@@ -45,9 +45,9 @@ namespace TouchFaders_MIDI {
 		}
 
 		public void Close() {
-			input.Close();
-			output.Close();
-			listenThread.Join();
+			input.Dispose();
+            output.Dispose();
+            listenThread.Join();
         }
 
 		void ListenLoop() {
