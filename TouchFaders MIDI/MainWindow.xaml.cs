@@ -1167,24 +1167,41 @@ namespace TouchFaders_MIDI {
 			displayMIDIDevices();
 		}
 
-		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
-			Dispatcher.Invoke(new Action(() => {
-				refreshMIDIButton.IsEnabled = false;
-				midiProgressBar.Value = 0;
-			}));
-			bool enabled = stopMIDIButton.IsEnabled;
-			CalculateSysExCommands();
-			Task.Run(async () => {
-				if (enabled) {
-					await GetAllFaderValues();
-					await GetChannelFaders();
-					await GetAllChannelsLinkGroup();
-					selectedChannelIndexToGet.Push(0);
-					//await GetChannelNames();
-				}
-				Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
-			});
+		void displayMIDIDevices_Click (object sender, RoutedEventArgs e) {
+			if (startMIDIButton.IsEnabled) {
+				displayMIDIDevices();
+			}
+		}
 
+		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
+			if (refreshMIDIButton.IsEnabled) {
+				Dispatcher.Invoke(new Action(() => {
+					refreshMIDIButton.IsEnabled = false;
+					midiProgressBar.Value = 0;
+				}));
+				bool enabled = stopMIDIButton.IsEnabled;
+				CalculateSysExCommands();
+				Task.Run(async () => {
+					if (enabled) {
+						await GetAllFaderValues();
+						await GetChannelFaders();
+						await GetAllChannelsLinkGroup();
+						selectedChannelIndexToGet.Push(0);
+						//await GetChannelNames();
+					}
+					Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
+				});
+			}
+		}
+
+		void testMIDIButton_Click (object sender, RoutedEventArgs e) {
+			if (stopMIDIButton.IsEnabled) {
+				if (data.channels[0].sends[0].level != 0) {
+					SendFaderValue(1, 1, 0, null);
+				} else {
+					SendFaderValue(1, 1, 823, null);
+				}
+			}
 		}
 
 		private void infoWindowButton_Click (object sender, RoutedEventArgs e) {
@@ -1278,16 +1295,7 @@ namespace TouchFaders_MIDI {
 					break;
 				case System.Windows.Input.Key.T:
 					e.Handled = true;
-					if (stopMIDIButton.IsEnabled) {
-						// idk what this is for
-						if (data.channels[0].sends[0].level != 0) {
-							SendFaderValue(1, 1, 0, null);
-							break;
-						} else {
-							SendFaderValue(1, 1, 823, null);
-							break;
-						}
-					}
+					testMIDIButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.Q:
 					e.Handled = true;

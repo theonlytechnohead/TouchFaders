@@ -49,8 +49,8 @@
         </Style>
 
         <Style TargetType="CheckBox" x:Key="DataGridCheckBox">
-            <Setter Property="Foreground" Value="{DynamicResource textBackground}" />
-            <Setter Property="Background" Value="{DynamicResource textColour}" />
+            <Setter Property="Foreground" Value="{DynamicResource textColour}" />
+            <Setter Property="Background" Value="{DynamicResource textBackground}" />
         </Style>
 
         <Style TargetType="MenuItem" x:Key="MenuItem">

@@ -165,6 +165,13 @@
                 <MenuItem Header="_File">
                     <MenuItem Header="_Quit" InputGestureText="Q" Click="quitButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
+                <MenuItem Header="_MIDI">
+                    <MenuItem Header="_Start MIDI" InputGestureText="S" Click="startMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Test MIDI" InputGestureText="R" Click="testMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Refresh MIDI" InputGestureText="R" Click="refreshMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="Refresh MIDI _devices" InputGestureText="D" Click="displayMIDIDevices_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Stop MIDI" InputGestureText="S" Click="stopMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                </MenuItem>
                 <MenuItem Header="_View">
                     <MenuItem Header="_Info" InputGestureText="I" Click="infoWindowButton_Click" Style="{StaticResource MenuItem}" />
                     <MenuItem Header="_Audio" InputGestureText="A" Click="audioWindowButton_Click" Style="{StaticResource MenuItem}" />
