@@ -45,13 +45,18 @@ namespace TouchFaders_MIDI {
 			if (packet is OscBundle) {
 				OscBundle messageBundle = (OscBundle)packet;
 				foreach (OscMessage message in messageBundle.Messages) {
-					handleOSCMessage(message);
+					try {
+						handleOSCMessage(message);
+                    } catch (NullReferenceException) {
+                        Console.WriteLine("Got a null reference exception whilst reading/handling an OSC bundle");
+                    }
 				}
 			} else {
 				OscMessage message = (OscMessage)packet;
 				try {
 					handleOSCMessage(message);
 				} catch (NullReferenceException) {
+                    Console.WriteLine("Got a null reference exception whilst reading/handling an OSC mesage");
 					return;
 				}
 			}
@@ -70,15 +75,16 @@ namespace TouchFaders_MIDI {
 					int mix = int.Parse(String.Join("", address[0].Where(char.IsDigit)));
 					int channel = int.Parse(String.Join("", address[1].Where(char.IsDigit)));
 					if (address.Length == 2) {
-						if (message.Arguments[0] is int) { // TouchFaders OSC clients use 1:1 mapping ints for fader values (can be passed directly to the console)
+						if (message.Arguments[0] is int) {
 							int value = (int)message.Arguments[0];
 							/*int linkedIndex = MainWindow.instance.linkedChannels.getIndex(channel - 1); // TODO: fix this
 							if (linkedIndex != -1) {
 								sendOSCMessage(mix, linkedIndex + 1, value);
 								MainWindow.instance.SendFaderValue(mix, linkedIndex + 1, value, this);
 							}*/
-							MainWindow.instance.SendFaderValue(mix, channel, value, this);
-						}
+							value = Math.Max(0, Math.Min(value, 1023));
+                            MainWindow.instance.SendFaderValue(mix, channel, value, this);
+                        }
 					} else if (address.Length == 3 && message.Arguments[0] is int) {
 						bool muted = false;
 						if ((int)message.Arguments[0] == 1) {
