@@ -1,4 +1,4 @@
-﻿using System;
+﻿using CoreAudio;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
-using CoreAudio;
 
 namespace TouchFaders_MIDI {
 	/// <summary>
@@ -61,7 +60,7 @@ namespace TouchFaders_MIDI {
 				if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p.ProcessName;
 			}
 
-			sessionLabel.Content = ParseLabel(sessionLabel.Content.ToString());
+			sessionTextBox.Text = ParseLabel(sessionLabel.Content.ToString());
 
 			session.OnSimpleVolumeChanged += SessionVolumeChanged;
 			sessionSlider.ValueChanged += SessionSlider_ValueChanged;
@@ -200,7 +199,7 @@ namespace TouchFaders_MIDI {
 			if (text.Split()[0].Length <= 6) {
 				string firstLetter = text.Substring(0, 1).ToUpper();
 				return firstLetter + text.Split()[0].Substring(1);
-            }
+			}
 			int iterations = 0;
 			string output = "";
 			while (iterations < text.Length - 6) {
@@ -209,11 +208,11 @@ namespace TouchFaders_MIDI {
 					break;
 				}
 				iterations++;
-            }
+			}
 
 			if (output.Length > 6) {
 				output = output.Substring(0, 6);
-            }
+			}
 			string firstLetterUppercase = output.Substring(0, 1).ToUpper();
 			return firstLetterUppercase + output.Substring(1);
 		}
