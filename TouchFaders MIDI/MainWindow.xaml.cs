@@ -14,10 +14,10 @@ using System.Windows.Media;
 using Windows.UI.ViewManagement;
 
 namespace TouchFaders_MIDI {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window {
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window {
 
 		public class Device {
 			public string Name { get; set; }
@@ -76,7 +76,7 @@ namespace TouchFaders_MIDI {
 
 			this.KeyDown += MainWindow_KeyDown;
 
-        }
+		}
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
 			selectedChannel = new Data.SelectedChannel();
@@ -85,34 +85,34 @@ namespace TouchFaders_MIDI {
 			devicesListBox.ItemsSource = uiDevices;
 		}
 
-        protected async override void OnClosed (EventArgs e) {
-            Console.WriteLine("Closing...");
-            base.OnClosed(e);
+		protected async override void OnClosed (EventArgs e) {
+			Console.WriteLine("Closing...");
+			base.OnClosed(e);
 
-            foreach (oscDevice device in devices) {
-                device.SendDisconnect();
+			foreach (oscDevice device in devices) {
+				device.SendDisconnect();
 				device.Close();
-            }
+			}
 
-            if (infoWindow != null) {
-                infoWindow.Visibility = Visibility.Hidden;
-                infoWindow.Close();
-            }
-            if (audioMixerWindow != null) {
-                audioMixerWindow.Visibility = Visibility.Hidden;
-                audioMixerWindow.Close();
-            }
-            stopMIDIButton_Click(null, null);
-            advertisingTimer?.Dispose();
-            await AppConfiguration.SaveConfig(config);
-            await AppConfiguration.SaveData(data);
-            base.OnClosed(e);
-        }
-        #endregion
+			if (infoWindow != null) {
+				infoWindow.Visibility = Visibility.Hidden;
+				infoWindow.Close();
+			}
+			if (audioMixerWindow != null) {
+				audioMixerWindow.Visibility = Visibility.Hidden;
+				audioMixerWindow.Close();
+			}
+			stopMIDIButton_Click(null, null);
+			advertisingTimer?.Dispose();
+			await AppConfiguration.SaveConfig(config);
+			await AppConfiguration.SaveData(data);
+			base.OnClosed(e);
+		}
+		#endregion
 
-        #region Scaling
-        // This section smoothly scales everything within the mainGrid
-        public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
+		#region Scaling
+		// This section smoothly scales everything within the mainGrid
+		public static readonly DependencyProperty ScaleValueProperty = DependencyProperty.Register("ScaleValue",
 			typeof(double),
 			typeof(MainWindow),
 			new UIPropertyMetadata(1.0,
@@ -170,12 +170,12 @@ namespace TouchFaders_MIDI {
 		#region File & network I/O (and setup)
 		void DataLoaded (Data data) {
 			Dispatcher.Invoke(() => { this.data = data; });
-            Data.channelNameChanged += Data_channelNameChanged;
+			Data.channelNameChanged += Data_channelNameChanged;
 			Data.channelMuteChanged += Data_channelMuteChanged;
 			Data.channelPatchChanged += Data_channelPatchChanged;
 			Data.channelColourChanged += Data_channelColourChanged;
 			Data.mixNameChanged += Data_mixNameChanged;
-            for (int i = 0; i < config.MIXER.channelCount; i++) {
+			for (int i = 0; i < config.MIXER.channelCount; i++) {
 				selectedChannelCache.Add(new Data.SelectedChannel() { name = $"ch {i + 1}", channelIndex = i });
 			}
 
@@ -190,8 +190,8 @@ namespace TouchFaders_MIDI {
 			// Supplementary windows...
 			Dispatcher.Invoke(() => {
 				infoWindow = new InfoWindow();
-                infoWindow.DataContext = this.DataContext;
-                audioMixerWindow = new AudioMixerWindow();
+				infoWindow.DataContext = this.DataContext;
+				audioMixerWindow = new AudioMixerWindow();
 				audioMixerWindow.Visibility = Visibility.Hidden;
 
 				infoWindow.KeyDown += MainWindow_KeyDown;
@@ -303,7 +303,7 @@ namespace TouchFaders_MIDI {
 				sendArray.Add(Convert.ToByte(config.NUM_MIXES));
 				foreach (var mix in data.mixes) {
 					sendArray.Add(Convert.ToByte(mix.bgColourId));
-                }
+				}
 				foreach (var mix in data.mixes) {
 					for (int i = 0; i < 6; i++) {
 						if (i < mix.name.Length) {
@@ -317,9 +317,9 @@ namespace TouchFaders_MIDI {
 				byte[] sendBuffer = sendArray.ToArray();
 
 				//int b = 0;
-                //sendArray.ForEach(send => { Console.WriteLine($"{b}: {send.ToString()}"); b++; });
+				//sendArray.ForEach(send => { Console.WriteLine($"{b}: {send.ToString()}"); b++; });
 
-                networkStream.Write(sendBuffer, 0, sendBuffer.Length);
+				networkStream.Write(sendBuffer, 0, sendBuffer.Length);
 				client.Close();
 			}
 		}
@@ -339,7 +339,7 @@ namespace TouchFaders_MIDI {
 		async Task RefreshOSCDevices () {
 			List<Task> tasks = new List<Task>();
 			foreach (oscDevice device in devices) {
-                tasks.Add(Task.Run(() => device.Refresh()));
+				tasks.Add(Task.Run(() => device.Refresh()));
 			}
 			await Task.WhenAll(tasks);
 		}
@@ -373,15 +373,15 @@ namespace TouchFaders_MIDI {
 			var args = e as Data.Channel.NameArgs;
 			foreach (var device in devices) {
 				device.SendChannelName(args.channel, args.name);
-            }
+			}
 		}
 
 		private void Data_channelMuteChanged (object sender, EventArgs e) {
 			var args = e as Data.Channel.MuteArgs;
 			foreach (var device in devices) {
 				device.SendChannelMute(args.channel, args.muted);
-            }
-        }
+			}
+		}
 
 		private void Data_channelPatchChanged (object sender, EventArgs e) {
 			var args = e as Data.Channel.PatchArgs;
@@ -390,12 +390,12 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
-		private void Data_channelColourChanged(object sender, EventArgs e) {
+		private void Data_channelColourChanged (object sender, EventArgs e) {
 			var args = e as Data.Channel.ColourArgs;
 			foreach (var device in devices) {
 				device.SendChannelColour(args.channel, args.bgColourId);
-            }
-        }
+			}
+		}
 
 		private void Data_mixNameChanged (object sender, EventArgs e) {
 			var args = e as Data.Mix.NameArgs;
@@ -434,16 +434,16 @@ namespace TouchFaders_MIDI {
 					Console.WriteLine("Started MIDI");
 				});
 				queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
-                await GetAllFaderValues();
-                await GetChannelFaders();
-                await GetAllChannelsLinkGroup();
-                await RequestChannelsPatch();
-                selectedChannelIndexToGet.Push(0);
-                meteringTimer = new Timer(GetMixesMetering, null, 100, 2000); // must be requested "at least every 10 seconds" according to OM
-                selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
-                SendAllAudioSessions();
-                //await GetChannelNames();
-            }
+				await GetAllFaderValues();
+				await GetChannelFaders();
+				await GetAllChannelsLinkGroup();
+				await RequestChannelsPatch();
+				selectedChannelIndexToGet.Push(0);
+				meteringTimer = new Timer(GetMixesMetering, null, 100, 2000); // must be requested "at least every 10 seconds" according to OM
+				selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
+				SendAllAudioSessions();
+				//await GetChannelNames();
+			}
 		}
 
 		void sendQueueItem (object state) {
@@ -471,21 +471,21 @@ namespace TouchFaders_MIDI {
 		async Task GetAllFaderValues () {
 			await GetFaderValuesForMix(0x05);
 			await GetFaderValuesForMix(0x08);
-            await GetFaderValuesForMix(0x0B);
-            await GetFaderValuesForMix(0x0E);
-            await GetFaderValuesForMix(0x11);
-            await GetFaderValuesForMix(0x14);
-            await GetFaderValuesForMix(0x17);
-            await GetFaderValuesForMix(0x1A);
-            await GetFaderValuesForMix(0x1D);
-            await GetFaderValuesForMix(0x20);
-            await GetFaderValuesForMix(0x23);
-            await GetFaderValuesForMix(0x26);
-            await GetFaderValuesForMix(0x29);
-            await GetFaderValuesForMix(0x2C);
-            await GetFaderValuesForMix(0x2F);
-            await GetFaderValuesForMix(0x32);
-        }
+			await GetFaderValuesForMix(0x0B);
+			await GetFaderValuesForMix(0x0E);
+			await GetFaderValuesForMix(0x11);
+			await GetFaderValuesForMix(0x14);
+			await GetFaderValuesForMix(0x17);
+			await GetFaderValuesForMix(0x1A);
+			await GetFaderValuesForMix(0x1D);
+			await GetFaderValuesForMix(0x20);
+			await GetFaderValuesForMix(0x23);
+			await GetFaderValuesForMix(0x26);
+			await GetFaderValuesForMix(0x29);
+			await GetFaderValuesForMix(0x2C);
+			await GetFaderValuesForMix(0x2F);
+			await GetFaderValuesForMix(0x32);
+		}
 
 		async Task GetFaderValuesForMix (byte mix) {
 			SysExCommand kInputToMix = config.MIXER.commands[SysExCommand.CommandType.kInputToMix];
@@ -497,7 +497,7 @@ namespace TouchFaders_MIDI {
 				byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputToMix.DataCategoryByte, kInputToMix.ElementMSB, kInputToMix.ElementLSB, kInputToMix.IndexMSB, mix, 0x00, Convert.ToByte(channel), 0xF7 };
 				sysExEvent.Data = data;
 				await SendSysEx(sysExEvent);
-            }
+			}
 		}
 
 		void GetSelectedChannelInfo (object state) {
@@ -664,7 +664,7 @@ namespace TouchFaders_MIDI {
 			if (manufacturerID == 0x43 &&       // YAMAHA
 				deviceNumber == device_byte &&  // 1 = parameter send; 3 = parameter request, device ID 1
 				groupID == 0x3E &&              // Digital mixer
-				modelID == config.MIXER.id) {	// 0x12 for LS9, 0x19 for CL/QL series
+				modelID == config.MIXER.id) {   // 0x12 for LS9, 0x19 for CL/QL series
 				return true;
 			}
 			return false;
@@ -1008,7 +1008,7 @@ namespace TouchFaders_MIDI {
 			SendOSCValue(mix, channel, muted, sender);
 			// TODO: encode for MIDI
 			// TODO: send to console
-        }
+		}
 
 		public void SendChannelLinkGroup (int channel, char linkGroup) {
 			byte device_byte = 0x10;
@@ -1123,13 +1123,13 @@ namespace TouchFaders_MIDI {
 		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
 				CalculateSysExCommands();
-                Dispatcher.Invoke(() => {
+				Dispatcher.Invoke(() => {
 					startMIDIButton.IsEnabled = false;
 					midiProgressBar.Value = 0;
 				});
 				Task.Run(async () => {
 					await InitializeMIDI();
-                    Dispatcher.Invoke(() => {
+					Dispatcher.Invoke(() => {
 						refreshMIDIButton.IsEnabled = true;
 						stopMIDIButton.IsEnabled = true;
 					});
@@ -1143,7 +1143,7 @@ namespace TouchFaders_MIDI {
 			int total = config.NUM_CHANNELS * config.NUM_MIXES; // sends to mix levels
 			total += config.NUM_CHANNELS; // channel levels
 			total += config.NUM_CHANNELS; // channel link groups
-			//total += config.NUM_CHANNELS; // channel patch in (inputs)
+										  //total += config.NUM_CHANNELS; // channel patch in (inputs)
 										  //total += config.NUM_CHANNELS; // channel names?
 			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
 		}
@@ -1246,7 +1246,7 @@ namespace TouchFaders_MIDI {
 
 		private void quitButton_Click (object sender, RoutedEventArgs e) {
 			this.Close();
-        }
+		}
 
 		private void UpdateSelectedChannel () {
 			if (!Dispatcher.CheckAccess()) {
@@ -1293,6 +1293,10 @@ namespace TouchFaders_MIDI {
 				case System.Windows.Input.Key.I:
 					e.Handled = true;
 					infoWindowButton_Click(this, new RoutedEventArgs());
+					break;
+				case System.Windows.Input.Key.C:
+					e.Handled = true;
+					configWindowButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.T:
 					e.Handled = true;
