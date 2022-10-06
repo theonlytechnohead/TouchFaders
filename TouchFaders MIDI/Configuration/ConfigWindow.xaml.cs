@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +25,7 @@ namespace TouchFaders_MIDI {
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			if (config == null) return;
 
-			deviceGroupBox.Header = $"Device ID: {config.DEVICE_ID}";
+			deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
 			deviceIDSlider.Value = config.DEVICE_ID;
 
 			Mixer dataObject = new Mixer();
@@ -101,7 +100,7 @@ namespace TouchFaders_MIDI {
 
 		private void CalculateScale () {
 			double xScale = ActualWidth / 500f; // must be set to initial window sizing for proper scaling!!!
-			double yScale = ActualHeight / 300f; // must be set to initial window sizing for proper scaling!!!
+			double yScale = ActualHeight / 400f; // must be set to initial window sizing for proper scaling!!!
 			double value = Math.Min(xScale, yScale); // Ensure that the smallest axis is the one that controls the scale
 			ScaleValue = (double)OnCoerceScaleValue(configWindow, value); // Update the actual scale for the main window
 		}
@@ -112,7 +111,7 @@ namespace TouchFaders_MIDI {
 			Slider slider = sender as Slider;
 			if (config == null) return;
 			config.DEVICE_ID = (int)slider.Value;
-			deviceGroupBox.Header = $"Device ID: {config.DEVICE_ID}";
+			deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
 		}
 
 		private void mixerComboBox_SelectionChanged (object sender, SelectionChangedEventArgs e) {
@@ -156,7 +155,7 @@ namespace TouchFaders_MIDI {
 			mixConfigWindow.DataContext = this.DataContext;
 			if (WindowState == WindowState.Maximized) {
 				mixConfigWindow.WindowState = WindowState.Maximized;
-            }
+			}
 			mixConfigWindow.ShowDialog();
 		}
 
