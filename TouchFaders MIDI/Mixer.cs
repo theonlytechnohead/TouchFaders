@@ -82,7 +82,7 @@ namespace TouchFaders_MIDI {
 			_1, _3, _5
 		}
 
-		public Mixer () { modelString = "NONE"; type = Type.LS9; model = Model._3; connection = Connection.MIDI; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
+		public Mixer () { modelString = "LS9-32"; type = Type.LS9; model = Model._5; connection = Connection.MIDI; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
 		private Mixer (string value, int channels, int mixes, byte midi_id, Type type, Model model, Connection connection) {
 			modelString = value;
 			channelCount = channels;
