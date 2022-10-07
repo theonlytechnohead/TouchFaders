@@ -82,9 +82,8 @@ namespace TouchFaders_MIDI {
 			_1, _3, _5
 		}
 
-		public Mixer () { modelString = "LS9-32"; type = Type.LS9; model = Model._5; connection = Connection.MIDI; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
-		private Mixer (string value, int channels, int mixes, byte midi_id, Type type, Model model, Connection connection) {
-			modelString = value;
+		public Mixer () { type = Type.LS9; model = Model._5; connection = Connection.MIDI; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
+		private Mixer (int channels, int mixes, byte midi_id, Type type, Model model, Connection connection) {
 			channelCount = channels;
 			mixCount = mixes;
 			id = midi_id;
@@ -101,7 +100,22 @@ namespace TouchFaders_MIDI {
 			this.connection = connection;
 		}
 
-		public string modelString { get; set; }
+		public string modelString {
+			get {
+				string console = t.ToString();
+				if (t == Type.LS9) {
+					switch (m) {
+						case Model._1:
+							return console + "-16";
+						case Model._3:
+							return console;
+						case Model._5:
+							return console + "-32";
+					}
+				}
+				return console + m.ToString().Replace("_", "");
+			}
+		}
 		private Type t;
 		public Type type {
 			get => t; set {
@@ -189,15 +203,15 @@ namespace TouchFaders_MIDI {
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
 
-		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, Type.LS9, Model._5, Connection.MIDI);
-		public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, Type.LS9, Model._1, Connection.MIDI);
+		public static Mixer LS932 => new Mixer(64, 16, 0x12, Type.LS9, Model._5, Connection.MIDI);
+		public static Mixer LS916 => new Mixer(32, 16, 0x12, Type.LS9, Model._1, Connection.MIDI);
 
-		public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, Type.QL, Model._5, Connection.TCP);
-		public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, Type.QL, Model._1, Connection.TCP);
+		public static Mixer QL5 => new Mixer(64, 16, 0x19, Type.QL, Model._5, Connection.TCP);
+		public static Mixer QL1 => new Mixer(32, 16, 0x19, Type.QL, Model._1, Connection.TCP);
 
-		public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, Type.CL, Model._5, Connection.TCP);
-		public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, Type.CL, Model._3, Connection.TCP);
-		public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, Type.CL, Model._1, Connection.TCP);
+		public static Mixer CL5 => new Mixer(72, 24, 0x19, Type.CL, Model._5, Connection.TCP);
+		public static Mixer CL3 => new Mixer(64, 24, 0x19, Type.CL, Model._3, Connection.TCP);
+		public static Mixer CL1 => new Mixer(48, 24, 0x19, Type.CL, Model._1, Connection.TCP);
 
 	}
 
