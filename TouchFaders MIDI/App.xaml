@@ -16,6 +16,11 @@
             <Setter Property="Background" Value="{DynamicResource textBackground}" />
         </Style>
 
+        <Style TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource textColour}" />
+            <Setter Property="Background" Value="{DynamicResource textBackground}" />
+        </Style>
+
         <Style TargetType="DataGrid">
             <Setter Property="Foreground" Value="{DynamicResource textColour}" />
             <Setter Property="Background" Value="{DynamicResource textBackground}" />

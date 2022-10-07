@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,6 +19,43 @@ namespace TouchFaders_MIDI {
 			}
 			set {
 				MainWindow.instance.config.MIXER.type = value;
+				UpdateModels();
+			}
+		}
+
+		public Mixer.Model mixerModel {
+			get {
+				return MainWindow.instance.config.MIXER.model;
+			}
+			set {
+				MainWindow.instance.config.MIXER.model = value;
+			}
+		}
+
+		void UpdateModels () {
+			smallModel.Content = $"{mixerType}";
+			mediumModel.Content = $"{mixerType}";
+			largeModel.Content = $"{mixerType}";
+			smallModel.Visibility = Visibility.Visible;
+			mediumModel.Visibility = Visibility.Visible;
+			largeModel.Visibility = Visibility.Visible;
+			// TODO: hardcoded!
+			switch (mixerType) {
+				case Mixer.Type.LS9:
+					smallModel.Content += "-16";
+					mediumModel.Visibility = Visibility.Collapsed;
+					largeModel.Content += "-32";
+					break;
+				case Mixer.Type.QL:
+					smallModel.Content += "1";
+					mediumModel.Visibility = Visibility.Collapsed;
+					largeModel.Content += "5";
+					break;
+				case Mixer.Type.CL:
+					smallModel.Content += "1";
+					mediumModel.Content += "3";
+					largeModel.Content += "5";
+					break;
 			}
 		}
 
@@ -29,6 +65,15 @@ namespace TouchFaders_MIDI {
 			}
 			set {
 				MainWindow.instance.config.MIXER.connection = value;
+				switch (value) {
+					case Mixer.Connection.MIDI:
+						deviceIDSlider.IsEnabled = true;
+						break;
+					case Mixer.Connection.TCP:
+						deviceIDSlider.IsEnabled = false;
+						deviceIDSlider.Value = 1;
+						break;
+				}
 			}
 		}
 
@@ -44,17 +89,10 @@ namespace TouchFaders_MIDI {
 		private void ConfigWindow_Loaded (object sender, RoutedEventArgs e) {
 			if (config == null) return;
 
+			UpdateModels();
+
 			deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
 			deviceIDSlider.Value = config.DEVICE_ID;
-
-			Mixer dataObject = new Mixer();
-			PropertyInfo[] properties = typeof(Mixer).GetProperties(BindingFlags.Static | BindingFlags.Public);
-			foreach (PropertyInfo info in properties) {
-				mixers.Add(info.GetValue(dataObject) as Mixer);
-			}
-
-			mixerComboBox.ItemsSource = mixers;
-			mixerComboBox.SelectedItem = config.MIXER;
 
 			channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
 			channelSlider.Value = config.NUM_CHANNELS;
@@ -131,16 +169,6 @@ namespace TouchFaders_MIDI {
 			if (config == null) return;
 			config.DEVICE_ID = (int)slider.Value;
 			deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
-		}
-
-		private void mixerComboBox_SelectionChanged (object sender, SelectionChangedEventArgs e) {
-			config.MIXER = mixerComboBox.SelectedItem as Mixer;
-
-			if (channelSlider.Value >= config.MIXER.channelCount) channelSlider.Value = config.MIXER.channelCount;
-			channelSlider.Maximum = config.MIXER.channelCount;
-
-			if (mixSlider.Value >= config.MIXER.mixCount) mixSlider.Value = config.MIXER.mixCount;
-			mixSlider.Maximum = config.MIXER.mixCount;
 		}
 
 		private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {

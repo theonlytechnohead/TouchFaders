@@ -1,7 +1,8 @@
 {
   "MIXER": {
-    "model": "LS9-32",
+    "modelString": "LS9-32",
     "type": "LS9",
+    "model": "_5",
     "connection": "MIDI",
     "channelCount": 64,
     "mixCount": 16,

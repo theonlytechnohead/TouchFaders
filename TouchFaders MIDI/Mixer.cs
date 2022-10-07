@@ -77,9 +77,14 @@ namespace TouchFaders_MIDI {
 			MIDI, TCP
 		}
 
-		public Mixer () { model = "NONE"; type = Type.LS9; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
-		private Mixer (string value, int channels, int mixes, byte midi_id, Type type) {
-			model = value;
+		[JsonConverter(typeof(JsonStringEnumConverter))]
+		public enum Model {
+			_1, _3, _5
+		}
+
+		public Mixer () { modelString = "NONE"; type = Type.LS9; model = Model._3; connection = Connection.MIDI; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
+		private Mixer (string value, int channels, int mixes, byte midi_id, Type type, Model model, Connection connection) {
+			modelString = value;
 			channelCount = channels;
 			mixCount = mixes;
 			id = midi_id;
@@ -92,9 +97,11 @@ namespace TouchFaders_MIDI {
 					commands = QL_CL_commands;
 					break;
 			}
+			this.model = model;
+			this.connection = connection;
 		}
 
-		public string model { get; set; }
+		public string modelString { get; set; }
 		private Type t;
 		public Type type {
 			get => t; set {
@@ -105,6 +112,19 @@ namespace TouchFaders_MIDI {
 					case Type.QL:
 					case Type.CL:
 						commands = QL_CL_commands;
+						break;
+				}
+			}
+		}
+		private Model m;
+		public Model model {
+			get => m; set {
+				m = value; switch (type) {
+					case Type.LS9:
+						break;
+					case Type.QL:
+						break;
+					case Type.CL:
 						break;
 				}
 			}
@@ -127,7 +147,7 @@ namespace TouchFaders_MIDI {
 		public Dictionary<SysExCommand.CommandType, SysExCommand> commands;
 
 		public override string ToString () {
-			return $"{model}, ch{channelCount}×{mixCount}";
+			return $"{modelString}, ch{channelCount}×{mixCount}";
 		}
 
 		public override bool Equals (object obj) {
@@ -141,7 +161,7 @@ namespace TouchFaders_MIDI {
 
 		public override int GetHashCode () {
 			int hashCode = -316074491;
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(model);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(modelString);
 			hashCode = hashCode * -1521134295 + channelCount.GetHashCode();
 			hashCode = hashCode * -1521134295 + mixCount.GetHashCode();
 			return hashCode;
@@ -169,15 +189,15 @@ namespace TouchFaders_MIDI {
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
 
-		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, Type.LS9);
-		public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, Type.LS9);
+		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, Type.LS9, Model._5, Connection.MIDI);
+		public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, Type.LS9, Model._1, Connection.MIDI);
 
-		public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, Type.QL);
-		public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, Type.QL);
+		public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, Type.QL, Model._5, Connection.TCP);
+		public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, Type.QL, Model._1, Connection.TCP);
 
-		public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, Type.CL);
-		public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, Type.CL);
-		public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, Type.CL);
+		public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, Type.CL, Model._5, Connection.TCP);
+		public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, Type.CL, Model._3, Connection.TCP);
+		public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, Type.CL, Model._1, Connection.TCP);
 
 	}
 
