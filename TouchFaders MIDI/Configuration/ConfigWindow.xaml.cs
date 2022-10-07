@@ -20,6 +20,7 @@ namespace TouchFaders_MIDI {
 			set {
 				MainWindow.instance.config.MIXER.type = value;
 				UpdateModels();
+				UpdateCounts();
 			}
 		}
 
@@ -29,6 +30,7 @@ namespace TouchFaders_MIDI {
 			}
 			set {
 				MainWindow.instance.config.MIXER.model = value;
+				UpdateCounts();
 			}
 		}
 
@@ -45,11 +47,17 @@ namespace TouchFaders_MIDI {
 					smallModel.Content += "-16";
 					mediumModel.Visibility = Visibility.Collapsed;
 					largeModel.Content += "-32";
+					if (mediumModel.IsChecked.Value) {
+						largeModel.IsChecked = true;
+					}
 					break;
 				case Mixer.Type.QL:
 					smallModel.Content += "1";
 					mediumModel.Visibility = Visibility.Collapsed;
 					largeModel.Content += "5";
+					if (mediumModel.IsChecked.Value) {
+						largeModel.IsChecked = true;
+					}
 					break;
 				case Mixer.Type.CL:
 					smallModel.Content += "1";
@@ -57,6 +65,66 @@ namespace TouchFaders_MIDI {
 					largeModel.Content += "5";
 					break;
 			}
+		}
+
+		void UpdateCounts () {
+			// TODO: hardcoded!
+			int channels = 0;
+			int mixes = 0;
+			switch (mixerType) {
+				case Mixer.Type.LS9:
+					switch (mixerModel) {
+						case Mixer.Model._1:
+							channels = 32;
+							mixes = 16;
+							break;
+						case Mixer.Model._3:
+							channels = 64;
+							mixes = 16;
+							break;
+						case Mixer.Model._5:
+							channels = 64;
+							mixes = 16;
+							break;
+					}
+					break;
+				case Mixer.Type.QL:
+					switch (mixerModel) {
+						case Mixer.Model._1:
+							channels = 32;
+							mixes = 16;
+							break;
+						case Mixer.Model._3:
+							channels = 64;
+							mixes = 16;
+							break;
+						case Mixer.Model._5:
+							channels = 64;
+							mixes = 16;
+							break;
+					}
+					break;
+				case Mixer.Type.CL:
+					switch (mixerModel) {
+						case Mixer.Model._1:
+							channels = 48;
+							mixes = 24;
+							break;
+						case Mixer.Model._3:
+							channels = 64;
+							mixes = 24;
+							break;
+						case Mixer.Model._5:
+							channels = 72;
+							mixes = 24;
+							break;
+					}
+					break;
+			}
+			channelSlider.Maximum = channels;
+			channelSlider.Value = channels;
+			mixSlider.Maximum = mixes;
+			mixSlider.Value = mixes;
 		}
 
 		public Mixer.Connection mixerConnection {
