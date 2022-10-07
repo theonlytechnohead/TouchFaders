@@ -13,3 +13,7 @@ TouchFaders MIDI/obj/Debug/TouchFaders MIDI.exe
 *.resources
 
 TouchFaders MIDI/obj/Debug/Configuration/
+
+TouchFaders MIDI/obj/Debug/App.g.cs
+
+TouchFaders MIDI/obj/Debug/App.g.i.cs
