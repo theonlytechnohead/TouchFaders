@@ -27,11 +27,11 @@ namespace TouchFaders_MIDI {
 
 		public byte ElementMSB {
 			get => dataBytes[1];
-        }
+		}
 
 		public byte ElementLSB {
 			get => dataBytes[2];
-        }
+		}
 
 		public int Index {
 			get {
@@ -42,11 +42,11 @@ namespace TouchFaders_MIDI {
 
 		public byte IndexMSB {
 			get => dataBytes[3];
-        }
+		}
 
 		public byte IndexLSB {
 			get => dataBytes[4];
-        }
+		}
 
 		public SysExCommand (byte[] data) {
 			dataBytes = data;
@@ -67,37 +67,41 @@ namespace TouchFaders_MIDI {
 	public class Mixer {
 
 		public enum Type {
-			LS, CL_QL
-        }
+			LS9, QL, CL
+		}
 
-		public Mixer () { model = "NONE"; type = Type.LS; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
+		public Mixer () { model = "NONE"; type = Type.LS9; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
 		private Mixer (string value, int channels, int mixes, byte midi_id, Type type) {
 			model = value;
 			channelCount = channels;
 			mixCount = mixes;
 			id = midi_id;
 			switch (type) {
-				case Type.LS:
+				case Type.LS9:
 					commands = LS9_commands;
 					break;
-				case Type.CL_QL:
-					commands = CL_QL_commands;
+				case Type.QL:
+				case Type.CL:
+					commands = QL_CL_commands;
 					break;
 			}
 		}
 
 		public string model { get; set; }
 		private Type t;
-		public Type type { get => t; set {
-                t = value; switch (type) {
-					case Type.LS:
+		public Type type {
+			get => t; set {
+				t = value; switch (type) {
+					case Type.LS9:
 						commands = LS9_commands;
 						break;
-					case Type.CL_QL:
-						commands = CL_QL_commands;
+					case Type.QL:
+					case Type.CL:
+						commands = QL_CL_commands;
 						break;
 				}
-			} }
+			}
+		}
 		public int channelCount { get; set; }
 		public int mixCount { get; set; }
 		public byte id { get; set; }
@@ -124,18 +128,18 @@ namespace TouchFaders_MIDI {
 			return hashCode;
 		}
 
-        private static readonly Dictionary<SysExCommand.CommandType, SysExCommand> LS9_commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
-                    { SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x33, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x43, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x01, 0x06, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x01, 0x0B, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x14, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x15, 0x00, 0x00}) },
-                    { SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
-                };
+		private static readonly Dictionary<SysExCommand.CommandType, SysExCommand> LS9_commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
+					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x31, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x33, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x43, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kGroupID_Input , new SysExCommand(new byte[] { 0x01, 0x01, 0x06, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kPatchInInput, new SysExCommand(new byte[] { 0x01, 0x01, 0x0B, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kNameInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x14, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x15, 0x00, 0x00}) },
+					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
+				};
 
-        private static readonly Dictionary<SysExCommand.CommandType, SysExCommand> CL_QL_commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
+		private static readonly Dictionary<SysExCommand.CommandType, SysExCommand> QL_CL_commands = new Dictionary<SysExCommand.CommandType, SysExCommand>() {
 					{ SysExCommand.CommandType.kInputOn , new SysExCommand(new byte[] { 0x01, 0x00, 0x35, 0x00, 0x00}) },
 					{ SysExCommand.CommandType.kInputFader , new SysExCommand(new byte[] { 0x01, 0x00, 0x37, 0x00, 0x00}) },
 					{ SysExCommand.CommandType.kInputToMix, new SysExCommand(new byte[] { 0x01, 0x00, 0x49, 0x00, 0x00}) },
@@ -146,16 +150,16 @@ namespace TouchFaders_MIDI {
 					{ SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
 				};
 
-		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, Type.LS);
-        public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, Type.LS);
+		public static Mixer LS932 => new Mixer("LS9-32", 64, 16, 0x12, Type.LS9);
+		public static Mixer LS916 => new Mixer("LS9-16", 32, 16, 0x12, Type.LS9);
 
-        public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, Type.CL_QL);
-        public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, Type.CL_QL);
+		public static Mixer QL5 => new Mixer("QL5", 64, 16, 0x19, Type.QL);
+		public static Mixer QL1 => new Mixer("QL1", 32, 16, 0x19, Type.QL);
 
-        public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, Type.CL_QL);
-        public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, Type.CL_QL);
-        public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, Type.CL_QL);
+		public static Mixer CL5 => new Mixer("CL5", 72, 24, 0x19, Type.CL);
+		public static Mixer CL3 => new Mixer("CL3", 64, 24, 0x19, Type.CL);
+		public static Mixer CL1 => new Mixer("CL1", 48, 24, 0x19, Type.CL);
 
-    }
+	}
 
 }

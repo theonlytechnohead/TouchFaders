@@ -74,7 +74,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Content="Close the window to apply changes" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,-5" Grid.ColumnSpan="2" Foreground="#7F000000" Padding="0,2,0,0"/>
+            <Label Content="Close the window to apply changes" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#7F000000" Padding="0,2,0,0"/>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -94,9 +94,45 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <RadioButton Content="LS9" HorizontalAlignment="Left" VerticalAlignment="Center" GroupName="consoleSeries"/>
-                        <RadioButton Content="QL series" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="consoleSeries"/>
-                        <RadioButton Content="CL series" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" GroupName="consoleSeries"/>
+                        <Grid.Resources>
+                            <local:ComparisonConverter x:Key="ComparisonConverter"/>
+                        </Grid.Resources>
+                        <RadioButton x:Name="ls9" Content="LS9" GroupName="consoleSeries" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.LS9}}" VerticalAlignment="Center"/>
+                        <RadioButton x:Name="qlSeries" Content="QL series" Grid.Row="1" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.QL}}" GroupName="consoleSeries" VerticalAlignment="Center"/>
+                        <RadioButton x:Name="clSeries" Content="CL series" Grid.Row="2" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.CL}}" GroupName="consoleSeries" VerticalAlignment="Center"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Console type" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,0" Grid.Column="1">
+                    <Grid Margin="5,0,5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton Content="LS9-16" HorizontalAlignment="Left" VerticalAlignment="Center" GroupName="consoleType"/>
+                        <RadioButton Content="LS9-32" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="consoleType"/>
+                        <RadioButton Content="LS9-64" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" GroupName="consoleType"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Connection method" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,0" Grid.Column="2">
+                    <Grid Margin="5,0,5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.Resources>
+                            <local:ComparisonConverter x:Key="ComparisonConverter"/>
+                        </Grid.Resources>
+                        <RadioButton Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" GroupName="connectionType"/>
+                        <RadioButton Content="MIDI over TCP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="connectionType"/>
+                        <RadioButton Content="SCP over TCP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" GroupName="connectionType"/>
                     </Grid>
                 </GroupBox>
             </Grid>

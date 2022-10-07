@@ -132,3 +132,4 @@ D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MID
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.exe
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\TouchFaders MIDI.pdb
 D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\bin\Debug\Rug.Osc.dll
+D:\desktop\Documents\TouchFaders MIDI\TouchFaders MIDI\obj\Debug\GeneratedInternalTypeHelper.g.cs

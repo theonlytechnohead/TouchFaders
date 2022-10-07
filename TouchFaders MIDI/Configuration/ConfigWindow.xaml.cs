@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using TouchFaders_MIDI.Configuration;
 
 namespace TouchFaders_MIDI {
@@ -12,6 +13,15 @@ namespace TouchFaders_MIDI {
 	public partial class ConfigWindow : Window {
 
 		public AppConfiguration.Config config;
+
+		public Mixer.Type mixerType {
+			get {
+				return MainWindow.instance.config.MIXER.type;
+			}
+			set {
+				MainWindow.instance.config.MIXER.type = value;
+			}
+		}
 
 		ObservableCollection<Mixer> mixers = new ObservableCollection<Mixer>();
 
@@ -159,5 +169,15 @@ namespace TouchFaders_MIDI {
 			mixConfigWindow.ShowDialog();
 		}
 
+	}
+
+	public class ComparisonConverter : IValueConverter {
+		public object Convert (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
+			return value?.Equals(parameter);
+		}
+
+		public object ConvertBack (object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
+			return value?.Equals(true) == true ? parameter : Binding.DoNothing;
+		}
 	}
 }
