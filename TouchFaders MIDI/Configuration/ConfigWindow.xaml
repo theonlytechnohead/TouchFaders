@@ -122,7 +122,6 @@
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition/>
-                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -130,9 +129,8 @@
                         <Grid.Resources>
                             <local:ComparisonConverter x:Key="ComparisonConverter"/>
                         </Grid.Resources>
-                        <RadioButton Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" GroupName="connectionType"/>
-                        <RadioButton Content="MIDI over TCP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="connectionType"/>
-                        <RadioButton Content="SCP over TCP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" GroupName="connectionType"/>
+                        <RadioButton Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.MIDI}}" GroupName="connectionType"/>
+                        <RadioButton Content="TCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.TCP}}" Grid.Row="1" GroupName="connectionType"/>
                     </Grid>
                 </GroupBox>
             </Grid>

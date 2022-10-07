@@ -23,6 +23,15 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+		public Mixer.Connection mixerConnection {
+			get {
+				return MainWindow.instance.config.MIXER.connection;
+			}
+			set {
+				MainWindow.instance.config.MIXER.connection = value;
+			}
+		}
+
 		ObservableCollection<Mixer> mixers = new ObservableCollection<Mixer>();
 
 		public ConfigWindow () {

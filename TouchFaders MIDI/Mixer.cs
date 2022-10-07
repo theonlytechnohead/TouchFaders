@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TouchFaders_MIDI {
 
@@ -66,8 +67,14 @@ namespace TouchFaders_MIDI {
 
 	public class Mixer {
 
+		[JsonConverter(typeof(JsonStringEnumConverter))]
 		public enum Type {
 			LS9, QL, CL
+		}
+
+		[JsonConverter(typeof(JsonStringEnumConverter))]
+		public enum Connection {
+			MIDI, TCP
 		}
 
 		public Mixer () { model = "NONE"; type = Type.LS9; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
@@ -102,6 +109,18 @@ namespace TouchFaders_MIDI {
 				}
 			}
 		}
+		private Connection c;
+		public Connection connection {
+			get => c; set {
+				c = value; switch (connection) {
+					case Connection.MIDI:
+						break;
+					case Connection.TCP:
+						break;
+				}
+			}
+		}
+
 		public int channelCount { get; set; }
 		public int mixCount { get; set; }
 		public byte id { get; set; }
