@@ -3,3 +3,13 @@
 .vs/TouchFaders MIDI/v16/.suo
 *.pdb
 *.cache
+
+TouchFaders MIDI/bin/Debug/TouchFaders MIDI.exe
+
+*.baml
+
+TouchFaders MIDI/obj/Debug/TouchFaders MIDI.exe
+
+*.resources
+
+TouchFaders MIDI/obj/Debug/Configuration/
