@@ -28,7 +28,7 @@ namespace TouchFaders_MIDI {
 			get {
 				bool running = false;
 				Dispatcher.CurrentDispatcher.Invoke(() => {
-					running = MainWindow.instance.midiProgressBar.Value >= MainWindow.instance.midiProgressBar.Maximum;
+					running = MainWindow.instance.syncProgressBar.Value >= MainWindow.instance.syncProgressBar.Maximum;
 				});
 				return running;
 			}

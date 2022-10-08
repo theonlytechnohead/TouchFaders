@@ -102,7 +102,7 @@ namespace TouchFaders_MIDI {
 				audioMixerWindow.Visibility = Visibility.Hidden;
 				audioMixerWindow.Close();
 			}
-			stopMIDIButton_Click(null, null);
+			stopConnectionButton_Click(null, null);
 			advertisingTimer?.Dispose();
 			await AppConfiguration.SaveConfig(config);
 			await AppConfiguration.SaveData(data);
@@ -357,7 +357,7 @@ namespace TouchFaders_MIDI {
 				outputMIDIComboBox.Items.Add(outputDevice.Name);
 				Dispatcher.Invoke(() => { outputMIDIComboBox.IsEnabled = true; });
 			}
-			Dispatcher.Invoke(() => { startMIDIButton.IsEnabled = true; });
+			Dispatcher.Invoke(() => { startConnectionButton.IsEnabled = true; });
 		}
 
 		int SendMixMeteringBroadcast (byte[] data) {
@@ -452,7 +452,7 @@ namespace TouchFaders_MIDI {
 					NormalSysExEvent sysExEvent = midiQueue.Dequeue();
 					if (sysExEvent != null) {
 						Console_in.SendEvent(sysExEvent);
-						Dispatcher.Invoke(() => midiProgressBar.Value += 1);
+						Dispatcher.Invoke(() => syncProgressBar.Value += 1);
 					}
 				} catch (MidiDeviceException ex) {
 					Console.WriteLine($"Well shucks, {Console_in.Name} don't work no more...");
@@ -503,7 +503,7 @@ namespace TouchFaders_MIDI {
 		void GetSelectedChannelInfo (object state) {
 			bool canContinue = false;
 			try {
-				Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
+				Dispatcher.Invoke(() => canContinue = syncProgressBar.Value >= syncProgressBar.Maximum);
 			} catch (TaskCanceledException) { }
 			if (!canContinue) return;
 			if (selectedChannelIndexToGet.Count == 0) {
@@ -614,7 +614,7 @@ namespace TouchFaders_MIDI {
 		async void GetMixesMetering (object state) {
 			bool get = true;
 			Dispatcher.Invoke(() => {
-				get = midiProgressBar.Value >= midiProgressBar.Maximum;
+				get = syncProgressBar.Value >= syncProgressBar.Maximum;
 			});
 			if (!get) return;
 			byte device_byte = 0x30;
@@ -825,7 +825,7 @@ namespace TouchFaders_MIDI {
 
 				selectedChannelCache[channel].level = level;
 				Dispatcher.Invoke(() => {
-					if (midiProgressBar.Value >= midiProgressBar.Maximum) {
+					if (syncProgressBar.Value >= syncProgressBar.Maximum) {
 						if (channel == selectedChannel.channelIndex) {
 							selectedChannel.level = level;
 						} else {
@@ -840,7 +840,7 @@ namespace TouchFaders_MIDI {
 				});
 			} else { // Now it's for the application audio mixer stuff
 				bool canUpdate = false;
-				Dispatcher.Invoke(() => canUpdate = midiProgressBar.Value >= midiProgressBar.Maximum);
+				Dispatcher.Invoke(() => canUpdate = syncProgressBar.Value >= syncProgressBar.Maximum);
 				if (canUpdate) {
 					int index = config.MIXER.channelCount - channel - 1;
 					float volume = level / 1023f;
@@ -998,7 +998,7 @@ namespace TouchFaders_MIDI {
 			byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputToMix.DataCategoryByte, kInputToMix.ElementMSB, kInputToMix.ElementLSB, kInputToMix.IndexMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
 			sysExEvent.Data = data;
 			bool enabled = false;
-			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
+			Dispatcher.Invoke(() => { enabled = stopConnectionButton.IsEnabled; });
 			if (enabled)
 				_ = SendSysEx(sysExEvent);
 		}
@@ -1028,7 +1028,7 @@ namespace TouchFaders_MIDI {
 			byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kGroupdId.DataCategoryByte, kGroupdId.ElementMSB, kGroupdId.ElementLSB, kGroupdId.IndexMSB, kGroupdId.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, group, 0xF7 };
 			kGroupID_Input.Data = data;
 			bool enabled = false;
-			Dispatcher.Invoke(() => { enabled = stopMIDIButton.IsEnabled; });
+			Dispatcher.Invoke(() => { enabled = stopConnectionButton.IsEnabled; });
 			if (enabled)
 				_ = SendSysEx(kGroupID_Input);
 		}
@@ -1076,7 +1076,7 @@ namespace TouchFaders_MIDI {
 			sessionOn.Data = dataOn;
 
 			bool canContinue = false;
-			Dispatcher.Invoke(() => canContinue = midiProgressBar.Value >= midiProgressBar.Maximum);
+			Dispatcher.Invoke(() => canContinue = syncProgressBar.Value >= syncProgressBar.Maximum);
 			if (canContinue || sendIt) {
 				//Console.WriteLine(BitConverter.ToString(dataOn));
 				_ = SendSysEx(sessionVolume);
@@ -1120,18 +1120,19 @@ namespace TouchFaders_MIDI {
 		#endregion
 
 		#region UIEvents
-		void startMIDIButton_Click (object sender, RoutedEventArgs e) {
+		void startConnectionButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
 				CalculateSysExCommands();
 				Dispatcher.Invoke(() => {
-					startMIDIButton.IsEnabled = false;
-					midiProgressBar.Value = 0;
+					startConnectionButton.IsEnabled = false;
+					configWindowButton.IsEnabled = false;
+					syncProgressBar.Value = 0;
 				});
 				Task.Run(async () => {
 					await InitializeMIDI();
 					Dispatcher.Invoke(() => {
-						refreshMIDIButton.IsEnabled = true;
-						stopMIDIButton.IsEnabled = true;
+						refreshConnectionButton.IsEnabled = true;
+						stopConnectionButton.IsEnabled = true;
 					});
 				});
 			} else {
@@ -1145,12 +1146,12 @@ namespace TouchFaders_MIDI {
 			total += config.NUM_CHANNELS; // channel link groups
 										  //total += config.NUM_CHANNELS; // channel patch in (inputs)
 										  //total += config.NUM_CHANNELS; // channel names?
-			Dispatcher.Invoke(() => midiProgressBar.Maximum = total);
+			Dispatcher.Invoke(() => syncProgressBar.Maximum = total);
 		}
 
-		void stopMIDIButton_Click (object sender, RoutedEventArgs e) {
+		void stopConnectionButton_Click (object sender, RoutedEventArgs e) {
 			(meteringTimer as IDisposable)?.Dispose();
-			if (stopMIDIButton.IsEnabled) {
+			if (stopConnectionButton.IsEnabled) {
 				_ = StopMetering();
 				Thread.Sleep(1000);
 			}
@@ -1158,10 +1159,11 @@ namespace TouchFaders_MIDI {
 			Console.WriteLine("Stopped MIDI");
 			Dispatcher.Invoke(() => {
 				Title = "TouchFaders MIDI | MIDI not started";
-				refreshMIDIButton.IsEnabled = false;
-				startMIDIButton.IsEnabled = true;
-				stopMIDIButton.IsEnabled = false;
-				midiProgressBar.Value = 0;
+				refreshConnectionButton.IsEnabled = false;
+				startConnectionButton.IsEnabled = true;
+				stopConnectionButton.IsEnabled = false;
+				syncProgressBar.Value = 0;
+				configWindowButton.IsEnabled = true;
 			});
 			(Console_in as IDisposable)?.Dispose();
 			(Console_out as IDisposable)?.Dispose();
@@ -1169,18 +1171,18 @@ namespace TouchFaders_MIDI {
 		}
 
 		void displayMIDIDevices_Click (object sender, RoutedEventArgs e) {
-			if (startMIDIButton.IsEnabled) {
+			if (startConnectionButton.IsEnabled) {
 				displayMIDIDevices();
 			}
 		}
 
-		void refreshMIDIButton_Click (object sender, RoutedEventArgs e) {
-			if (refreshMIDIButton.IsEnabled) {
+		void refreshConnectionButton_Click (object sender, RoutedEventArgs e) {
+			if (refreshConnectionButton.IsEnabled) {
 				Dispatcher.Invoke(new Action(() => {
-					refreshMIDIButton.IsEnabled = false;
-					midiProgressBar.Value = 0;
+					refreshConnectionButton.IsEnabled = false;
+					syncProgressBar.Value = 0;
 				}));
-				bool enabled = stopMIDIButton.IsEnabled;
+				bool enabled = stopConnectionButton.IsEnabled;
 				CalculateSysExCommands();
 				Task.Run(async () => {
 					if (enabled) {
@@ -1190,13 +1192,13 @@ namespace TouchFaders_MIDI {
 						selectedChannelIndexToGet.Push(0);
 						//await GetChannelNames();
 					}
-					Dispatcher.Invoke(new Action(() => { refreshMIDIButton.IsEnabled = true; }));
+					Dispatcher.Invoke(new Action(() => { refreshConnectionButton.IsEnabled = true; }));
 				});
 			}
 		}
 
 		void testMIDIButton_Click (object sender, RoutedEventArgs e) {
-			if (stopMIDIButton.IsEnabled) {
+			if (stopConnectionButton.IsEnabled) {
 				if (data.channels[0].sends[0].level != 0) {
 					SendFaderValue(1, 1, 0, null);
 				} else {
@@ -1272,8 +1274,8 @@ namespace TouchFaders_MIDI {
 					break;
 				case System.Windows.Input.Key.R:
 					e.Handled = true;
-					if (refreshMIDIButton.IsEnabled)
-						refreshMIDIButton_Click(this, new RoutedEventArgs());
+					if (refreshConnectionButton.IsEnabled)
+						refreshConnectionButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.O:
 					e.Handled = true;
@@ -1281,10 +1283,10 @@ namespace TouchFaders_MIDI {
 					break;
 				case System.Windows.Input.Key.S:
 					e.Handled = true;
-					if (startMIDIButton.IsEnabled)
-						startMIDIButton_Click(this, new RoutedEventArgs());
-					if (stopMIDIButton.IsEnabled)
-						stopMIDIButton_Click(this, new RoutedEventArgs());
+					if (startConnectionButton.IsEnabled)
+						startConnectionButton_Click(this, new RoutedEventArgs());
+					if (stopConnectionButton.IsEnabled)
+						stopConnectionButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.A:
 					e.Handled = true;
@@ -1296,7 +1298,8 @@ namespace TouchFaders_MIDI {
 					break;
 				case System.Windows.Input.Key.C:
 					e.Handled = true;
-					configWindowButton_Click(this, new RoutedEventArgs());
+					if (startConnectionButton.IsEnabled)
+						configWindowButton_Click(this, new RoutedEventArgs());
 					break;
 				case System.Windows.Input.Key.T:
 					e.Handled = true;

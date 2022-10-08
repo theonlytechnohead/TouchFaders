@@ -165,12 +165,12 @@
                 <MenuItem Header="_File">
                     <MenuItem Header="_Quit" InputGestureText="Q" Click="quitButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
-                <MenuItem Header="_MIDI">
-                    <MenuItem Header="_Start MIDI" InputGestureText="S" Click="startMIDIButton_Click" Style="{StaticResource MenuItem}" />
-                    <MenuItem Header="_Test MIDI" InputGestureText="R" Click="testMIDIButton_Click" Style="{StaticResource MenuItem}" />
-                    <MenuItem Header="_Refresh MIDI" InputGestureText="R" Click="refreshMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                <MenuItem Header="_Connection">
+                    <MenuItem Header="_Start connection" InputGestureText="S" Click="startConnectionButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Test connection" InputGestureText="T" Click="testMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Refresh connection" InputGestureText="R" Click="refreshConnectionButton_Click" Style="{StaticResource MenuItem}" />
                     <MenuItem Header="Refresh MIDI _devices" InputGestureText="D" Click="displayMIDIDevices_Click" Style="{StaticResource MenuItem}" />
-                    <MenuItem Header="_Stop MIDI" InputGestureText="S" Click="stopMIDIButton_Click" Style="{StaticResource MenuItem}" />
+                    <MenuItem Header="_Stop connection" InputGestureText="S" Click="stopConnectionButton_Click" Style="{StaticResource MenuItem}" />
                 </MenuItem>
                 <MenuItem Header="_View">
                     <MenuItem Header="_Info" InputGestureText="I" Click="infoWindowButton_Click" Style="{StaticResource MenuItem}" />
@@ -188,7 +188,7 @@
                     <RowDefinition Height="2*"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <GroupBox Header="MIDI control" Margin="5, 5, 0, 0" Style="{DynamicResource GroupBoxSquareStyle}">
+                <GroupBox Header="Connection control" Margin="5, 5, 0, 0" Style="{DynamicResource GroupBoxSquareStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2*"/>
@@ -199,14 +199,14 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="startMIDIButton" Content="Start MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startMIDIButton_Click" Padding="5,1" Width="76" Margin="0" IsEnabled="False"/>
-                        <Button x:Name="refreshMIDIButton" Content="Refresh MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshMIDIButton_Click" Padding="1" Width="76" IsEnabled="False" Grid.RowSpan="3"/>
-                        <Button x:Name="stopMIDIButton" Content="Stop MIDI" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopMIDIButton_Click" Padding="1" Width="76" Grid.Row="2" IsEnabled="False"/>
+                        <Button x:Name="startConnectionButton" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startConnectionButton_Click" Padding="5,1" Width="76" Margin="0" IsEnabled="False"/>
+                        <Button x:Name="refreshConnectionButton" Content="Refresh" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshConnectionButton_Click" Padding="1" Width="76" IsEnabled="False" Grid.RowSpan="3"/>
+                        <Button x:Name="stopConnectionButton" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopConnectionButton_Click" Padding="1" Width="76" Grid.Row="2" IsEnabled="False"/>
                         <Label Content="MIDI input device" Grid.Column="1" VerticalAlignment="Center" Height="22" Padding="0" Margin="0,0,0,20"/>
                         <ComboBox x:Name="inputMIDIComboBox" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Margin="0,20,0,0"/>
                         <Label Content="MIDI output device" Grid.Column="1" VerticalAlignment="Center" Height="22" VerticalContentAlignment="Center" Padding="0" Grid.Row="2" Margin="0,0,0,20"/>
                         <ComboBox x:Name="outputMIDIComboBox" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Grid.Row="2" Margin="0,20,0,0" />
-                        <ProgressBar x:Name="midiProgressBar" Grid.Column="1" Grid.Row="1" Height="6" SmallChange="1" Maximum="1"/>
+                        <ProgressBar x:Name="syncProgressBar" Grid.Column="1" Grid.Row="1" Height="6" SmallChange="1" Maximum="1"/>
 
                     </Grid>
                 </GroupBox>
