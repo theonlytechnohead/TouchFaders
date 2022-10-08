@@ -14,6 +14,6 @@ TouchFaders MIDI/obj/Debug/TouchFaders MIDI.exe
 
 TouchFaders MIDI/obj/Debug/Configuration/
 
-TouchFaders MIDI/obj/Debug/App.g.cs
+*.g.cs
 
-TouchFaders MIDI/obj/Debug/App.g.i.cs
+*.g.i.cs
