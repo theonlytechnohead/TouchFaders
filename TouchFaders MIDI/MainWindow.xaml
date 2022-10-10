@@ -249,9 +249,6 @@
                                         <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
                                             <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
                                         </Trigger>
-                                        <Trigger Property="Text" Value="{x:Null}">
-                                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
-                                        </Trigger>
                                         <Trigger Property="Text" Value="True">
                                             <Setter Property="Background" Value="White" />
                                         </Trigger>
