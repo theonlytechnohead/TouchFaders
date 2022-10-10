@@ -15,19 +15,23 @@ namespace TouchFaders_MIDI {
         }
 
         public void Connect (OutputDevice consoleIn, InputDevice consoleOut) {
+            if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.MIDI;
         }
         public void Connect (IPAddress console) {
+            if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.TCP;
         }
         public void Connect (SocketAddress console) {
+            if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.SCP;
         }
 
         public void Sync () {
+            if (state != State.RUNNING) return;
             state = State.SYNCING;
             switch (method) {
                 case Method.MIDI:
@@ -41,6 +45,7 @@ namespace TouchFaders_MIDI {
         }
 
         public void Disconnect () {
+            if (state != State.RUNNING) return;
             state = State.STOPPING;
             switch (method) {
                 case Method.MIDI:
