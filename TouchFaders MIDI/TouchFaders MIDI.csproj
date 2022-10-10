@@ -94,6 +94,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AudioConsole.cs" />
     <Compile Include="Configuration\AppConfiguration.cs" />
     <Compile Include="BroadcastUDPClient.cs" />
     <Compile Include="Configuration\MixConfigWindow.xaml.cs">

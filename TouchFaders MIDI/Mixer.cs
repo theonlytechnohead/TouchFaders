@@ -155,6 +155,8 @@ namespace TouchFaders_MIDI {
 			}
 		}
 
+
+
 		public int channelCount { get; set; }
 		public int mixCount { get; set; }
 		public byte id { get; set; }

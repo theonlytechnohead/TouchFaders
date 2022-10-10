@@ -3,8 +3,10 @@ using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +19,13 @@ namespace TouchFaders_MIDI {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window {
+	public partial class MainWindow : Window, INotifyPropertyChanged {
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged ([CallerMemberName] string name = null) {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+		}
 
 		public class Device {
 			public string Name { get; set; }
@@ -28,11 +36,20 @@ namespace TouchFaders_MIDI {
 		}
 
 		public static MainWindow instance;
-		public AppConfiguration.Config config;
+		private AppConfiguration.Config c;
+		public AppConfiguration.Config config {
+			get => c;
+			set {
+				OnPropertyChanged();
+				c = value;
+			}
+		}
 		public Data data;
 
 		List<oscDevice> devices = new List<oscDevice>();
 		ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
+
+		AudioConsole audioConsole;
 
 		MIDI_Functions MIDI;
 		OutputDevice Console_in;
@@ -1266,7 +1283,14 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void MainWindow_KeyDown (object sender, System.Windows.Input.KeyEventArgs e) {
-			if (menuBar.IsKeyboardFocusWithin) return;
+			if (menuBar.IsMouseCaptured || menuBar.IsKeyboardFocusWithin) return;
+			if (addressTextBox.IsMouseCaptured || addressTextBox.IsKeyboardFocusWithin) {
+				if (e.Key == System.Windows.Input.Key.Escape) {
+					e.Handled = true;
+					System.Windows.Input.Keyboard.ClearFocus();
+				}
+				return;
+			}
 			switch (e.Key) {
 				case System.Windows.Input.Key.D:
 					e.Handled = true;
