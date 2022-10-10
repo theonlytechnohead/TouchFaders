@@ -209,10 +209,10 @@
                                     </Style>
                                 </ColumnDefinition.Style>
                             </ColumnDefinition>
-                            <ColumnDefinition>
+                            <ColumnDefinition d:Width="0">
                                 <ColumnDefinition.Style>
                                     <Style TargetType="ColumnDefinition">
-                                        <Setter Property="Width" Value="2*" />
+                                        <Setter Property="Width" Value="2*"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ElementName=mainWindow, Path=config.MIXER.connection}" Value="{x:Static local:Mixer+Connection.MIDI}">
                                                 <Setter Property="Width" Value="0" />
