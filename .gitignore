@@ -17,3 +17,7 @@ TouchFaders MIDI/obj/Debug/Configuration/
 *.g.cs
 
 *.g.i.cs
+
+*.lref
+
+*.props
