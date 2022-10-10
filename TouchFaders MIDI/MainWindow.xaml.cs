@@ -96,6 +96,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
+			config = config;  // fix wonky property notification
 			selectedChannel = new Data.SelectedChannel();
 			UpdateSelectedChannel();
 			devicesListBox.DataContext = this;
