@@ -268,7 +268,7 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
                         <Button x:Name="infoWindowButton" Content="Open status" HorizontalAlignment="Center" VerticalAlignment="Center" Click="infoWindowButton_Click" Padding="1" Width="76"/>
                         <Button x:Name="configWindowButton" Content="Edit config" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Click="configWindowButton_Click" Padding="1" Width="76"/>
@@ -278,13 +278,14 @@
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="4*"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Label x:Name="selectedChannelName" Content="Name" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,0,0,0" Padding="2"/>
                             <ProgressBar x:Name="selectedChannelFader" Maximum="1023" Orientation="Vertical" Grid.Column="1"  Style="{DynamicResource ProgressBarNarrowStyle}" Grid.RowSpan="2" Value="823" />
-                            <Rectangle x:Name="selectedChannelColour" Fill="#FFF4F4F5" Grid.Row="1" Stroke="Black" StrokeThickness="0" Margin="5,5,5,0"/>
-                            <Image x:Name="selectedChannelImage" Grid.Row="1" Opacity="1.56" SnapsToDevicePixels="True" Margin="0,5,5,0"/>
+                            <Rectangle x:Name="selectedChannelColour" Fill="#FFF4F4F5" Stroke="Black" StrokeThickness="0" Grid.RowSpan="2"/>
+                            <Image x:Name="selectedChannelImage" Opacity="0.6" SnapsToDevicePixels="True" Margin="0,5,5,0" Grid.RowSpan="2"/>
+                            <Label x:Name="selectedChannelLabel" Content="CH 0" FontSize="20" Background="{x:Null}" Foreground="{DynamicResource textBackground}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            <Label x:Name="selectedChannelName" Content="ch 1" FontSize="28" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="2" Background="{x:Null}" Foreground="{DynamicResource textBackground}" Grid.Row="1" Margin="5,0,0,0" FontWeight="Bold"/>
                         </Grid>
 
                     </Grid>
