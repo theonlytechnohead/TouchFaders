@@ -1143,6 +1143,7 @@ namespace TouchFaders_MIDI {
 				Dispatcher.Invoke(() => {
 					startConnectionButton.IsEnabled = false;
 					configWindowButton.IsEnabled = false;
+					syncProgressBar.IsIndeterminate = false;
 					syncProgressBar.Value = 0;
 				});
 				Task.Run(async () => {
@@ -1150,6 +1151,7 @@ namespace TouchFaders_MIDI {
 					Dispatcher.Invoke(() => {
 						refreshConnectionButton.IsEnabled = true;
 						stopConnectionButton.IsEnabled = true;
+						syncProgressBar.IsIndeterminate = true;
 					});
 				});
 			} else {
@@ -1179,6 +1181,7 @@ namespace TouchFaders_MIDI {
 				refreshConnectionButton.IsEnabled = false;
 				startConnectionButton.IsEnabled = true;
 				stopConnectionButton.IsEnabled = false;
+				syncProgressBar.IsIndeterminate = false;
 				syncProgressBar.Value = 0;
 				configWindowButton.IsEnabled = true;
 			});
@@ -1197,6 +1200,7 @@ namespace TouchFaders_MIDI {
 			if (refreshConnectionButton.IsEnabled) {
 				Dispatcher.Invoke(new Action(() => {
 					refreshConnectionButton.IsEnabled = false;
+					syncProgressBar.IsIndeterminate = false;
 					syncProgressBar.Value = 0;
 				}));
 				bool enabled = stopConnectionButton.IsEnabled;
@@ -1209,7 +1213,10 @@ namespace TouchFaders_MIDI {
 						selectedChannelIndexToGet.Push(0);
 						//await GetChannelNames();
 					}
-					Dispatcher.Invoke(new Action(() => { refreshConnectionButton.IsEnabled = true; }));
+					Dispatcher.Invoke(new Action(() => {
+						refreshConnectionButton.IsEnabled = true;
+						syncProgressBar.IsIndeterminate = true;
+					}));
 				});
 			}
 		}
