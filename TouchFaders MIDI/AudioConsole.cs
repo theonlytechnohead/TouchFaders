@@ -1,6 +1,8 @@
-﻿using Melanchall.DryWetMidi.Devices;
+﻿using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Devices;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace TouchFaders_MIDI {
@@ -32,7 +34,12 @@ namespace TouchFaders_MIDI {
 
             input = consoleIn;
             output = consoleOut;
+
+            output.EventReceived += delegate (object sender, MidiEventReceivedEventArgs args) {
+                process(args.Event);
+            };
         }
+
         public void Connect (IPAddress console) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
@@ -52,6 +59,8 @@ namespace TouchFaders_MIDI {
 
                         byte[] ackMessage = { 0x00, 0x00, 0x00, 0x10, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff };
                         inputStream.Write(ackMessage, 0, ackMessage.Length);
+
+                        process(buffer);
                     }
                 }
             });
@@ -75,7 +84,19 @@ namespace TouchFaders_MIDI {
             state = State.STARTING;
             method = Method.SCP;
 
-            client = new TcpClient(console);
+            client = new TcpClient();
+            client.Connect(console);
+            outputStream = client.GetStream();
+
+            Task.Run(() => {
+                while (true) {
+                    byte[] buffer = new byte[client.ReceiveBufferSize];
+                    int bytes = outputStream.Read(buffer, 0, buffer.Length);
+
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytes);
+                    process(message);
+                }
+            });
         }
 
         public void Sync () {
@@ -90,6 +111,17 @@ namespace TouchFaders_MIDI {
                     break;
             }
             state = State.RUNNING;
+        }
+
+        public void Send (MidiEvent midi) {
+            input.SendEvent(midi);
+        }
+        public void Send (byte[] bytes) {
+            outputStream.Write(bytes, 0, bytes.Length);
+        }
+        public void Send (string message) {
+            byte[] buffer = Encoding.UTF8.GetBytes(message);
+            outputStream.Write(buffer, 0, buffer.Length);
         }
 
         public void Disconnect () {
@@ -114,6 +146,16 @@ namespace TouchFaders_MIDI {
                     break;
             }
             state = State.DISCONNECTED;
+        }
+
+        void process (MidiEvent midi) {
+
+        }
+        void process (byte[] bytes) {
+
+        }
+        void process (string message) {
+
         }
 
     }
