@@ -1137,6 +1137,40 @@ namespace TouchFaders_MIDI {
 		}
 		#endregion
 
+		#region Console I/O API
+		void TryStart () {
+			switch (config.MIXER.connection) {
+				case Mixer.Connection.MIDI:
+					try {
+						var input = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString());
+						var output = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString());
+						audioConsole.Connect(input, output);
+					} catch (ArgumentException) {
+						MessageBox.Show("Couldn't find valid MIDI I/O!\nPlease select valid MIDI ports.");
+					}
+					break;
+				case Mixer.Connection.TCP:
+					switch (config.MIXER.type) {
+						case Mixer.Type.LS9:
+							try {
+								IPAddress address = IPAddress.Parse(addressTextBox.Text);
+								audioConsole.Connect(address);
+							} catch (FormatException) {
+								MessageBox.Show("Incorrect address format!\nPlease enter a valid IPv4 address.");
+							} catch (ArgumentNullException) {
+								MessageBox.Show("No address entered!\nPlease enter a valid IPv4 address.");
+							}
+							break;
+						case Mixer.Type.QL:
+						case Mixer.Type.CL:
+							audioConsole.Connect(addressTextBox.Text);
+							break;
+					}
+					break;
+			}
+		}
+		#endregion
+
 		#region UIEvents
 		void startConnectionButton_Click (object sender, RoutedEventArgs e) {
 			if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
