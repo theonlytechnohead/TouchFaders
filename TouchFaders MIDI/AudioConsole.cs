@@ -47,7 +47,7 @@ namespace TouchFaders_MIDI {
 
             listener = new TcpListener(IPAddress.Any, 12300);
             listener.Start();
-
+            // TODO: refactor and check this whole protocol
             Task.Run(() => {
                 while (true) {
                     if (consoleClient == null || !consoleClient.Connected) {
@@ -79,14 +79,21 @@ namespace TouchFaders_MIDI {
             byte[] receiveBufferB = new byte[client.ReceiveBufferSize];
             int receivedB = outputStream.Read(receiveBufferB, 0, receiveBufferB.Length);
         }
-        public void Connect (IPEndPoint console) {
+        public void Connect (string host) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.SCP;
 
+            IPEndPoint console = new IPEndPoint(IPAddress.Parse(host), 49280);
             client = new TcpClient();
             client.Connect(console);
             outputStream = client.GetStream();
+
+            byte[] buffer = Encoding.UTF8.GetBytes("devinfo productname\n");
+            outputStream.Write(buffer, 0, buffer.Length);
+
+            buffer = Encoding.UTF8.GetBytes("scpmode sstype \"text\"\n");
+            outputStream.Write(buffer, 0, buffer.Length);
 
             Task.Run(() => {
                 while (true) {
@@ -142,6 +149,7 @@ namespace TouchFaders_MIDI {
                     listener.Stop();
                     break;
                 case Method.SCP:
+                    outputStream.Close();
                     client.Close();
                     break;
             }
@@ -155,7 +163,13 @@ namespace TouchFaders_MIDI {
 
         }
         void process (string message) {
-
+            string[] messages = message.Split('\n');
+            foreach (var m in messages) {
+                if (m.Length == 0) continue;
+                if (m.Contains("OK devinfo productname")) {
+                    System.Console.WriteLine($"Found a thing! {m}");
+                }
+            }
         }
 
     }
