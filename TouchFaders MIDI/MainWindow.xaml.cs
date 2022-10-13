@@ -1329,7 +1329,9 @@ namespace TouchFaders_MIDI {
 			if (addressTextBox.IsMouseCaptured || addressTextBox.IsKeyboardFocusWithin) {
 				if (e.Key == System.Windows.Input.Key.Escape) {
 					e.Handled = true;
+					System.Windows.Input.FocusManager.SetFocusedElement(this, null);
 					System.Windows.Input.Keyboard.ClearFocus();
+					instance.Focus();
 				}
 				return;
 			}

@@ -241,7 +241,7 @@
                                     <Style.Resources>
                                         <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
                                             <VisualBrush.Visual>
-                                                <Label Content="Address" Foreground="LightGray" />
+                                                <Label Content="Address" Foreground="LightGray" Background="Transparent" />
                                             </VisualBrush.Visual>
                                         </VisualBrush>
                                     </Style.Resources>
@@ -250,7 +250,7 @@
                                             <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
                                         </Trigger>
                                         <Trigger Property="Text" Value="True">
-                                            <Setter Property="Background" Value="White" />
+                                            <Setter Property="Background" Value="Transparent" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
