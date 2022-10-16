@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 namespace TouchFaders_MIDI {
     class AudioConsole {
 
-        public State state;
+        public static State state;
         public enum State {
             DISCONNECTED, STARTING, SYNCING, RUNNING, STOPPING
         }
 
-        public Method method;
+        public static Method method;
         public enum Method {
             MIDI, TCP, SCP
         }
 
-        OutputDevice input;
-        InputDevice output;
+        static OutputDevice input;
+        static InputDevice output;
 
-        TcpClient client;
-        NetworkStream outputStream;
-        TcpListener listener;
-        NetworkStream inputStream;
-        TcpClient consoleClient;
+        static TcpClient client;
+        static NetworkStream outputStream;
+        static TcpListener listener;
+        static NetworkStream inputStream;
+        static TcpClient consoleClient;
 
-        public void Connect (OutputDevice consoleIn, InputDevice consoleOut) {
+        public static void Connect (OutputDevice consoleIn, InputDevice consoleOut) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.MIDI;
@@ -40,7 +40,7 @@ namespace TouchFaders_MIDI {
             };
         }
 
-        public void Connect (IPAddress console) {
+        public static void Connect (IPAddress console) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.TCP;
@@ -79,7 +79,7 @@ namespace TouchFaders_MIDI {
             byte[] receiveBufferB = new byte[client.ReceiveBufferSize];
             int receivedB = outputStream.Read(receiveBufferB, 0, receiveBufferB.Length);
         }
-        public void Connect (string host) {
+        public static void Connect (string host) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.SCP;
@@ -106,7 +106,7 @@ namespace TouchFaders_MIDI {
             });
         }
 
-        public void Sync () {
+        public static void Sync () {
             if (state != State.RUNNING) return;
             state = State.SYNCING;
             switch (method) {
@@ -120,18 +120,18 @@ namespace TouchFaders_MIDI {
             state = State.RUNNING;
         }
 
-        public void Send (MidiEvent midi) {
+        public static void Send (MidiEvent midi) {
             input.SendEvent(midi);
         }
-        public void Send (byte[] bytes) {
+        public static void Send (byte[] bytes) {
             outputStream.Write(bytes, 0, bytes.Length);
         }
-        public void Send (string message) {
+        public static void Send (string message) {
             byte[] buffer = Encoding.UTF8.GetBytes(message);
             outputStream.Write(buffer, 0, buffer.Length);
         }
 
-        public void Disconnect () {
+        public static void Disconnect () {
             if (state != State.RUNNING) return;
             state = State.STOPPING;
             switch (method) {
@@ -156,13 +156,13 @@ namespace TouchFaders_MIDI {
             state = State.DISCONNECTED;
         }
 
-        void process (MidiEvent midi) {
+        static void process (MidiEvent midi) {
 
         }
-        void process (byte[] bytes) {
+        static void process (byte[] bytes) {
 
         }
-        void process (string message) {
+        static void process (string message) {
             string[] messages = message.Split('\n');
             foreach (var m in messages) {
                 if (m.Length == 0) continue;

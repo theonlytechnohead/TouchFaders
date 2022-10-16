@@ -49,9 +49,6 @@ namespace TouchFaders_MIDI {
 		List<oscDevice> devices = new List<oscDevice>();
 		ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
 
-		AudioConsole audioConsole;
-
-		MIDI_Functions MIDI;
 		OutputDevice Console_in;
 		InputDevice Console_out;
 		Timer queueTimer;
@@ -1144,7 +1141,7 @@ namespace TouchFaders_MIDI {
 					try {
 						var input = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString());
 						var output = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString());
-						audioConsole.Connect(input, output);
+						AudioConsole.Connect(input, output);
 					} catch (ArgumentException) {
 						MessageBox.Show("Couldn't find valid MIDI I/O!\nPlease select valid MIDI ports.");
 					}
@@ -1154,7 +1151,7 @@ namespace TouchFaders_MIDI {
 						case Mixer.Type.LS9:
 							try {
 								IPAddress address = IPAddress.Parse(addressTextBox.Text);
-								audioConsole.Connect(address);
+								AudioConsole.Connect(address);
 							} catch (FormatException) {
 								MessageBox.Show("Incorrect address format!\nPlease enter a valid IPv4 address.");
 							} catch (ArgumentNullException) {
@@ -1163,7 +1160,7 @@ namespace TouchFaders_MIDI {
 							break;
 						case Mixer.Type.QL:
 						case Mixer.Type.CL:
-							audioConsole.Connect(addressTextBox.Text);
+							AudioConsole.Connect(addressTextBox.Text);
 							break;
 					}
 					break;

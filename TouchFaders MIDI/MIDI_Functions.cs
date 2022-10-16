@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 namespace TouchFaders_MIDI {
-    class MIDI_Functions {
+	class MIDI_Functions {
 
 		OutputDevice console_in;
 		InputDevice console_out;

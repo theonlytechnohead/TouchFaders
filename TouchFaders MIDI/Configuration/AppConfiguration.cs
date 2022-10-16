@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace TouchFaders_MIDI {
-    public class AppConfiguration {
+	public class AppConfiguration {
 
 		public const string CONFIG_DIR = "config";
 		public const string CONFIG_FILE = "config";
@@ -55,11 +55,11 @@ namespace TouchFaders_MIDI {
 
 		public static async Task SaveConfig (Config config) {
 			if (config == null) return;
-			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
+			JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
 			_ = Directory.CreateDirectory(CONFIG_DIR);
-            using FileStream fs = File.Create($"{CONFIG_DIR}/{CONFIG_FILE}.json");
-            await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
-        }
+			using FileStream fs = File.Create($"{CONFIG_DIR}/{CONFIG_FILE}.json");
+			await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
+		}
 
 		public static Data LoadData () {
 			Data data;
@@ -77,7 +77,7 @@ namespace TouchFaders_MIDI {
 		}
 
 		public static async Task SaveData (Data data) {
-			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true };
+			JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
 			_ = Directory.CreateDirectory(CONFIG_DIR);
 			if (data != null) {
 				using FileStream fs = File.Create($"{CONFIG_DIR}/{DATA_FILE}.json");
