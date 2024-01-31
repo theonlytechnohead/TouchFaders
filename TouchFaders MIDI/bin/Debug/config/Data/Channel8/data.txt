@@ -1,0 +1,8 @@
+channel: 9
+name: "ch 9"
+level: 823
+muted: False
+patch: 9
+bgColourId: 2
+linkGroup:  
+sends: List<Send>

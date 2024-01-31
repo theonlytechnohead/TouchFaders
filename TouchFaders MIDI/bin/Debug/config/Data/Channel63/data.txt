@@ -1,0 +1,8 @@
+channel: 64
+name: "ch64"
+level: 823
+muted: False
+patch: 64
+bgColourId: 0
+linkGroup:  
+sends: List<Send>

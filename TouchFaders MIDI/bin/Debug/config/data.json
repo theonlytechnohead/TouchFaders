@@ -2,7 +2,7 @@
   "channels": [
     {
       "channel": 1,
-      "name": "ch1",
+      "name": "ch 1",
       "level": 823,
       "muted": false,
       "patch": 1,
@@ -77,7 +77,7 @@
     },
     {
       "channel": 2,
-      "name": "ch2",
+      "name": "ch 2",
       "level": 823,
       "muted": false,
       "patch": 2,
@@ -152,7 +152,7 @@
     },
     {
       "channel": 3,
-      "name": "ch3",
+      "name": "ch 3",
       "level": 823,
       "muted": false,
       "patch": 3,
@@ -227,7 +227,7 @@
     },
     {
       "channel": 4,
-      "name": "ch4",
+      "name": "ch 4",
       "level": 823,
       "muted": false,
       "patch": 4,
@@ -302,7 +302,7 @@
     },
     {
       "channel": 5,
-      "name": "ch5",
+      "name": "ch 5",
       "level": 823,
       "muted": false,
       "patch": 5,
@@ -377,7 +377,7 @@
     },
     {
       "channel": 6,
-      "name": "ch6",
+      "name": "ch 6",
       "level": 823,
       "muted": false,
       "patch": 6,
@@ -452,7 +452,7 @@
     },
     {
       "channel": 7,
-      "name": "ch7",
+      "name": "ch 7",
       "level": 823,
       "muted": false,
       "patch": 7,
@@ -527,7 +527,7 @@
     },
     {
       "channel": 8,
-      "name": "ch8",
+      "name": "ch 8",
       "level": 823,
       "muted": false,
       "patch": 8,
@@ -602,7 +602,7 @@
     },
     {
       "channel": 9,
-      "name": "ch9",
+      "name": "ch 9",
       "level": 823,
       "muted": false,
       "patch": 9,
@@ -4804,63 +4804,63 @@
   "mixes": [
     {
       "mix": 1,
-      "name": "MX1",
+      "name": "MX 1",
       "level": 823,
       "muted": false,
       "bgColourId": 1
     },
     {
       "mix": 2,
-      "name": "MX2",
+      "name": "MX 2",
       "level": 823,
       "muted": false,
       "bgColourId": 1
     },
     {
       "mix": 3,
-      "name": "MX3",
+      "name": "MX 3",
       "level": 823,
       "muted": false,
       "bgColourId": 1
     },
     {
       "mix": 4,
-      "name": "MX4",
+      "name": "MX 4",
       "level": 823,
       "muted": false,
       "bgColourId": 1
     },
     {
       "mix": 5,
-      "name": "MX5",
+      "name": "MX 5",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
       "mix": 6,
-      "name": "MX6",
+      "name": "MX 6",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
       "mix": 7,
-      "name": "MX7",
+      "name": "MX 7",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
       "mix": 8,
-      "name": "MX8",
+      "name": "MX 8",
       "level": 823,
       "muted": false,
       "bgColourId": 0
     },
     {
       "mix": 9,
-      "name": "MX9",
+      "name": "MX 9",
       "level": 823,
       "muted": false,
       "bgColourId": 4
