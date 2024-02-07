@@ -71,9 +71,9 @@ namespace TouchFaders_MIDI {
             InitializeComponent();
 
             instance = this;
-            Title = "TouchFaders MIDI | MIDI not started";
-
             config = AppConfiguration.LoadConfig();
+            Title = $"TouchFaders MIDI | {config.MIXER.connection} not started";
+
             Task.Run(() => { DataLoaded(AppConfiguration.LoadData()); });
 
             UISettings settings = new UISettings();
@@ -456,8 +456,8 @@ namespace TouchFaders_MIDI {
                 Dispatcher.Invoke(() => {
                     inputMIDIComboBox.IsEnabled = false;
                     outputMIDIComboBox.IsEnabled = false;
-                    Title = "TouchFaders MIDI | MIDI started";
-                    Console.WriteLine("Started MIDI");
+                    Title = $"TouchFaders MIDI | {config.MIXER.connection} started";
+                    Console.WriteLine($"Started {config.MIXER.connection}");
                 });
                 queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
                 await GetAllFaderValues();
@@ -1157,7 +1157,7 @@ namespace TouchFaders_MIDI {
                         MessageBox.Show("Couldn't find valid MIDI I/O!\nPlease select valid MIDI ports.");
                     }
                     break;
-                case Mixer.Connection.TCP:
+                case Mixer.Connection.RCP:
                     switch (config.MIXER.type) {
                         case Mixer.Type.LS9:
                             try {
@@ -1181,6 +1181,8 @@ namespace TouchFaders_MIDI {
 
         #region UIEvents
         void startConnectionButton_Click (object sender, RoutedEventArgs e) {
+            TryStart();
+            return;
             if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
                 CalculateSysExCommands();
                 Dispatcher.Invoke(() => {
@@ -1220,7 +1222,7 @@ namespace TouchFaders_MIDI {
             (queueTimer as IDisposable)?.Dispose();
             Console.WriteLine("Stopped MIDI");
             Dispatcher.Invoke(() => {
-                Title = "TouchFaders MIDI | MIDI not started";
+                Title = $"TouchFaders MIDI | {config.MIXER.connection} not started";
                 refreshConnectionButton.IsEnabled = false;
                 startConnectionButton.IsEnabled = true;
                 stopConnectionButton.IsEnabled = false;

@@ -192,8 +192,9 @@
                         <Grid.Resources>
                             <local:ComparisonConverter x:Key="ComparisonConverter"/>
                         </Grid.Resources>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.MIDI}}" GroupName="connectionType"/>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" Content="TCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.TCP}}" Grid.Row="1" GroupName="connectionType"/>
+                        <RadioButton x:Name="midiConnection" Template="{DynamicResource RadioButtonThemable}" Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.MIDI}}" GroupName="connectionType"/>
+                        <RadioButton x:Name="tcpConnection" Template="{DynamicResource RadioButtonThemable}" Content="TCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.TCP}}" Grid.Row="1" GroupName="connectionType"/>
+                        <RadioButton x:Name="rcpConnection" Template="{DynamicResource RadioButtonThemable}" Content="RCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.RCP}}" Grid.Row="1" GroupName="connectionType" Visibility="Collapsed"/>
                     </Grid>
                 </GroupBox>
             </Grid>

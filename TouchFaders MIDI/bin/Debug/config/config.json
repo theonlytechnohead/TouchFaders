@@ -3,7 +3,7 @@
     "modelString": "QL5",
     "type": "QL",
     "model": "_5",
-    "connection": "MIDI",
+    "connection": "RCP",
     "channelCount": 64,
     "mixCount": 16,
     "id": 18
