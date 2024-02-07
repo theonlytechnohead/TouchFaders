@@ -2384,11 +2384,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders MIDI\\TouchFaders.csproj",
+      "projectUniqueName": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders\\TouchFaders.csproj",
       "projectName": "TouchFaders",
-      "projectPath": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders MIDI\\TouchFaders.csproj",
+      "projectPath": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders\\TouchFaders.csproj",
       "packagesPath": "C:\\Users\\desktop\\.nuget\\packages\\",
-      "outputPath": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders MIDI\\obj\\",
+      "outputPath": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
