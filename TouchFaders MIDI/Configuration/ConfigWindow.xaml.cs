@@ -129,19 +129,19 @@ namespace TouchFaders_MIDI {
         }
 
         void UpdateConnections () {
-            midiConnection.Visibility = Visibility.Visible;
-            tcpConnection.Visibility = Visibility.Visible;
-            rcpConnection.Visibility = Visibility.Visible;
+            midiConnection.IsEnabled = true;
+            tcpConnection.IsEnabled = true;
+            rcpConnection.IsEnabled = true;
             switch (mixerType) {
                 case Mixer.Type.LS9:
-                    rcpConnection.Visibility = Visibility.Collapsed;
+                    rcpConnection.IsEnabled = false; ;
                     if (rcpConnection.IsChecked.Value) {
                         tcpConnection.IsChecked = true;
                     }
                     break;
                 case Mixer.Type.QL:
                 case Mixer.Type.CL:
-                    tcpConnection.Visibility = Visibility.Collapsed;
+                    tcpConnection.IsEnabled = false;
                     if (tcpConnection.IsChecked.Value) {
                         rcpConnection.IsChecked = true;
                     }
