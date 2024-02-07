@@ -100,8 +100,11 @@
     <Compile Include="Configuration\MixConfigWindow.xaml.cs">
       <DependentUpon>MixConfigWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\Parser.cs" />
+    <Compile Include="IConsole.cs" />
     <Compile Include="MIDI_Functions.cs" />
     <Compile Include="Mixer.cs" />
+    <Compile Include="TCP_Functions.cs" />
     <Compile Include="WinSessionMixer\SessionUI.xaml.cs">
       <DependentUpon>SessionUI.xaml</DependentUpon>
     </Compile>

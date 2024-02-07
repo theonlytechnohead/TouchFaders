@@ -27,6 +27,11 @@ namespace TouchFaders_MIDI {
         static NetworkStream inputStream;
         static TcpClient consoleClient;
 
+        /// <summary>
+        /// Uses native MIDI connection
+        /// </summary>
+        /// <param name="consoleIn">Send to console (MIDI out from PC)</param>
+        /// <param name="consoleOut">Send from console (MIDI in to PC)</param>
         public static void Connect (OutputDevice consoleIn, InputDevice consoleOut) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
@@ -40,6 +45,10 @@ namespace TouchFaders_MIDI {
             };
         }
 
+        /// <summary>
+        /// Uses reverse-engineered MIDI-over-TCP conneciton
+        /// </summary>
+        /// <param name="console">IP address of the console to connect to</param>
         public static void Connect (IPAddress console) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
@@ -79,12 +88,21 @@ namespace TouchFaders_MIDI {
             byte[] receiveBufferB = new byte[client.ReceiveBufferSize];
             int receivedB = outputStream.Read(receiveBufferB, 0, receiveBufferB.Length);
         }
+
+        /// <summary>
+        /// Uses native SCP commands over a TCP connection for modern consoles
+        /// </summary>
+        /// <param name="host">String containing any valid interpretation of an IP address to parse</param>
         public static void Connect (string host) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
             method = Method.SCP;
 
-            IPEndPoint console = new IPEndPoint(IPAddress.Parse(host), 49280);
+            IPAddress address;
+            if (!IPAddress.TryParse(host, out address)) {
+                return;
+            }
+            IPEndPoint console = new IPEndPoint(address, TCP_Functions.RCP_PORT);
             client = new TcpClient();
             client.Connect(console);
             outputStream = client.GetStream();

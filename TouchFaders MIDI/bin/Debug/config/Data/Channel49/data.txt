@@ -1,0 +1,8 @@
+channel: 50
+name: "ch50"
+level: 823
+muted: False
+patch: 50
+bgColourId: 0
+linkGroup:  
+sends: List<Send>

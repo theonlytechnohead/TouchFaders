@@ -1,0 +1,8 @@
+channel: 43
+name: "ch43"
+level: 823
+muted: False
+patch: 43
+bgColourId: 0
+linkGroup:  
+sends: List<Send>

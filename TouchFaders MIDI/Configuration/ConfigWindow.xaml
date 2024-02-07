@@ -175,14 +175,15 @@
                         <Grid.Resources>
                             <local:ComparisonConverter x:Key="ComparisonConverter"/>
                         </Grid.Resources>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="smallModel" Content="smol" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._1}}" GroupName="consoleType"/>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="mediumModel" Content="medium" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._3}}" Grid.Row="1" GroupName="consoleType"/>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="largeModel" Content="large" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._5}}" Grid.Row="2" GroupName="consoleType"/>
+                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="smallModel" Content="1" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._1}}" GroupName="consoleType"/>
+                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="mediumModel" Content="3" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._3}}" Grid.Row="1" GroupName="consoleType"/>
+                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="largeModel" Content="5" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._5}}" Grid.Row="2" GroupName="consoleType"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Connection method" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,0" Grid.Column="2">
                     <Grid Margin="5,0,5,0">
                         <Grid.RowDefinitions>
+                            <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
@@ -192,8 +193,9 @@
                         <Grid.Resources>
                             <local:ComparisonConverter x:Key="ComparisonConverter"/>
                         </Grid.Resources>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.MIDI}}" GroupName="connectionType"/>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" Content="TCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.TCP}}" Grid.Row="1" GroupName="connectionType"/>
+                        <RadioButton x:Name="midiConnection" Template="{DynamicResource RadioButtonThemable}" Content="MIDI" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.MIDI}}" GroupName="connectionType"/>
+                        <RadioButton x:Name="tcpConnection" Template="{DynamicResource RadioButtonThemable}" Content="TCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.TCP}}" Grid.Row="1" GroupName="connectionType"/>
+                        <RadioButton x:Name="rcpConnection" Template="{DynamicResource RadioButtonThemable}" Content="RCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.RCP}}" Grid.Row="2" GroupName="connectionType"/>
                     </Grid>
                 </GroupBox>
             </Grid>

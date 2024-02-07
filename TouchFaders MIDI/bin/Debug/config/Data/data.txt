@@ -1,0 +1,2 @@
+channels: List<Channel>
+mixes: List<Mix>
