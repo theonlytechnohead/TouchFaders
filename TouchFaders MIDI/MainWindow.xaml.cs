@@ -72,7 +72,7 @@ namespace TouchFaders_MIDI {
 
             instance = this;
             config = AppConfiguration.LoadConfig();
-            Title = $"TouchFaders MIDI | {config.MIXER.connection} not started";
+            Title = "TouchFaders | disconnected";
 
             Task.Run(() => { DataLoaded(AppConfiguration.LoadData()); });
 
