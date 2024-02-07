@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace TouchFaders_MIDI.Configuration {
+namespace TouchFaders.Configuration {
     /// <summary>
     /// Interaction logic for MixConfigWindow.xaml
     /// </summary>

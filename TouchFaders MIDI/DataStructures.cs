@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
     class DataStructures {
 
         public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {

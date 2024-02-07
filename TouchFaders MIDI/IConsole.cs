@@ -1,4 +1,4 @@
-﻿namespace TouchFaders_MIDI {
+﻿namespace TouchFaders {
     interface IConsole {
         bool Connect ();
         bool Disconnect ();

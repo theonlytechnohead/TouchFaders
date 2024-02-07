@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using TouchFaders_MIDI.Configuration;
+using TouchFaders.Configuration;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
     /// <summary>
     /// Interaction logic for ConfigWindow.xaml
     /// </summary>

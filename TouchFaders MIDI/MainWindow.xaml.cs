@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TouchFaders_MIDI.Configuration;
+using TouchFaders.Configuration;
 using Windows.UI.ViewManagement;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

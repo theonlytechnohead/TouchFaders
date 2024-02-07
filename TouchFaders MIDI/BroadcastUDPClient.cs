@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 	class BroadcastUDPClient : UdpClient {
 
 		public BroadcastUDPClient () : base() {

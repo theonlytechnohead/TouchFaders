@@ -1,9 +1,9 @@
-﻿<Window x:Name="channelConfigWindow" x:Class="TouchFaders_MIDI.ChannelConfigWindow"
+﻿<Window x:Name="channelConfigWindow" x:Class="TouchFaders.ChannelConfigWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TouchFaders_MIDI"
+        xmlns:local="clr-namespace:TouchFaders"
         mc:Ignorable="d"
         Title="Channel configuration" Height="450" Width="800" WindowStartupLocation="CenterOwner" ScrollViewer.IsDeferredScrollingEnabled="True" Loaded="channelConfigWindow_Loaded" MinWidth="800" MinHeight="450">
     <Grid x:Name="channelConfigWindowGrid" SizeChanged="channelConfigWindowGrid_SizeChanged">

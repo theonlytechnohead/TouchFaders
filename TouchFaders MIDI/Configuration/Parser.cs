@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.IO;
 
-namespace TouchFaders_MIDI.Configuration {
+namespace TouchFaders.Configuration {
     internal class Parser {
 
         const string basePath = "config";

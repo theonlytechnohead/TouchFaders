@@ -8,7 +8,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using CoreAudio;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>

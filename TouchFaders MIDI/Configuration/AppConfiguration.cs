@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 	public class AppConfiguration {
 
 		public const string CONFIG_DIR = "config";

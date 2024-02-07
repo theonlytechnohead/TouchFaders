@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 
     public class SysExCommand {
         private byte[] dataBytes;

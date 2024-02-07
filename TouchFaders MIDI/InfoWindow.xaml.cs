@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 	/// <summary>
 	/// Interaction logic for InfoWindow.xaml
 	/// </summary>

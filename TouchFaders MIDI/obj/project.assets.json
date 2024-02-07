@@ -2384,11 +2384,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders.csproj",
-      "projectName": "TouchFaders MIDI",
-      "projectPath": "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\TouchFaders.csproj",
+      "projectUniqueName": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders MIDI\\TouchFaders.csproj",
+      "projectName": "TouchFaders",
+      "projectPath": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders MIDI\\TouchFaders.csproj",
       "packagesPath": "C:\\Users\\desktop\\.nuget\\packages\\",
-      "outputPath": "D:\\desktop\\Documents\\TouchFaders MIDI\\TouchFaders MIDI\\obj\\",
+      "outputPath": "D:\\desktop\\Documents\\TouchFaders\\TouchFaders MIDI\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
@@ -2431,7 +2431,12 @@
             "target": "Package",
             "version": "[6.0.5, )"
           }
-        }
+        },
+        "imports": [
+          "uap10.0.22621"
+        ],
+        "assetTargetFallback": true,
+        "warn": true
       }
     },
     "runtimes": {

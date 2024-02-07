@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
     public class oscDevice {
 
 		public const string CONNECT = "connect";

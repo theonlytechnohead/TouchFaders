@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 	/// <summary>
 	/// Interaction logic for SessionUI.xaml
 	/// </summary>

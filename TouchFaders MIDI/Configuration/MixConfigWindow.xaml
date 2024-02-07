@@ -1,9 +1,9 @@
-﻿<Window x:Name="mixConfigWindow" x:Class="TouchFaders_MIDI.Configuration.MixConfigWindow"
+﻿<Window x:Name="mixConfigWindow" x:Class="TouchFaders.Configuration.MixConfigWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TouchFaders_MIDI.Configuration"
+        xmlns:local="clr-namespace:TouchFaders.Configuration"
         mc:Ignorable="d"
         Title="MixConfigWindow" Height="450" Width="800" WindowStartupLocation="CenterOwner" ScrollViewer.IsDeferredScrollingEnabled="True" Loaded="mixConfigWindow_Loaded" MinWidth="800" MinHeight="450">
     <Grid x:Name="mixConfigWindowGrid" SizeChanged="mixConfigWindowGrid_SizeChanged" >

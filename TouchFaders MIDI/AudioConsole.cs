@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
     class AudioConsole {
 
         public static State state;

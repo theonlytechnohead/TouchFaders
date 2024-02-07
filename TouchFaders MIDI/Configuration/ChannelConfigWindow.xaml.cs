@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
     /// <summary>
     /// Interaction logic for ChannelConfigWindow.xaml
     /// </summary>

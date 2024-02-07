@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace TouchFaders_MIDI {
+namespace TouchFaders {
 	class MIDI_Functions {
 
 		OutputDevice console_in;
