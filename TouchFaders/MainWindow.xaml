@@ -201,21 +201,16 @@
                                 <ColumnDefinition.Style>
                                     <Style TargetType="ColumnDefinition">
                                         <Setter Property="Width" Value="0" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=mainWindow, Path=config.MIXER.connection}" Value="{x:Static local:Mixer+Connection.MIDI}">
-                                                <Setter Property="Width" Value="2*" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
                                     </Style>
                                 </ColumnDefinition.Style>
                             </ColumnDefinition>
-                            <ColumnDefinition d:Width="0">
+                            <ColumnDefinition>
                                 <ColumnDefinition.Style>
                                     <Style TargetType="ColumnDefinition">
-                                        <Setter Property="Width" Value="2*"/>
+                                        <Setter Property="Width" Value="0"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=mainWindow, Path=config.MIXER.connection}" Value="{x:Static local:Mixer+Connection.MIDI}">
-                                                <Setter Property="Width" Value="0" />
+                                            <DataTrigger Binding="{Binding ElementName=mainWindow, Path=config.MIXER.connection}" Value="{x:Static local:Mixer+Connection.RCP}">
+                                                <Setter Property="Width" Value="2*" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>

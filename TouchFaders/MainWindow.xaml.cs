@@ -1147,27 +1147,8 @@ namespace TouchFaders {
         #region Console I/O API
         void TryStart () {
             switch (config.MIXER.connection) {
-                case Mixer.Connection.MIDI:
-                    try {
-                        var input = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString());
-                        var output = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString());
-                        AudioConsole.Connect(input, output);
-                    } catch (ArgumentException) {
-                        MessageBox.Show("Couldn't find valid MIDI I/O!\nPlease select valid MIDI ports.");
-                    }
-                    break;
                 case Mixer.Connection.RCP:
                     switch (config.MIXER.type) {
-                        case Mixer.Type.LS9:
-                            try {
-                                IPAddress address = IPAddress.Parse(addressTextBox.Text);
-                                AudioConsole.Connect(address);
-                            } catch (FormatException) {
-                                MessageBox.Show("Incorrect address format!\nPlease enter a valid IPv4 address.");
-                            } catch (ArgumentNullException) {
-                                MessageBox.Show("No address entered!\nPlease enter a valid IPv4 address.");
-                            }
-                            break;
                         case Mixer.Type.QL:
                         case Mixer.Type.CL:
                             AudioConsole.Connect(addressTextBox.Text);

@@ -69,12 +69,12 @@ namespace TouchFaders {
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Type {
-            LS9, QL, CL
+            QL, CL
         }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Connection {
-            MIDI, TCP, RCP
+            RCP
         }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -82,15 +82,12 @@ namespace TouchFaders {
             _1, _3, _5
         }
 
-        public Mixer () { type = Type.LS9; model = Model._5; connection = Connection.MIDI; channelCount = 0; mixCount = 0; id = 0; commands = LS9_commands; }
+        public Mixer () { type = Type.QL; model = Model._1; connection = Connection.RCP; channelCount = 0; mixCount = 0; id = 0; commands = QL_CL_commands; }
         private Mixer (int channels, int mixes, byte midi_id, Type type, Model model, Connection connection) {
             channelCount = channels;
             mixCount = mixes;
             id = midi_id;
             switch (type) {
-                case Type.LS9:
-                    commands = LS9_commands;
-                    break;
                 case Type.QL:
                 case Type.CL:
                     commands = QL_CL_commands;
@@ -103,16 +100,6 @@ namespace TouchFaders {
         public string modelString {
             get {
                 string console = t.ToString();
-                if (t == Type.LS9) {
-                    switch (m) {
-                        case Model._1:
-                            return console + "-16";
-                        case Model._3:
-                            return console;
-                        case Model._5:
-                            return console + "-32";
-                    }
-                }
                 return console + m.ToString().Replace("_", "");
             }
         }
@@ -120,9 +107,6 @@ namespace TouchFaders {
         public Type type {
             get => t; set {
                 t = value; switch (type) {
-                    case Type.LS9:
-                        commands = LS9_commands;
-                        break;
                     case Type.QL:
                     case Type.CL:
                         commands = QL_CL_commands;
@@ -134,8 +118,6 @@ namespace TouchFaders {
         public Model model {
             get => m; set {
                 m = value; switch (type) {
-                    case Type.LS9:
-                        break;
                     case Type.QL:
                         break;
                     case Type.CL:
@@ -148,8 +130,6 @@ namespace TouchFaders {
             get => c;
             set {
                 c = value; switch (connection) {
-                    case Connection.MIDI:
-                        break;
                     case Connection.RCP:
                         break;
                 }
@@ -205,9 +185,6 @@ namespace TouchFaders {
                     { SysExCommand.CommandType.kIconInputChannel, new SysExCommand(new byte[] { 0x01, 0x01, 0x1E, 0x00, 0x00}) },
                     { SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
                 };
-
-        public static Mixer LS932 => new Mixer(64, 16, 0x12, Type.LS9, Model._5, Connection.MIDI);
-        public static Mixer LS916 => new Mixer(32, 16, 0x12, Type.LS9, Model._1, Connection.MIDI);
 
         public static Mixer QL5 => new Mixer(64, 16, 0x19, Type.QL, Model._5, Connection.RCP);
         public static Mixer QL1 => new Mixer(32, 16, 0x19, Type.QL, Model._1, Connection.RCP);

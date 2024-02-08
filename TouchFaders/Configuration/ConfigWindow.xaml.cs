@@ -44,14 +44,6 @@ namespace TouchFaders {
             largeModel.Visibility = Visibility.Visible;
             // TODO: hardcoded!
             switch (mixerType) {
-                case Mixer.Type.LS9:
-                    smallModel.Content += "-16";
-                    mediumModel.Visibility = Visibility.Collapsed;
-                    largeModel.Content += "-32";
-                    if (mediumModel.IsChecked.Value) {
-                        largeModel.IsChecked = true;
-                    }
-                    break;
                 case Mixer.Type.QL:
                     smallModel.Content += "1";
                     mediumModel.Visibility = Visibility.Collapsed;
@@ -73,22 +65,6 @@ namespace TouchFaders {
             int channels = 0;
             int mixes = 0;
             switch (mixerType) {
-                case Mixer.Type.LS9:
-                    switch (mixerModel) {
-                        case Mixer.Model._1:
-                            channels = 32;
-                            mixes = 16;
-                            break;
-                        case Mixer.Model._3:
-                            channels = 64;
-                            mixes = 16;
-                            break;
-                        case Mixer.Model._5:
-                            channels = 64;
-                            mixes = 16;
-                            break;
-                    }
-                    break;
                 case Mixer.Type.QL:
                     switch (mixerModel) {
                         case Mixer.Model._1:
@@ -129,22 +105,11 @@ namespace TouchFaders {
         }
 
         void UpdateConnections () {
-            midiConnection.IsEnabled = true;
-            tcpConnection.IsEnabled = true;
             rcpConnection.IsEnabled = true;
             switch (mixerType) {
-                case Mixer.Type.LS9:
-                    rcpConnection.IsEnabled = false; ;
-                    if (rcpConnection.IsChecked.Value) {
-                        tcpConnection.IsChecked = true;
-                    }
-                    break;
                 case Mixer.Type.QL:
                 case Mixer.Type.CL:
-                    tcpConnection.IsEnabled = false;
-                    if (tcpConnection.IsChecked.Value) {
-                        rcpConnection.IsChecked = true;
-                    }
+                    rcpConnection.IsChecked = true;
                     break;
             }
         }
@@ -156,10 +121,6 @@ namespace TouchFaders {
             set {
                 MainWindow.instance.config.MIXER.connection = value;
                 switch (value) {
-                    case Mixer.Connection.MIDI:
-                    case Mixer.Connection.TCP:
-                        deviceIDSlider.IsEnabled = true;
-                        break;
                     case Mixer.Connection.RCP:
                         deviceIDSlider.IsEnabled = false;
                         deviceIDSlider.Value = 1;
