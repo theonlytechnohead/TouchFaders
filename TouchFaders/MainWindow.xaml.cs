@@ -50,12 +50,12 @@ namespace TouchFaders {
         // OSC
         List<oscDevice> devices = new List<oscDevice>();
         ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
+        Timer advertisingTimer;
 
         // MIDI
         OutputDevice Console_in;
         InputDevice Console_out;
         Timer queueTimer;
-        Timer advertisingTimer;
         Timer meteringTimer;
         public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
@@ -533,7 +533,6 @@ namespace TouchFaders {
         }
 
         async Task GetChannelNames () {
-            byte device_byte = 0x30;
             for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
                 await GetChannelName(channel);
             }

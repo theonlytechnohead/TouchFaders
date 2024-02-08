@@ -1,5 +1,4 @@
-﻿using Melanchall.DryWetMidi.Devices;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +11,6 @@ namespace TouchFaders {
             DISCONNECTED, STARTING, SYNCING, RUNNING, STOPPING
         }
 
-        static OutputDevice input;
-        static InputDevice output;
 
         static TcpClient client;
         static NetworkStream outputStream;
