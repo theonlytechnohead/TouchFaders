@@ -14,14 +14,12 @@ namespace TouchFaders {
         // Constants and stuff goes here
         public class Config {
             public Mixer MIXER { get; set; }
-            public int DEVICE_ID { get; set; }
             public int NUM_CHANNELS { get; set; }
             public int NUM_MIXES { get; set; }
 
             public static Config defaultValues () {
                 return new Config() {
                     MIXER = Mixer.QL1,
-                    DEVICE_ID = 1,
                     NUM_MIXES = 16,
                     NUM_CHANNELS = 32
                 };
@@ -39,9 +37,6 @@ namespace TouchFaders {
                 }
                 if (config.NUM_CHANNELS == 0) {
                     config.NUM_CHANNELS = Config.defaultValues().NUM_CHANNELS;
-                }
-                if (config.DEVICE_ID == 0) {
-                    config.DEVICE_ID = Config.defaultValues().DEVICE_ID;
                 }
                 if (config.MIXER == null) {
                     config.MIXER = Config.defaultValues().MIXER;

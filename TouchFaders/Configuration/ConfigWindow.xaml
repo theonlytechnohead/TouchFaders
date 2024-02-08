@@ -129,7 +129,6 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
-                <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -142,12 +141,10 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <GroupBox Header="Console series" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,0">
                     <Grid Margin="5,0,5,0">
                         <Grid.RowDefinitions>
-                            <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
@@ -157,8 +154,8 @@
                         <Grid.Resources>
                             <local:ComparisonConverter x:Key="ComparisonConverter"/>
                         </Grid.Resources>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="qlSeries" Content="QL series" Grid.Row="1" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.QL}}" GroupName="consoleSeries" VerticalAlignment="Center"/>
-                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="clSeries" Content="CL series" Grid.Row="2" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.CL}}" GroupName="consoleSeries" VerticalAlignment="Center"/>
+                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="qlSeries" Content="QL series" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.QL}}" GroupName="consoleSeries" VerticalAlignment="Center"/>
+                        <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="clSeries" Content="CL series" Grid.Row="1" IsChecked="{Binding ElementName=configWindow, Path=mixerType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Type.CL}}" GroupName="consoleSeries" VerticalAlignment="Center"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Console type" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,0" Grid.Column="1">
@@ -179,39 +176,8 @@
                         <RadioButton Template="{DynamicResource RadioButtonThemable}" x:Name="largeModel" Content="5" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerModel, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Model._5}}" Grid.Row="2" GroupName="consoleType"/>
                     </Grid>
                 </GroupBox>
-                <GroupBox Header="Connection method" Style="{DynamicResource GroupBoxSquareStyle}" Margin="5,0,5,0" Grid.Column="2">
-                    <Grid Margin="5,0,5,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.Resources>
-                            <local:ComparisonConverter x:Key="ComparisonConverter"/>
-                        </Grid.Resources>
-                    </Grid>
-                </GroupBox>
             </Grid>
-            <GroupBox x:Name="deviceGroupBox" Header="Device" Margin="5, 0, 5, 0" Style="{DynamicResource GroupBoxSquareStyle}" Grid.Row="2">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="3*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.Resources>
-                        <local:ComparisonConverter x:Key="ComparisonConverter"/>
-                    </Grid.Resources>
-                    <Slider x:Name="deviceIDSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="1" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="deviceIDSlider_ValueChanged" Grid.Column="1"/>
-                    <Label x:Name="deviceIDLabel" Content="ID:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                </Grid>
-            </GroupBox>
-            <GroupBox x:Name="channelGroupBox" Header="Channels:" Grid.Row="3" Margin="5,0,5,5" Style="{DynamicResource GroupBoxSquareStyle}">
+            <GroupBox x:Name="channelGroupBox" Header="Channels:" Grid.Row="2" Margin="5,0,5,5" Style="{DynamicResource GroupBoxSquareStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -220,11 +186,11 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <Slider x:Name="channelSlider" VerticalAlignment="Center" Maximum="64" Minimum="1" SmallChange="1" Value="32" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="channelSlider_ValueChanged" Grid.Column="1"/>
+                    <Slider x:Name="channelSlider" VerticalAlignment="Center" Maximum="32" Minimum="1" SmallChange="1" Value="32" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="channelSlider_ValueChanged" Grid.Column="1"/>
                     <Button x:Name="editChannelsButton" Content="Edit channels" HorizontalAlignment="Center" VerticalAlignment="Center" Click="editChannelsButton_Click" Width="96"/>
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="mixGroupBox" Header="Mixes:" Grid.Row="4" Margin="5,0,5,5" Style="{DynamicResource GroupBoxSquareStyle}">
+            <GroupBox x:Name="mixGroupBox" Header="Mixes:" Grid.Row="3" Margin="5,0,5,5" Style="{DynamicResource GroupBoxSquareStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -233,7 +199,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Slider x:Name="mixSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="8" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="mixSlider_ValueChanged" Grid.Column="1"/>
+                    <Slider x:Name="mixSlider" VerticalAlignment="Center" Maximum="16" Minimum="1" SmallChange="1" Value="16" AutoToolTipPlacement="TopLeft" TickPlacement="BottomRight" IsSnapToTickEnabled="True" ValueChanged="mixSlider_ValueChanged" Grid.Column="1"/>
                     <Button x:Name="editMixesButton" Content="Edit mixes" HorizontalAlignment="Center" VerticalAlignment="Center" Width="96" Click="editMixesButton_Click"/>
                 </Grid>
             </GroupBox>

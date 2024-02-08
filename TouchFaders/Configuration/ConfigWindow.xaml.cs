@@ -119,9 +119,6 @@ namespace TouchFaders {
             UpdateModels();
             UpdateCounts();
 
-            deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
-            deviceIDSlider.Value = config.DEVICE_ID;
-
             channelGroupBox.Header = $"Channels: {config.NUM_CHANNELS}";
             channelSlider.Value = config.NUM_CHANNELS;
 
@@ -195,8 +192,6 @@ namespace TouchFaders {
         private void deviceIDSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {
             Slider slider = sender as Slider;
             if (config == null) return;
-            config.DEVICE_ID = (int)slider.Value;
-            deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
         }
 
         private void channelSlider_ValueChanged (object sender, RoutedPropertyChangedEventArgs<double> e) {

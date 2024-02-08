@@ -77,12 +77,12 @@ namespace TouchFaders {
             _1, _3, _5
         }
 
-        public Mixer () { type = Type.QL; model = Model._1; channelCount = 0; mixCount = 0; id = 0; commands = QL_CL_commands; }
-        private Mixer (int channels, int mixes, byte midi_id, Type type, Model model) {
+        public Mixer () { type = Type.QL; model = Model._1; channelCount = 0; mixCount = 0; commands = QL_CL_commands; }
+        private Mixer (int channels, int mixes, Type type, Model model) {
             channelCount = channels;
             mixCount = mixes;
-            id = midi_id;
             commands = QL_CL_commands;
+            this.type = type;
             this.model = model;
         }
 
@@ -165,12 +165,12 @@ namespace TouchFaders {
                     { SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
                 };
 
-        public static Mixer QL5 => new Mixer(64, 16, 0x19, Type.QL, Model._5);
-        public static Mixer QL1 => new Mixer(32, 16, 0x19, Type.QL, Model._1);
+        public static Mixer QL5 => new Mixer(64, 16, Type.QL, Model._5);
+        public static Mixer QL1 => new Mixer(32, 16, Type.QL, Model._1);
 
-        public static Mixer CL5 => new Mixer(72, 24, 0x19, Type.CL, Model._5);
-        public static Mixer CL3 => new Mixer(64, 24, 0x19, Type.CL, Model._3);
-        public static Mixer CL1 => new Mixer(48, 24, 0x19, Type.CL, Model._1);
+        public static Mixer CL5 => new Mixer(72, 24, Type.CL, Model._5);
+        public static Mixer CL3 => new Mixer(64, 24, Type.CL, Model._3);
+        public static Mixer CL1 => new Mixer(48, 24, Type.CL, Model._1);
 
     }
 
