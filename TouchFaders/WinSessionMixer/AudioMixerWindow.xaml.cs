@@ -1,4 +1,4 @@
-﻿using CoreAudio;
+using CoreAudio;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +21,7 @@ namespace TouchFaders {
 
             public RenderDevice (MMDevice device) {
                 Device = device;
-                Name = $"{device.DeviceInterfaceFriendlyName} ({device.FriendlyName})";
+                Name = $"{device.Properties[PKey.DeviceDescription].Value} - {device.DeviceInterfaceFriendlyName}";
             }
 
             public override string ToString () {
@@ -89,7 +89,7 @@ namespace TouchFaders {
             MMDeviceCollection devCol = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
             for (int i = 0; i < devCol.Count; i++) {
                 devices.Add(new RenderDevice(devCol[i]));
-                if (devCol[i].FriendlyName == defaultDevice.FriendlyName) {
+                if (devCol[i].DeviceFriendlyName == defaultDevice.DeviceFriendlyName) {
                     deviceComboBox.SelectedIndex = i;
                 }
             }
