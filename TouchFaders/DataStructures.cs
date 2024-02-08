@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Media;
 
 namespace TouchFaders {
@@ -83,22 +82,6 @@ namespace TouchFaders {
         public static event EventHandler mixLevelChanged;
         public static event EventHandler mixMuteChanged;
 
-        public static string kNameShortToString (byte[] kNameShort) {
-            string raw = string.Concat(kNameShort.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))); // convert the byte array to a string of 0's and 1's
-            string decoded = "";
-            for (int i = 0; i < raw.Length; i++) {
-                if (i % 8 != 0) { // if it's not the 8th bit in a byte
-                    decoded += raw[i]; // add it to the new string, reforming the original 8-bit encoding
-                }
-            }
-            decoded = decoded.Substring(3); // skip the first nibble-ish, it's a leftover artifact of the 7b/8b encoding
-            List<byte> name = new List<byte>();
-            for (int i = 0; i < decoded.Length; i += 8) {
-                name.Add(Convert.ToByte(decoded.Substring(i, 8), 2)); // convert segments 8 bits to a byte, and put in a list
-            }
-            return Encoding.ASCII.GetString(name.ToArray());
-        }
-
         public List<Channel> channels { get; set; }
         public List<Mix> mixes { get; set; }
 
@@ -171,19 +154,9 @@ namespace TouchFaders {
 
             public int channelIndex { get; set; }
             public string name {
-                get {
-                    if (kNameShort1 != null && kNameShort2 != null) {
-                        return kNameShortToString(kNameShort1) + kNameShortToString(kNameShort2);
-                    } else {
-                        return currentChannel.name;
-                    }
-                }
-                set {
-                    currentChannel.name = value;
-                }
+                get => currentChannel.name;
+                set => currentChannel.name = value;
             }
-            public byte[] kNameShort1 { get; set; }
-            public byte[] kNameShort2 { get; set; }
 
             public int iconID { get; set; }
             public static List<Uri> iconURIs = new List<Uri>() {

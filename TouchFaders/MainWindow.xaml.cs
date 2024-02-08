@@ -656,39 +656,7 @@ namespace TouchFaders {
         }
 
         void HandleChannelName (byte[] bytes) {
-            byte indexMSB = bytes[7];       // kNameShort1 is 0x00, 0x00
-            byte indexLSB = bytes[8];       // kNameShort2 is 0x00, 0x01
-            byte channelMSB = bytes[9];    // Channel MSB per channel
-            byte channelLSB = bytes[10];    // Channel LSB with a 0 in the 8th bit
-            byte data5 = bytes[11];         // Data bytes start
-            byte data4 = bytes[12];
-            byte data3 = bytes[13];
-            byte data2 = bytes[14];
-            byte data1 = bytes[15];
 
-            ushort index = (ushort)(indexMSB << 7);
-            index += indexLSB;
-
-            ushort channel = (ushort)(channelMSB << 7);
-            channel += channelLSB;
-
-            byte[] data = { data5, data4, data3, data2, data1 };
-
-            switch (index) { // the index number is either for kNameShort 1 or 2
-                case 0x00: // kNameShort1
-                    this.data.channels[channel].name = Data.kNameShortToString(data);
-                    if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort1 = data; }
-                    selectedChannelCache[channel].kNameShort1 = data;
-                    break;
-                case 0x01: // kNameShort2
-                    this.data.channels[channel].name += Data.kNameShortToString(data);
-                    foreach (oscDevice device in devices) {
-                        device.SendChannelName(channel + 1, this.data.channels[channel].name);
-                    }
-                    if (channel == selectedChannel.channelIndex) { selectedChannel.kNameShort2 = data; }
-                    selectedChannelCache[channel].kNameShort2 = data;
-                    break;
-            }
         }
 
         void HandleChannelPatch (byte[] bytes) {
