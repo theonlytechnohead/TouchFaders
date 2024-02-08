@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +21,7 @@ namespace TouchFaders {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged ([CallerMemberName] string name = null) {
+        protected void OnPropertyChanged (string name = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
