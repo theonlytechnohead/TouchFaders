@@ -103,7 +103,6 @@ namespace TouchFaders {
         public List<Mix> mixes { get; set; }
 
         public Data () {
-            channels = new List<Channel>();
             channels = (from channel in Enumerable.Range(1, MainWindow.instance.config.NUM_CHANNELS) select new Channel(channel)).ToList();
             mixes = (from mix in Enumerable.Range(1, MainWindow.instance.config.NUM_MIXES) select new Mix(mix)).ToList();
         }

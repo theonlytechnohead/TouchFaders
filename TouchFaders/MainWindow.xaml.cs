@@ -78,10 +78,11 @@ namespace TouchFaders {
             InitializeComponent();
 
             instance = this;
-            config = AppConfiguration.LoadConfig();
+            config = (AppConfiguration.Config)Parser.Load(AppConfiguration.Config.defaultValues());
             Title = "TouchFaders | disconnected";
 
-            Task.Run(() => { DataLoaded(AppConfiguration.LoadData()); });
+            //Task.Run(() => { DataLoaded(AppConfiguration.LoadData()); });
+            Task.Run(() => { DataLoaded((Data)Parser.Load(new Data())); });
 
             UISettings settings = new UISettings();
             Windows.UI.Color foreground = settings.GetColorValue(UIColorType.Foreground);
@@ -102,10 +103,6 @@ namespace TouchFaders {
 
         private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
             config = config;  // fix wonky property notification
-
-            //testing
-            //Parser.Store(config);
-            //Parser.Store(Parser.Load(config));
 
             selectedChannel = new Data.SelectedChannel();
             UpdateSelectedChannel();
@@ -132,8 +129,6 @@ namespace TouchFaders {
             }
             stopConnectionButton_Click(null, null);
             advertisingTimer?.Dispose();
-            //await AppConfiguration.SaveConfig(config);
-            //await AppConfiguration.SaveData(data);
             await Parser.Store(config);
             await Parser.Store(data);
             base.OnClosed(e);

@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TouchFaders.Configuration {
@@ -74,10 +76,19 @@ namespace TouchFaders.Configuration {
             using StreamWriter writer = writeFile(path);
             if (writer == null) { return; }
             foreach (var item in data.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
+                //Console.Write(item.Name);
                 await writer.WriteAsync($"{item.Name}: ");
                 if (item.PropertyType == typeof(string)) {
+                    //Console.WriteLine(" string");
                     await writer.WriteLineAsync($"\"{item.GetValue(data)}\"");
+                } else if (item.PropertyType == typeof(int)) {
+                    //Console.WriteLine(" int");
+                    await writer.WriteLineAsync(item.GetValue(data).ToString());
+                } else if (item.PropertyType == typeof(bool)) {
+                    //Console.WriteLine(" bool");
+                    await writer.WriteLineAsync(item.GetValue(data).ToString());
                 } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
+                    //Console.WriteLine(" list");
                     await writer.WriteLineAsync($"List<{(item.GetValue(data) as IEnumerable).GetType().GetGenericArguments()[0].Name}>");
                     // iterate and store recursive
                     int i = 0;
@@ -86,48 +97,68 @@ namespace TouchFaders.Configuration {
                         i++;
                     }
                 } else if (item.PropertyType.IsClass) {
+                    //Console.WriteLine(" class");
                     await writer.WriteLineAsync(item.GetValue(data).ToString());
                     // store recursive
                     _ = Store(item.GetValue(data), Path.Combine(path, item.Name));
                 } else {
+                    //Console.Write(" other ");
+                    //Console.WriteLine(item.PropertyType.IsEnum);
                     writer.WriteLine(item.GetValue(data));
                 }
             }
         }
 
-        public static object Load (object data, string path = "") {
-            path = processPath(path, data.GetType().Name);
+        public static object Load (object data, string path = "", Type typeOverride = null) {
+            Type type = typeOverride ?? data.GetType();
+            path = processPath(path, type.Name);
             using (StreamReader reader = readFile(path)) {
-                //Console.WriteLine($"Reading: {path}");
-                foreach (var item in data.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
+                foreach (var item in type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
                     string[] line = reader.ReadLine().Split(':');
                     string name = line[0];
                     string value = line[1].TrimStart();
                     if (item.Name != name || !item.CanWrite) {
+                        //Console.WriteLine($"{name}:{value} skip ({item.Name}, {!item.CanWrite})");
                         continue;
                     }
                     if (item.PropertyType == typeof(string)) {
-                        string property = value;
+                        //Console.WriteLine($"{name}:{value} string");
+                        string property = value.Trim('"');
                         item.SetValue(data, property);
                     } else if (item.PropertyType == typeof(int)) {
+                        //Console.WriteLine($"{name}:{value} int");
                         int property = int.Parse(value);
                         item.SetValue(data, property);
+                    } else if (item.PropertyType == typeof(bool)) {
+                        //Console.WriteLine($"{name}:{value} bool");
+                        bool property = bool.Parse(value);
+                        item.SetValue(data, property);
+                    } else if (item.PropertyType.IsEnum) {
+                        //Console.WriteLine($"{name}:{value} enum");
+                        item.SetValue(data, Enum.Parse(item.PropertyType, value));
                     } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
+                        //Console.WriteLine($"{name}:{value} list");
                         // iterate and load recursive
-                        string itemName = (item.GetValue(data) as IEnumerable).GetType().GetGenericArguments()[0].Name;
-                        int i = 0;
-                        while (true) {
-                            string subDirectory = Path.Combine(path, itemName + i);
+                        var list = item.GetValue(data);
+                        Type subType = (list as IEnumerable).GetType().GetGenericArguments()[0];
+
+                        // https://stackoverflow.com/questions/46495831/how-can-i-cast-listobject-to-listfoo-when-foo-is-a-type-variable-and-i-dont
+                        // https://stackoverflow.com/questions/4612618/how-to-get-the-count-property-using-reflection-for-generic-types
+                        // I'm using IList because it actually works for what I need
+                        var GenericCastMethod = typeof(Enumerable).GetMethod("Cast", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                        var SpecificCastMethod = GenericCastMethod.MakeGenericMethod(subType);
+                        var typedList = SpecificCastMethod.Invoke(null, new object[] { list }) as IList;
+
+                        for (int i = 0; i < typedList.Count; i++) {
+                            var collectionItem = typedList[i];
+                            string subDirectory = Path.Combine(path, subType.Name + i);
                             if (Directory.Exists(subDirectory)) {
-                                System.Console.WriteLine($"Loading: {subDirectory}");
-                                object listItem = Load(item.GetValue(data), subDirectory);
-                                item.SetValue(data, listItem);
-                                i++;
-                            } else {
-                                break;
+                                object loadedValue = Load(collectionItem, subDirectory);
+                                typedList[i] = loadedValue;
                             }
                         }
                     } else if (item.PropertyType.IsClass) {
+                        //Console.WriteLine(" class");
                         // load recursive
                         object subObject = Load(item.GetValue(data), Path.Combine(path, item.Name));
                         item.SetValue(data, subObject);
