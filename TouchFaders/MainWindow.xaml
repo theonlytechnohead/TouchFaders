@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TouchFaders"
         mc:Ignorable="d" Icon="icon.ico"
-        Title="TouchFaders MIDI" Loaded="mainWindow_Loaded" WindowStartupLocation="CenterScreen" MinWidth="600" MinHeight="375" Width="600" Height="375" UseLayoutRounding="True">
+        Title="TouchFaders" Loaded="mainWindow_Loaded" WindowStartupLocation="CenterScreen" MinWidth="600" MinHeight="375" Width="600" Height="375" UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
@@ -284,7 +284,7 @@
                             <ProgressBar x:Name="selectedChannelFader" Maximum="1023" Orientation="Vertical" Grid.Column="1"  Style="{DynamicResource ProgressBarNarrowStyle}" Grid.RowSpan="2" Value="823" />
                             <Rectangle x:Name="selectedChannelColour" Fill="#0000FF" Stroke="Black" StrokeThickness="0" Grid.RowSpan="2"/>
                             <Image x:Name="selectedChannelImage" Opacity="0.6" SnapsToDevicePixels="True" Margin="0,5,5,0" Grid.RowSpan="2"/>
-                            <Label x:Name="selectedChannelLabel" Content="CH 0" FontSize="20" Background="{x:Null}" Foreground="{DynamicResource textBackground}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            <Label x:Name="selectedChannelLabel" Content="CH 1" FontSize="20" Background="{x:Null}" Foreground="{DynamicResource textBackground}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                             <Label x:Name="selectedChannelName" Content="ch 1" FontSize="28" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="2" Background="{x:Null}" Foreground="{DynamicResource textBackground}" Grid.Row="1" Margin="5,0,0,0" FontWeight="Bold"/>
                         </Grid>
 

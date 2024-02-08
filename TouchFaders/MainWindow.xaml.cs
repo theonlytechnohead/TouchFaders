@@ -456,8 +456,7 @@ namespace TouchFaders {
                 Dispatcher.Invoke(() => {
                     inputMIDIComboBox.IsEnabled = false;
                     outputMIDIComboBox.IsEnabled = false;
-                    Title = $"TouchFaders MIDI | {config.MIXER.connection} started";
-                    Console.WriteLine($"Started {config.MIXER.connection}");
+                    Title = "TouchFaders | connected";
                 });
                 queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
                 await GetAllFaderValues();
@@ -1220,9 +1219,8 @@ namespace TouchFaders {
                 Thread.Sleep(1000);
             }
             (queueTimer as IDisposable)?.Dispose();
-            Console.WriteLine("Stopped MIDI");
             Dispatcher.Invoke(() => {
-                Title = $"TouchFaders MIDI | {config.MIXER.connection} not started";
+                Title = "TouchFaders | disconnected";
                 refreshConnectionButton.IsEnabled = false;
                 startConnectionButton.IsEnabled = true;
                 stopConnectionButton.IsEnabled = false;
