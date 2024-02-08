@@ -21,7 +21,7 @@ namespace TouchFaders {
 
             public RenderDevice (MMDevice device) {
                 Device = device;
-                Name = $"{device.Properties[PKEY.PKEY_Device_DeviceDesc].Value} ({device.FriendlyName})";
+                Name = $"{device.DeviceInterfaceFriendlyName} ({device.FriendlyName})";
             }
 
             public override string ToString () {
@@ -83,10 +83,10 @@ namespace TouchFaders {
         }
 
         private void ListDevices () {
-            MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
-            MMDevice defaultDevice = deviceEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia);
+            MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator(new Guid());
+            MMDevice defaultDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
             audioSessionManager2 = defaultDevice.AudioSessionManager2;
-            MMDeviceCollection devCol = deviceEnumerator.EnumerateAudioEndPoints(EDataFlow.eRender, DEVICE_STATE.DEVICE_STATE_ACTIVE);
+            MMDeviceCollection devCol = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
             for (int i = 0; i < devCol.Count; i++) {
                 devices.Add(new RenderDevice(devCol[i]));
                 if (devCol[i].FriendlyName == defaultDevice.FriendlyName) {

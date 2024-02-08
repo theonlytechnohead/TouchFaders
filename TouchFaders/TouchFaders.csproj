@@ -66,10 +66,6 @@
     <TargetPlatformVersion>8.0</TargetPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreAudio, Version=2020.11.2.36, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\CoreAudio.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -250,6 +246,9 @@
     <Resource Include="Resources\01_snare.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CoreAudio">
+      <Version>1.37.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
       <Version>8.0.0</Version>
     </PackageReference>

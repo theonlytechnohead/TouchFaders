@@ -1,4 +1,5 @@
 ﻿using CoreAudio;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ namespace TouchFaders {
         public void SetSession (AudioSessionControl2 session) {
             this.session = session;
             session.OnStateChanged += SessionStateChanged;
-            Process p = Process.GetProcessById((int)session.GetProcessID);
+            Process p = Process.GetProcessById((int)session.ProcessID);
 
             if (!Dispatcher.CheckAccess()) {
                 Dispatcher.Invoke(() => {
