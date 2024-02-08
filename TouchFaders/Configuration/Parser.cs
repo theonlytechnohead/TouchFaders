@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace TouchFaders.Configuration {
@@ -139,22 +138,18 @@ namespace TouchFaders.Configuration {
                     } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
                         //Console.WriteLine($"{name}:{value} list");
                         // iterate and load recursive
-                        var list = item.GetValue(data);
-                        Type subType = (list as IEnumerable).GetType().GetGenericArguments()[0];
-
                         // https://stackoverflow.com/questions/46495831/how-can-i-cast-listobject-to-listfoo-when-foo-is-a-type-variable-and-i-dont
+                        // this is cool and perhaps useful to know, but not actually necessary in this case
                         // https://stackoverflow.com/questions/4612618/how-to-get-the-count-property-using-reflection-for-generic-types
                         // I'm using IList because it actually works for what I need
-                        var GenericCastMethod = typeof(Enumerable).GetMethod("Cast", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                        var SpecificCastMethod = GenericCastMethod.MakeGenericMethod(subType);
-                        var typedList = SpecificCastMethod.Invoke(null, new object[] { list }) as IList;
+                        var list = item.GetValue(data) as IList;
 
-                        for (int i = 0; i < typedList.Count; i++) {
-                            var collectionItem = typedList[i];
-                            string subDirectory = Path.Combine(path, subType.Name + i);
+                        for (int i = 0; i < list.Count; i++) {
+                            var collectionItem = list[i];
+                            string subDirectory = Path.Combine(path, list.GetType().GetGenericArguments()[0].Name + i);
                             if (Directory.Exists(subDirectory)) {
                                 object loadedValue = Load(collectionItem, subDirectory);
-                                typedList[i] = loadedValue;
+                                list[i] = loadedValue;
                             }
                         }
                     } else if (item.PropertyType.IsClass) {
