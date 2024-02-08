@@ -242,7 +242,7 @@
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
                         <Button x:Name="infoWindowButton" Content="Open status" HorizontalAlignment="Center" VerticalAlignment="Center" Click="infoWindowButton_Click" Padding="1" Width="76"/>
-                        <Button x:Name="configWindowButton" Content="Edit config" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Click="configWindowButton_Click" Padding="1" Width="76"/>
+                        <Button x:Name="configWindowButton" Content="Edit config" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Click="configWindowButton_Click" Padding="1" Width="76" IsEnabled="False"/>
                         <Grid Grid.Column="1" Grid.RowSpan="2">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>

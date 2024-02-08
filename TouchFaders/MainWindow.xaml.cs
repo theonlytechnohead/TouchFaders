@@ -103,9 +103,9 @@ namespace TouchFaders {
         private void mainWindow_Loaded (object sender, RoutedEventArgs e) {
             config = config;  // fix wonky property notification
 
-            // testing
-            Parser.Store(config);
-            Parser.Store(Parser.Load(config));
+            //testing
+            //Parser.Store(config);
+            //Parser.Store(Parser.Load(config));
 
             selectedChannel = new Data.SelectedChannel();
             UpdateSelectedChannel();
@@ -132,8 +132,10 @@ namespace TouchFaders {
             }
             stopConnectionButton_Click(null, null);
             advertisingTimer?.Dispose();
-            await AppConfiguration.SaveConfig(config);
-            await AppConfiguration.SaveData(data);
+            //await AppConfiguration.SaveConfig(config);
+            //await AppConfiguration.SaveData(data);
+            await Parser.Store(config);
+            await Parser.Store(data);
             base.OnClosed(e);
         }
         #endregion
@@ -197,11 +199,10 @@ namespace TouchFaders {
 
         #region File & network I/O (and setup)
         void DataLoaded (Data data) {
-            Dispatcher.Invoke(() => { this.data = data; });
-
-            // testing
-            Parser.Store(data);
-            Parser.Store(Parser.Load(data));
+            Dispatcher.Invoke(() => {
+                this.data = data;
+                configWindowButton.IsEnabled = true;
+            });
 
             Data.channelNameChanged += Data_channelNameChanged;
             Data.channelMuteChanged += Data_channelMuteChanged;
@@ -490,15 +491,7 @@ namespace TouchFaders {
         }
 
         async Task GetFaderValuesForMix (byte mix) {
-            SysExCommand kInputToMix = config.MIXER.commands[SysExCommand.CommandType.kInputToMix];
 
-            byte device_byte = 0x30;
-            for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
-                NormalSysExEvent sysExEvent = new NormalSysExEvent();
-                byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputToMix.DataCategoryByte, kInputToMix.ElementMSB, kInputToMix.ElementLSB, kInputToMix.IndexMSB, mix, 0x00, Convert.ToByte(channel), 0xF7 };
-                sysExEvent.Data = data;
-                await SendSysEx(sysExEvent);
-            }
         }
 
         void GetSelectedChannelInfo (object state) {
@@ -521,15 +514,7 @@ namespace TouchFaders {
         }
 
         async Task GetChannelFaders () {
-            SysExCommand kInputFader = config.MIXER.commands[SysExCommand.CommandType.kInputFader];
 
-            byte device_byte = 0x30;
-            for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
-                NormalSysExEvent kFader = new NormalSysExEvent();
-                byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputFader.DataCategoryByte, kInputFader.ElementMSB, kInputFader.ElementLSB, kInputFader.IndexMSB, kInputFader.IndexLSB, 0x00, Convert.ToByte(channel), 0xF7 };
-                kFader.Data = data;
-                await SendSysEx(kFader);
-            }
         }
 
         async Task GetChannelNames () {
@@ -539,37 +524,15 @@ namespace TouchFaders {
         }
 
         async Task GetChannelName (int channel) {
-            SysExCommand kNameInputChannel = config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel];
 
-            byte device_byte = 0x30;
-            NormalSysExEvent kNameShort1 = new NormalSysExEvent();
-            byte[] data1 = { 0x43, device_byte, 0x3E, config.MIXER.id, kNameInputChannel.DataCategoryByte, kNameInputChannel.ElementMSB, kNameInputChannel.ElementLSB, kNameInputChannel.IndexMSB, kNameInputChannel.IndexLSB, 0x00, Convert.ToByte(channel), 0xF7 };
-            kNameShort1.Data = data1;
-            await SendSysEx(kNameShort1);
-            NormalSysExEvent kNameShort2 = new NormalSysExEvent();
-            byte[] data2 = { 0x43, device_byte, 0x3E, config.MIXER.id, kNameInputChannel.DataCategoryByte, kNameInputChannel.ElementMSB, kNameInputChannel.ElementLSB, kNameInputChannel.IndexMSB, (byte)(kNameInputChannel.IndexLSB + 1), 0x00, Convert.ToByte(channel), 0xF7 };
-            kNameShort2.Data = data2;
-            await SendSysEx(kNameShort2);
         }
 
         async Task GetChannelIcon (int channel) {
-            SysExCommand kIconInputChannel = config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel];
 
-            byte device_byte = 0x30;
-            NormalSysExEvent kIconID = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kIconInputChannel.DataCategoryByte, kIconInputChannel.ElementMSB, kIconInputChannel.ElementLSB, kIconInputChannel.IndexMSB, kIconInputChannel.IndexLSB, 0x00, Convert.ToByte(channel), 0xF7 };
-            kIconID.Data = data;
-            await SendSysEx(kIconID);
         }
 
         async Task GetChannelColour (int channel) {
-            SysExCommand kIconInputChannel = config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel];
 
-            byte device_byte = 0x30;
-            NormalSysExEvent kIconBgColour = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kIconInputChannel.DataCategoryByte, kIconInputChannel.ElementMSB, kIconInputChannel.ElementLSB, kIconInputChannel.IndexMSB, (byte)(kIconInputChannel.IndexLSB + 1), 0x00, Convert.ToByte(channel), 0xF7 };
-            kIconBgColour.Data = data;
-            await SendSysEx(kIconBgColour);
         }
 
         async Task RequestChannelsPatch () {
@@ -579,13 +542,7 @@ namespace TouchFaders {
         }
 
         async Task RequestChannelPatch (int channel) {
-            SysExCommand kPatchInput = config.MIXER.commands[SysExCommand.CommandType.kPatchInInput];
 
-            byte device_byte = 0x30;
-            NormalSysExEvent kPatchInInput = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kPatchInput.DataCategoryByte, kPatchInput.ElementMSB, kPatchInput.ElementLSB, kPatchInput.IndexMSB, kPatchInput.IndexLSB, 0x00, Convert.ToByte(channel), 0xF7 };
-            kPatchInInput.Data = data;
-            await SendSysEx(kPatchInInput);
         }
 
         async Task GetAllChannelsLinkGroup () {
@@ -595,13 +552,7 @@ namespace TouchFaders {
         }
 
         async Task GetChannelLinkGroup (int channel) {
-            SysExCommand kGroupID = config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input];
 
-            byte device_byte = 0x30;
-            NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kGroupID.DataCategoryByte, kGroupID.ElementMSB, kGroupID.ElementLSB, kGroupID.IndexMSB, kGroupID.IndexLSB, 0x00, Convert.ToByte(channel), 0xF7 };
-            kGroupID_Input.Data = data;
-            await SendSysEx(kGroupID_Input);
         }
 
         async void GetMixesMetering (object state) {
@@ -610,19 +561,11 @@ namespace TouchFaders {
                 get = syncProgressBar.Value >= syncProgressBar.Maximum;
             });
             if (!get) return;
-            byte device_byte = 0x30;
-            NormalSysExEvent mixesMeteringPost = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, 0x21, 0x01, 0x03, 0x7F, 0x00, 0x00, 0xF7 };
-            mixesMeteringPost.Data = data;
-            await SendSysEx(mixesMeteringPost);
+
         }
 
         async Task StopMetering () {
-            byte device_byte = 0x30;
-            NormalSysExEvent stopMeteringEvent = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, 0x21, 0x7F, 0xF7 };
-            stopMeteringEvent.Data = data;
-            await SendSysEx(stopMeteringEvent);
+
         }
 
         #endregion
@@ -653,8 +596,8 @@ namespace TouchFaders {
 
             if (manufacturerID == 0x43 &&       // YAMAHA
                 deviceNumber == device_byte &&  // 1 = parameter send; 3 = parameter request, device ID 1
-                groupID == 0x3E &&              // Digital mixer
-                modelID == config.MIXER.id) {   // 0x12 for LS9, 0x19 for CL/QL series
+                groupID == 0x3E              // Digital mixer
+                ) {   // 0x12 for LS9, 0x19 for CL/QL series
                 return true;
             }
             return false;
@@ -981,15 +924,6 @@ namespace TouchFaders {
             byte valueMSB = (byte)(shiftedValue & 0x7Fu);
 
             SysExCommand kInputToMix = config.MIXER.commands[SysExCommand.CommandType.kInputToMix];
-
-            NormalSysExEvent sysExEvent = new NormalSysExEvent(); //		Mix					Ch							  db		dB
-            byte device_byte = 0x10;
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputToMix.DataCategoryByte, kInputToMix.ElementMSB, kInputToMix.ElementLSB, kInputToMix.IndexMSB, mixLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
-            sysExEvent.Data = data;
-            bool enabled = false;
-            Dispatcher.Invoke(() => { enabled = stopConnectionButton.IsEnabled; });
-            if (enabled)
-                _ = SendSysEx(sysExEvent);
         }
 
         public void SendChannelMute (int mix, int channel, bool muted, oscDevice sender) {
@@ -1011,14 +945,6 @@ namespace TouchFaders {
             //Console.WriteLine($"Setting channel {channel + 1} link group to {linkGroup}");
 
             SysExCommand kGroupdId = config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input];
-
-            NormalSysExEvent kGroupID_Input = new NormalSysExEvent();
-            byte[] data = { 0x43, device_byte, 0x3E, config.MIXER.id, kGroupdId.DataCategoryByte, kGroupdId.ElementMSB, kGroupdId.ElementLSB, kGroupdId.IndexMSB, kGroupdId.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, group, 0xF7 };
-            kGroupID_Input.Data = data;
-            bool enabled = false;
-            Dispatcher.Invoke(() => { enabled = stopConnectionButton.IsEnabled; });
-            if (enabled)
-                _ = SendSysEx(kGroupID_Input);
         }
 
         public void SendAllAudioSessions () {
@@ -1046,28 +972,11 @@ namespace TouchFaders {
 
             SysExCommand kInputFader = config.MIXER.commands[SysExCommand.CommandType.kInputFader];
 
-            NormalSysExEvent sessionVolume = new NormalSysExEvent();
-            byte[] dataVolume = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputFader.DataCategoryByte, kInputFader.ElementMSB, kInputFader.ElementLSB, kInputFader.IndexMSB, kInputFader.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, valueMSB, valueLSB, 0xF7 };
-            sessionVolume.Data = dataVolume;
-
-            SysExCommand kInputOn = config.MIXER.commands[SysExCommand.CommandType.kInputOn];
-
             byte on;
             if (mute) {
                 on = 0x00;
             } else {
                 on = 0x01;
-            }
-            NormalSysExEvent sessionOn = new NormalSysExEvent();
-            byte[] dataOn = { 0x43, device_byte, 0x3E, config.MIXER.id, kInputOn.DataCategoryByte, kInputOn.ElementMSB, kInputOn.ElementLSB, kInputOn.IndexMSB, kInputOn.IndexLSB, channelMSB, channelLSB, 0x00, 0x00, 0x00, 0x00, on, 0xF7 };
-            sessionOn.Data = dataOn;
-
-            bool canContinue = false;
-            Dispatcher.Invoke(() => canContinue = syncProgressBar.Value >= syncProgressBar.Maximum);
-            if (canContinue || sendIt) {
-                //Console.WriteLine(BitConverter.ToString(dataOn));
-                _ = SendSysEx(sessionVolume);
-                _ = SendSysEx(sessionOn);
             }
         }
 

@@ -119,7 +119,6 @@ namespace TouchFaders {
 
         public int channelCount { get; set; }
         public int mixCount { get; set; }
-        public byte id { get; set; }
         public Dictionary<SysExCommand.CommandType, SysExCommand> commands;
 
         public override string ToString () {

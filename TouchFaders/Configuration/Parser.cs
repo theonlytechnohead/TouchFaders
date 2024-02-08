@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace TouchFaders.Configuration {
     internal class Parser {
@@ -68,29 +69,28 @@ namespace TouchFaders.Configuration {
             return path;
         }
 
-        public static void Store (object data, string path = "") {
+        public async static Task Store (object data, string path = "") {
             path = process(path, data.GetType().Name);
-            using (StreamWriter writer = writeFile(path)) {
-                if (writer == null) { return; }
-                foreach (var item in data.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
-                    writer.Write($"{item.Name}: ");
-                    if (item.PropertyType == typeof(string)) {
-                        writer.WriteLine($"\"{item.GetValue(data)}\"");
-                    } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
-                        writer.WriteLine($"List<{(item.GetValue(data) as IEnumerable).GetType().GetGenericArguments()[0].Name}>");
-                        // iterate and store recursive
-                        int i = 0;
-                        foreach (var listItem in item.GetValue(data) as IEnumerable) {
-                            Store(listItem, Path.Combine(path, listItem.GetType().Name + i));
-                            i++;
-                        }
-                    } else if (item.PropertyType.IsClass) {
-                        writer.WriteLine(item.GetValue(data).ToString());
-                        // store recursive
-                        Store(item.GetValue(data), Path.Combine(path, item.Name));
-                    } else {
-                        writer.WriteLine(item.GetValue(data));
+            using StreamWriter writer = writeFile(path);
+            if (writer == null) { return; }
+            foreach (var item in data.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
+                await writer.WriteAsync($"{item.Name}: ");
+                if (item.PropertyType == typeof(string)) {
+                    await writer.WriteLineAsync($"\"{item.GetValue(data)}\"");
+                } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
+                    await writer.WriteLineAsync($"List<{(item.GetValue(data) as IEnumerable).GetType().GetGenericArguments()[0].Name}>");
+                    // iterate and store recursive
+                    int i = 0;
+                    foreach (var listItem in item.GetValue(data) as IEnumerable) {
+                        _ = Store(listItem, Path.Combine(path, listItem.GetType().Name + i));
+                        i++;
                     }
+                } else if (item.PropertyType.IsClass) {
+                    await writer.WriteLineAsync(item.GetValue(data).ToString());
+                    // store recursive
+                    _ = Store(item.GetValue(data), Path.Combine(path, item.Name));
+                } else {
+                    writer.WriteLine(item.GetValue(data));
                 }
             }
         }
