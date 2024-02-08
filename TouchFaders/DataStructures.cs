@@ -8,14 +8,14 @@ namespace TouchFaders {
     class DataStructures {
 
         public static List<SolidColorBrush> bgColours = new List<SolidColorBrush>() {
-            new SolidColorBrush(Color.FromRgb(1, 1, 253)), // blue, default
-			new SolidColorBrush(Color.FromRgb(255, 102, 1)), // orange
-			new SolidColorBrush(Color.FromRgb(153, 102, 1)), // brown (gold)
-			new SolidColorBrush(Color.FromRgb(102, 1, 153)), // purple
-			new SolidColorBrush(Color.FromRgb(1, 153, 255)), // cyan
-			new SolidColorBrush(Color.FromRgb(255, 102, 153)), // pink
-			new SolidColorBrush(Color.FromRgb(102, 1, 1)), // bergundy (brown)
-			new SolidColorBrush(Color.FromRgb(1, 102, 51)) // green
+            new SolidColorBrush(Color.FromRgb(1, 1, 253)),      // blue, default
+			new SolidColorBrush(Color.FromRgb(255, 102, 1)),    // orange
+			new SolidColorBrush(Color.FromRgb(153, 102, 1)),    // brown (gold)
+			new SolidColorBrush(Color.FromRgb(102, 1, 153)),    // purple
+			new SolidColorBrush(Color.FromRgb(1, 153, 255)),    // cyan
+			new SolidColorBrush(Color.FromRgb(255, 102, 153)),  // pink
+			new SolidColorBrush(Color.FromRgb(102, 1, 1)),      // bergundy (brown)
+			new SolidColorBrush(Color.FromRgb(1, 102, 51))      // green
 		};
 
         public static ObservableCollection<string> bgColourNames = new ObservableCollection<string>() {
