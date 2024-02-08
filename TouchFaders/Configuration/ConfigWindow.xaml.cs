@@ -21,7 +21,6 @@ namespace TouchFaders {
                 MainWindow.instance.config.MIXER.type = value;
                 UpdateModels();
                 UpdateCounts();
-                UpdateConnections();
             }
         }
 
@@ -104,30 +103,6 @@ namespace TouchFaders {
             mixSlider.Value = mixes;
         }
 
-        void UpdateConnections () {
-            rcpConnection.IsEnabled = true;
-            switch (mixerType) {
-                case Mixer.Type.QL:
-                case Mixer.Type.CL:
-                    rcpConnection.IsChecked = true;
-                    break;
-            }
-        }
-
-        public Mixer.Connection mixerConnection {
-            get {
-                return MainWindow.instance.config.MIXER.connection;
-            }
-            set {
-                MainWindow.instance.config.MIXER.connection = value;
-                switch (value) {
-                    case Mixer.Connection.RCP:
-                        deviceIDSlider.IsEnabled = false;
-                        deviceIDSlider.Value = 1;
-                        break;
-                }
-            }
-        }
 
         ObservableCollection<Mixer> mixers = new ObservableCollection<Mixer>();
 
@@ -143,7 +118,6 @@ namespace TouchFaders {
 
             UpdateModels();
             UpdateCounts();
-            UpdateConnections();
 
             deviceIDLabel.Content = $"ID: {config.DEVICE_ID}";
             deviceIDSlider.Value = config.DEVICE_ID;

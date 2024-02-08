@@ -1146,16 +1146,7 @@ namespace TouchFaders {
 
         #region Console I/O API
         void TryStart () {
-            switch (config.MIXER.connection) {
-                case Mixer.Connection.RCP:
-                    switch (config.MIXER.type) {
-                        case Mixer.Type.QL:
-                        case Mixer.Type.CL:
-                            AudioConsole.Connect(addressTextBox.Text);
-                            break;
-                    }
-                    break;
-            }
+            AudioConsole.Connect(addressTextBox.Text);
         }
         #endregion
 

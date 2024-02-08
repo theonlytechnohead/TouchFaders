@@ -73,28 +73,17 @@ namespace TouchFaders {
         }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public enum Connection {
-            RCP
-        }
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Model {
             _1, _3, _5
         }
 
-        public Mixer () { type = Type.QL; model = Model._1; connection = Connection.RCP; channelCount = 0; mixCount = 0; id = 0; commands = QL_CL_commands; }
-        private Mixer (int channels, int mixes, byte midi_id, Type type, Model model, Connection connection) {
+        public Mixer () { type = Type.QL; model = Model._1; channelCount = 0; mixCount = 0; id = 0; commands = QL_CL_commands; }
+        private Mixer (int channels, int mixes, byte midi_id, Type type, Model model) {
             channelCount = channels;
             mixCount = mixes;
             id = midi_id;
-            switch (type) {
-                case Type.QL:
-                case Type.CL:
-                    commands = QL_CL_commands;
-                    break;
-            }
+            commands = QL_CL_commands;
             this.model = model;
-            this.connection = connection;
         }
 
         public string modelString {
@@ -121,16 +110,6 @@ namespace TouchFaders {
                     case Type.QL:
                         break;
                     case Type.CL:
-                        break;
-                }
-            }
-        }
-        private Connection c;
-        public Connection connection {
-            get => c;
-            set {
-                c = value; switch (connection) {
-                    case Connection.RCP:
                         break;
                 }
             }
@@ -186,12 +165,12 @@ namespace TouchFaders {
                     { SysExCommand.CommandType.kChannelSelected, new SysExCommand(new byte[] {0x02, 0x39, 0x00, 0x10, 0x00}) }
                 };
 
-        public static Mixer QL5 => new Mixer(64, 16, 0x19, Type.QL, Model._5, Connection.RCP);
-        public static Mixer QL1 => new Mixer(32, 16, 0x19, Type.QL, Model._1, Connection.RCP);
+        public static Mixer QL5 => new Mixer(64, 16, 0x19, Type.QL, Model._5);
+        public static Mixer QL1 => new Mixer(32, 16, 0x19, Type.QL, Model._1);
 
-        public static Mixer CL5 => new Mixer(72, 24, 0x19, Type.CL, Model._5, Connection.RCP);
-        public static Mixer CL3 => new Mixer(64, 24, 0x19, Type.CL, Model._3, Connection.RCP);
-        public static Mixer CL1 => new Mixer(48, 24, 0x19, Type.CL, Model._1, Connection.RCP);
+        public static Mixer CL5 => new Mixer(72, 24, 0x19, Type.CL, Model._5);
+        public static Mixer CL3 => new Mixer(64, 24, 0x19, Type.CL, Model._3);
+        public static Mixer CL1 => new Mixer(48, 24, 0x19, Type.CL, Model._1);
 
     }
 

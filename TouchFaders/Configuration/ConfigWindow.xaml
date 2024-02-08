@@ -192,7 +192,6 @@
                         <Grid.Resources>
                             <local:ComparisonConverter x:Key="ComparisonConverter"/>
                         </Grid.Resources>
-                        <RadioButton x:Name="rcpConnection" Template="{DynamicResource RadioButtonThemable}" Content="RCP" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding ElementName=configWindow, Path=mixerConnection, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static local:Mixer+Connection.RCP}}" Grid.Row="2" GroupName="connectionType"/>
                     </Grid>
                 </GroupBox>
             </Grid>
