@@ -298,19 +298,19 @@ namespace TouchFaders {
                 TcpClient client = listener.AcceptTcpClient();
 
                 NetworkStream networkStream = client.GetStream();
+                IPEndPoint ipEndpoint = client.Client.RemoteEndPoint as IPEndPoint;
+                IPAddress ipAddress = ipEndpoint.Address;
                 byte[] buffer = new byte[client.ReceiveBufferSize];
-                byte[] ipBuffer = new byte[4];
 
                 int bytesRead = networkStream.Read(buffer, 0, client.ReceiveBufferSize);
-                Array.Copy(buffer, ipBuffer, 4);
 
                 string dataReceived = BitConverter.ToString(buffer, 0, bytesRead);
                 //Console.WriteLine($"Data received: {dataReceived}");
-                Console.WriteLine($"Device {Encoding.ASCII.GetString(buffer, 4, bytesRead - 4)} connected from {new IPAddress(ipBuffer)}");
+                Console.WriteLine($"Device {Encoding.ASCII.GetString(buffer, 0, bytesRead)} connected from {ipAddress}");
 
                 int ports = devices.Count + 1;
 
-                AddOSCDevice(new IPAddress(ipBuffer), Encoding.ASCII.GetString(buffer, 4, bytesRead - 4), ports);
+                AddOSCDevice(ipAddress, Encoding.ASCII.GetString(buffer, 0, bytesRead), ports);
 
 
                 byte oscSend = Convert.ToByte(ports); // offset from 9000 in client app
