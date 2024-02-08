@@ -1,5 +1,3 @@
-using Melanchall.DryWetMidi.Core;
-using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -52,12 +50,8 @@ namespace TouchFaders {
         ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
         Timer advertisingTimer;
 
-        // MIDI
-        OutputDevice Console_in;
-        InputDevice Console_out;
-        Timer queueTimer;
+        // Metering
         Timer meteringTimer;
-        public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
         // RCP
         AudioConsole audioConsole = new AudioConsole();
@@ -416,340 +410,7 @@ namespace TouchFaders {
         }
         #endregion
 
-        #region MIDI management
-        public void InitializeMIDI () {
-            Console_in.EventSent += Console_in_EventSent;
-            Console_out.EventReceived += Console_out_EventReceived;
-            try {
-                Console_out.StartEventsListening();
-            } catch (MidiDeviceException ex) {
-                Console.WriteLine(ex.Message);
-                return;
-            }
-            if (Console_out.IsListeningForEvents) {
-                Dispatcher.Invoke(() => {
-                    Title = "TouchFaders | connected";
-                });
-                //queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
-                selectedChannelIndexToGet.Push(0);
-                //meteringTimer = new Timer(null, null, 100, 2000); // must be requested "at least every 10 seconds" according to OM
-                //selectedChannelTimer = new Timer(null, null, 1000, 500);
-                SendAllAudioSessions();
-                //await GetChannelNames();
-            }
-        }
-
-        void sendQueueItem (object state) {
-            if (midiQueue.Count > 0) {
-                try {
-                    NormalSysExEvent sysExEvent = midiQueue.Dequeue();
-                    if (sysExEvent != null) {
-                        Console_in.SendEvent(sysExEvent);
-                        Dispatcher.Invoke(() => syncProgressBar.Value += 1);
-                    }
-                } catch (MidiDeviceException ex) {
-                    Console.WriteLine($"Well shucks, {Console_in.Name} don't work no more...");
-                    Console.WriteLine(ex.Message);
-                    MessageBox.Show(ex.Message);
-                } catch (ObjectDisposedException) {
-                    Console.WriteLine($"Tried to use {Console_in.Name} without initializing MIDI!");
-                    MessageBox.Show("Initialize MIDI first!");
-                } catch (NullReferenceException) {
-                    Console.WriteLine($"Tried to use MIDI device without initializing MIDI!");
-                    MessageBox.Show("Initialize MIDI first!");
-                }
-            }
-        }
-        #endregion
-
-        #region SysExMIDIHelpers
-        bool CheckSysEx (byte[] bytes) {
-            if (bytes.Length != 17) {
-                return false;
-            }
-            byte manufacturerID = bytes[0]; // YAMAHA is 0x43
-            byte deviceNumber = bytes[1];   // device number is 0x1n where n is 0-15
-            byte groupID = bytes[2];        // Digital mixer is 0x3E
-            byte modelID = bytes[3];        // LS9 is 0x12, CL/QL is 0x19
-            byte dataCategory = bytes[4];
-            byte elementMSB = bytes[5];
-            byte elementLSB = bytes[6];
-            byte indexMSB = bytes[7];
-            byte indexLSB = bytes[8];
-            byte channelMSB = bytes[9];     // Channel MSB per channel
-            byte channelLSB = bytes[10];    // Channel LSB with a 0 in the 8th bit
-            byte data5 = bytes[11];         // Data bytes start
-            byte data4 = bytes[12];
-            byte data3 = bytes[13];
-            byte data2 = bytes[14];
-            byte data1 = bytes[15];
-
-            byte device_byte = 0x10;
-
-            if (manufacturerID == 0x43 &&       // YAMAHA
-                deviceNumber == device_byte &&  // 1 = parameter send; 3 = parameter request, device ID 1
-                groupID == 0x3E              // Digital mixer
-                ) {   // 0x12 for LS9, 0x19 for CL/QL series
-                return true;
-            }
-            return false;
-        }
-
-        (int, int, int) ConvertByteArray (byte[] bytes) {
-            byte mixMSB = bytes[7];         // mix number MSB
-            byte mixLSB = bytes[8];         // mix number LSB
-            ushort mixHex = (ushort)(mixMSB << 7);       // Convert MSB to int in the right place
-            mixHex += mixLSB;               // Add LSB
-
-            byte channelMSB = bytes[9];    // channel number MSB
-            byte channelLSB = bytes[10];    // channel number LSB
-            ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
-            channel += channelLSB;          // Add LSB
-            channel++;                      // LS9 has 0-indexed channel numbers over MIDI
-
-            byte valueMSB = bytes[14];      // value MSB (for up to 14-bit value)
-            byte valueLSB = bytes[15];      // value LSB
-            ushort value = (ushort)(valueMSB << 7);      // Convert MSB to int in the right place
-            value += valueLSB;              // Add LSB
-            int mix = mixHex switch {
-                0x05 => 1,
-                0x08 => 2,
-                0x0B => 3,
-                0x0E => 4,
-                0x11 => 5,
-                0x14 => 6,
-                0x17 => 7,
-                0x1A => 8,
-                0x1D => 9,
-                0x20 => 10,
-                0x23 => 11,
-                0x26 => 12,
-                0x29 => 13,
-                0x2C => 14,
-                0x2F => 15,
-                0x32 => 16,
-                _ => throw new NotImplementedException()
-            };
-            return (mix, channel, value);
-        }
-
-        void HandleMixSendMIDI (SysExEvent midiEvent) {
-            (int mix, int channel, int value) = ConvertByteArray(midiEvent.Data);
-            /*int linkedIndex = linkedChannels.getIndex(channel - 1); // TODO: fix this
-			if (linkedIndex != -1) {
-				sendsToMix[mix - 1, linkedIndex] = value;
-			}*/
-            data.channels[channel - 1].sends[mix - 1].level = value;
-            //Console.WriteLine($"Received level for mix {mix}, channel {channel}, value {value}");
-            foreach (oscDevice device in devices) {
-                /*if (linkedIndex != -1) { // TODO: fix this
-					if (device.LegacyApp) {
-						device.sendOSCMessage(mix, linkedIndex + 1, value / 1023f);
-					} else {
-						device.sendOSCMessage(mix, linkedIndex + 1, value);
-					}
-				}*/
-                device.sendOSCMessage(mix, channel, value);
-            }
-        }
-
-        void HandleChannelName (byte[] bytes) {
-
-        }
-
-        void HandleChannelPatch (byte[] bytes) {
-            byte channelMSB = bytes[9];    // channel number MSB
-            byte channelLSB = bytes[10];    // channel number LSB
-            ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
-            channel += channelLSB;          // Add LSB
-
-            byte inputPatch = bytes[15];
-            data.channels[channel].patch = inputPatch;
-            foreach (oscDevice device in devices) {
-                device.SendChannelPatch(channel + 1, inputPatch);
-            }
-        }
-
-        void HandleChannelOn (byte[] bytes) {
-            byte channelMSB = bytes[9];    // channel number MSB
-            byte channelLSB = bytes[10];    // channel number LSB
-            ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
-            channel += channelLSB;          // Add LSB
-
-            byte on = bytes[15];
-
-            if (channel >= config.MIXER.channelCount - 8) {
-                int index = config.MIXER.channelCount - channel - 1;
-                bool mute;
-                if (on == 0) {
-                    mute = true;
-                } else {
-                    mute = false;
-                }
-                audioMixerWindow.UpdateSession(index, mute);
-            }
-        }
-
-        void HandleChannelLinkGroup (byte[] bytes) {
-            byte channelMSB = bytes[9];    // channel number MSB
-            byte channelLSB = bytes[10];    // channel number LSB
-            ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
-            channel += channelLSB;          // Add LSB
-
-            byte group = bytes[15];
-
-            data.channels[channel].linkGroup = DataStructures.ChannelGroupChars[group];
-        }
-
-        void HandleChannelFader (byte[] bytes) {
-            byte channelMSB = bytes[9];    // channel number MSB
-            byte channelLSB = bytes[10];    // channel number LSB
-            ushort channel = (ushort)(channelMSB << 7);  // Convert MSB to int in the right place
-            channel += channelLSB;          // Add LSB
-
-            byte data2 = bytes[14];
-            byte data1 = bytes[15];
-
-            ushort level = (ushort)(data2 << 7);
-            level += data1;
-
-            if (channel < config.MIXER.channelCount - 8) { // TODO: make this proper and UI and stuff
-                data.channels[channel].level = level;
-
-                selectedChannelCache[channel].level = level;
-                Dispatcher.Invoke(() => {
-                    if (syncProgressBar.Value >= syncProgressBar.Maximum) {
-                        if (channel == selectedChannel.channelIndex) {
-                            selectedChannel.level = level;
-                        } else {
-                            selectedChannel = selectedChannelCache[channel];
-                            selectedChannel.channelIndex = channel;
-                            selectedChannel.level = level;
-                            //_ = GetSelectedChannelInfo(); // if too many channels are moved in quick succession, overload occurs
-                            selectedChannelIndexToGet.Push(channel);
-                        }
-                    }
-                    UpdateSelectedChannel();
-                });
-            } else { // Now it's for the application audio mixer stuff
-                bool canUpdate = false;
-                Dispatcher.Invoke(() => canUpdate = syncProgressBar.Value >= syncProgressBar.Maximum);
-                if (canUpdate) {
-                    int index = config.MIXER.channelCount - channel - 1;
-                    float volume = level / 1023f;
-                    audioMixerWindow.UpdateSession(index, volume);
-                    //Console.WriteLine($"Updating audio session (index): {index}");
-                }
-            }
-        }
-        #endregion
-
         #region MIDI I/O
-        void Console_out_EventReceived (object sender, MidiEventReceivedEventArgs e) {
-            var console = (MidiDevice)sender;
-            if (e.Event.EventType != MidiEventType.NormalSysEx)
-                return;
-            SysExEvent midiEvent = (SysExEvent)e.Event;
-            byte[] bytes = midiEvent.Data;
-            //string byte_string = BitConverter.ToString(bytes).Replace("-", ", ");
-            //Console.WriteLine($"Event received from '{console.Name}' data: {byte_string}");
-            if (CheckSysEx(bytes)) {
-                byte dataCategory = bytes[4];   // kInputToMix is in 0x01
-                byte elementMSB = bytes[5];     // kInputToMix has MSB 0x00
-                byte elementLSB = bytes[6];     // kInputToMix has LSB 0x43
-                byte indexMSB = bytes[7];       // index MSB is for the Mix ...
-                byte indexLSB = bytes[8];       // ... as on the desk, MIX 0-5
-                byte channelMSB = bytes[9];     // Channel MSB per channel
-                byte channelLSB = bytes[10];    // Channel LSB with a 0 in the 8th bit
-
-                ushort element = (ushort)(elementMSB << 7);
-                element += elementLSB;
-
-                ushort index = (ushort)(indexMSB << 8);
-                index += indexLSB;
-
-                ushort channel = (ushort)(channelMSB << 7);
-                channel += channelLSB;
-
-                if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kInputToMix].DataCategory &&
-                    element == config.MIXER.commands[SysExCommand.CommandType.kInputToMix].Element &&
-                    0 <= channel &&
-                    channel < config.NUM_CHANNELS) {
-                    switch (index) { // the index number must be for Mix1-6 send level
-                        case 0x05:  // Mix 1 ...
-                        case 0x08:
-                        case 0x0B:
-                        case 0x0E:
-                        case 0x11:
-                        case 0x14:  // Mix 6
-                        case 0x17:
-                        case 0x1A:  // Mix 8
-                        case 0x1D:
-                        case 0x20:
-                        case 0x23:
-                        case 0x26:
-                        case 0x29:
-                        case 0x2C:
-                        case 0x2F:
-                        case 0x32:  // Mix 16
-                            HandleMixSendMIDI(midiEvent);
-                            return;
-                    }
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel].DataCategory &&
-                           element == config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel].Element &&
-                           0 <= channel &&
-                           channel < config.NUM_CHANNELS) {
-                    HandleChannelName(bytes);
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kInputOn].DataCategory &&
-                           element == config.MIXER.commands[SysExCommand.CommandType.kInputOn].Element) {
-                    HandleChannelOn(bytes);
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kInputFader].DataCategory &&
-                            element == config.MIXER.commands[SysExCommand.CommandType.kNameInputChannel].Element &&
-                            0 <= channel &&
-                            channel < config.NUM_CHANNELS) {
-                    HandleChannelFader(bytes);
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input].DataCategory &&
-                           element == config.MIXER.commands[SysExCommand.CommandType.kGroupID_Input].Element) {
-                    HandleChannelLinkGroup(bytes);
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kPatchInInput].DataCategory &&
-                           element == config.MIXER.commands[SysExCommand.CommandType.kPatchInInput].Element) {
-                    HandleChannelPatch(bytes);
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].DataCategory &&
-                           element == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Element &&
-                           index == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Index) {
-                    if (channel == selectedChannel.channelIndex) {
-                        selectedChannel.iconID = bytes[15];
-                        UpdateSelectedChannel();
-                    }
-                    selectedChannelCache[channel].iconID = bytes[15];
-                } else if (dataCategory == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].DataCategory &&
-                           element == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Element &&
-                           index == config.MIXER.commands[SysExCommand.CommandType.kIconInputChannel].Index + 1) {    // KIconBgColor
-                    if (channel == selectedChannel.channelIndex) {
-                        selectedChannel.bgColourID = bytes[15];
-                        UpdateSelectedChannel();
-                    }
-                    selectedChannelCache[channel].bgColourID = bytes[15];
-                }
-            } else {
-                byte dataCategory = bytes[4];
-                byte UL = bytes[5];
-                byte LU = bytes[6];
-                byte LL = bytes[7];
-                if (dataCategory == 0x21 &&
-                    UL == 0x01 &&
-                    LU == 0x03 &&
-                    LL == 0x00) {
-                    byte[] meteringData = new byte[config.MIXER.mixCount];
-                    for (int i = 0; i < config.MIXER.mixCount; i++) {
-                        meteringData[i] = bytes[i + 8];
-                    }
-                    //Console.WriteLine("Got metering data!");
-                    SendMixMeteringBroadcast(meteringData);
-                }
-            }
-        }
-
         public void SendFaderValue (int mix, int channel, int value, oscDevice sender) {
             this.data.channels[channel - 1].sends[mix - 1].level = value;
             SendOSCValue(mix, channel, value, sender);
@@ -848,20 +509,6 @@ namespace TouchFaders {
                 }
             });
         }
-
-        public async Task SendSysEx (NormalSysExEvent normalSysExEvent) {
-            midiQueue.Enqueue(normalSysExEvent);
-            await Task.Run(() => {
-                Thread.Sleep(25);
-            });
-        }
-
-        void Console_in_EventSent (object sender, MidiEventSentEventArgs e) {
-            var console = (MidiDevice)sender;
-            NormalSysExEvent sysExEvent = e.Event as NormalSysExEvent;
-            //string byte_string = BitConverter.ToString(sysExEvent.Data).Replace("-", ", ");
-            //Console.WriteLine($"{DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()} Event sent with data: {byte_string}");
-        }
         #endregion
 
         #region Console I/O API
@@ -889,7 +536,6 @@ namespace TouchFaders {
             if (stopConnectionButton.IsEnabled) {
                 Thread.Sleep(1000);
             }
-            (queueTimer as IDisposable)?.Dispose();
             Dispatcher.Invoke(() => {
                 Title = "TouchFaders | disconnected";
                 refreshConnectionButton.IsEnabled = false;
@@ -899,8 +545,6 @@ namespace TouchFaders {
                 syncProgressBar.Value = 0;
                 configWindowButton.IsEnabled = true;
             });
-            (Console_in as IDisposable)?.Dispose();
-            (Console_out as IDisposable)?.Dispose();
         }
 
         void refreshConnectionButton_Click (object sender, RoutedEventArgs e) {

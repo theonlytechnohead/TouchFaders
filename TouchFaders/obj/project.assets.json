@@ -2,19 +2,6 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.8": {
-      "Melanchall.DryWetMidi/5.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -31,7 +18,7 @@
           }
         }
       },
-      "Microsoft.Windows.SDK.Contracts/10.0.22621.1": {
+      "Microsoft.Windows.SDK.Contracts/10.0.22621.2428": {
         "type": "package",
         "dependencies": {
           "System.Runtime.InteropServices.WindowsRuntime": "4.3.0",
@@ -121,6 +108,7 @@
           "ref/netstandard2.0/Windows.UI.Core.AnimationMetrics.AnimationMetricsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Core.CoreWindowDialogsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Shell.SecurityAppManagerContract.winmd": {},
+          "ref/netstandard2.0/Windows.UI.Shell.WindowTabManagerContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.UIAutomation.UIAutomationContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.ViewManagement.ViewManagementViewScalingContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.WebUI.Core.WebUICommandBarContract.winmd": {},
@@ -329,19 +317,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win": {
-      "Melanchall.DryWetMidi/5.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -358,7 +333,7 @@
           }
         }
       },
-      "Microsoft.Windows.SDK.Contracts/10.0.22621.1": {
+      "Microsoft.Windows.SDK.Contracts/10.0.22621.2428": {
         "type": "package",
         "dependencies": {
           "System.Runtime.InteropServices.WindowsRuntime": "4.3.0",
@@ -448,6 +423,7 @@
           "ref/netstandard2.0/Windows.UI.Core.AnimationMetrics.AnimationMetricsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Core.CoreWindowDialogsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Shell.SecurityAppManagerContract.winmd": {},
+          "ref/netstandard2.0/Windows.UI.Shell.WindowTabManagerContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.UIAutomation.UIAutomationContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.ViewManagement.ViewManagementViewScalingContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.WebUI.Core.WebUICommandBarContract.winmd": {},
@@ -656,19 +632,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win-arm64": {
-      "Melanchall.DryWetMidi/5.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -685,7 +648,7 @@
           }
         }
       },
-      "Microsoft.Windows.SDK.Contracts/10.0.22621.1": {
+      "Microsoft.Windows.SDK.Contracts/10.0.22621.2428": {
         "type": "package",
         "dependencies": {
           "System.Runtime.InteropServices.WindowsRuntime": "4.3.0",
@@ -775,6 +738,7 @@
           "ref/netstandard2.0/Windows.UI.Core.AnimationMetrics.AnimationMetricsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Core.CoreWindowDialogsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Shell.SecurityAppManagerContract.winmd": {},
+          "ref/netstandard2.0/Windows.UI.Shell.WindowTabManagerContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.UIAutomation.UIAutomationContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.ViewManagement.ViewManagementViewScalingContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.WebUI.Core.WebUICommandBarContract.winmd": {},
@@ -983,19 +947,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x64": {
-      "Melanchall.DryWetMidi/5.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -1012,7 +963,7 @@
           }
         }
       },
-      "Microsoft.Windows.SDK.Contracts/10.0.22621.1": {
+      "Microsoft.Windows.SDK.Contracts/10.0.22621.2428": {
         "type": "package",
         "dependencies": {
           "System.Runtime.InteropServices.WindowsRuntime": "4.3.0",
@@ -1102,6 +1053,7 @@
           "ref/netstandard2.0/Windows.UI.Core.AnimationMetrics.AnimationMetricsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Core.CoreWindowDialogsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Shell.SecurityAppManagerContract.winmd": {},
+          "ref/netstandard2.0/Windows.UI.Shell.WindowTabManagerContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.UIAutomation.UIAutomationContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.ViewManagement.ViewManagementViewScalingContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.WebUI.Core.WebUICommandBarContract.winmd": {},
@@ -1310,19 +1262,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x86": {
-      "Melanchall.DryWetMidi/5.2.1": {
-        "type": "package",
-        "compile": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Melanchall.DryWetMidi.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -1339,7 +1278,7 @@
           }
         }
       },
-      "Microsoft.Windows.SDK.Contracts/10.0.22621.1": {
+      "Microsoft.Windows.SDK.Contracts/10.0.22621.2428": {
         "type": "package",
         "dependencies": {
           "System.Runtime.InteropServices.WindowsRuntime": "4.3.0",
@@ -1429,6 +1368,7 @@
           "ref/netstandard2.0/Windows.UI.Core.AnimationMetrics.AnimationMetricsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Core.CoreWindowDialogsContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.Shell.SecurityAppManagerContract.winmd": {},
+          "ref/netstandard2.0/Windows.UI.Shell.WindowTabManagerContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.UIAutomation.UIAutomationContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.ViewManagement.ViewManagementViewScalingContract.winmd": {},
           "ref/netstandard2.0/Windows.UI.WebUI.Core.WebUICommandBarContract.winmd": {},
@@ -1638,22 +1578,6 @@
     }
   },
   "libraries": {
-    "Melanchall.DryWetMidi/5.2.1": {
-      "sha512": "LMtff2kMFZJEhE8KXzaNye1oWyHyGaAu6sp/Taf45M5K+ZjEtWGZM4NmTX6bwLWfWj0e5oITFoQwrTONgothCQ==",
-      "type": "package",
-      "path": "melanchall.drywetmidi/5.2.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "icon.png",
-        "lib/net45/Melanchall.DryWetMidi.dll",
-        "lib/net45/Melanchall.DryWetMidi.xml",
-        "lib/netstandard2.0/Melanchall.DryWetMidi.dll",
-        "lib/netstandard2.0/Melanchall.DryWetMidi.xml",
-        "melanchall.drywetmidi.5.2.1.nupkg.sha512",
-        "melanchall.drywetmidi.nuspec"
-      ]
-    },
     "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
       "sha512": "UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg==",
       "type": "package",
@@ -1675,10 +1599,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.Windows.SDK.Contracts/10.0.22621.1": {
-      "sha512": "Zy3/J3aqxmuEIaMvGCeiFIHm1NnyswNS99FkAKUMc4BpB5rcAp35PqRxlhlHqgGdXOz6xIuy75eYT6zmAYKYHw==",
+    "Microsoft.Windows.SDK.Contracts/10.0.22621.2428": {
+      "sha512": "W+mt71YdJcDtNzgVrRSHQYdj2/p0t7Dlvd0MRVwT57S54uxzsw3Qyv6RjGTUZ6nwOLYe/MA4IMeCHQZqPi3Tpw==",
       "type": "package",
-      "path": "microsoft.windows.sdk.contracts/10.0.22621.1",
+      "path": "microsoft.windows.sdk.contracts/10.0.22621.2428",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1688,7 +1612,7 @@
         "c/Catalogs/cat4ec14c5368b7642563c070cd168960a8.cat",
         "c/Catalogs/cate59830bab4961666e8d8c2af1e5fa771.cat",
         "c/Catalogs/catf105a73f98cfc88c7b64d8f7b39a474c.cat",
-        "microsoft.windows.sdk.contracts.10.0.22621.1.nupkg.sha512",
+        "microsoft.windows.sdk.contracts.10.0.22621.2428.nupkg.sha512",
         "microsoft.windows.sdk.contracts.nuspec",
         "ref/netstandard2.0/Windows.AI.MachineLearning.MachineLearningContract.winmd",
         "ref/netstandard2.0/Windows.AI.MachineLearning.Preview.MachineLearningPreviewContract.winmd",
@@ -1772,6 +1696,7 @@
         "ref/netstandard2.0/Windows.UI.Core.AnimationMetrics.AnimationMetricsContract.winmd",
         "ref/netstandard2.0/Windows.UI.Core.CoreWindowDialogsContract.winmd",
         "ref/netstandard2.0/Windows.UI.Shell.SecurityAppManagerContract.winmd",
+        "ref/netstandard2.0/Windows.UI.Shell.WindowTabManagerContract.winmd",
         "ref/netstandard2.0/Windows.UI.UIAutomation.UIAutomationContract.winmd",
         "ref/netstandard2.0/Windows.UI.ViewManagement.ViewManagementViewScalingContract.winmd",
         "ref/netstandard2.0/Windows.UI.WebUI.Core.WebUICommandBarContract.winmd",
@@ -2371,9 +2296,8 @@
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
-      "Melanchall.DryWetMidi >= 5.2.1",
       "Microsoft.Bcl.AsyncInterfaces >= 6.0.0",
-      "Microsoft.Windows.SDK.Contracts >= 10.0.22621.1",
+      "Microsoft.Windows.SDK.Contracts >= 10.0.22621.2428",
       "Rug.Osc >= 1.2.5",
       "System.Text.Json >= 6.0.5"
     ]
@@ -2411,17 +2335,13 @@
     "frameworks": {
       "net48": {
         "dependencies": {
-          "Melanchall.DryWetMidi": {
-            "target": "Package",
-            "version": "[5.2.1, )"
-          },
           "Microsoft.Bcl.AsyncInterfaces": {
             "target": "Package",
             "version": "[6.0.0, )"
           },
           "Microsoft.Windows.SDK.Contracts": {
             "target": "Package",
-            "version": "[10.0.22621.1, )"
+            "version": "[10.0.22621.2428, )"
           },
           "Rug.Osc": {
             "target": "Package",
@@ -2431,12 +2351,7 @@
             "target": "Package",
             "version": "[6.0.5, )"
           }
-        },
-        "imports": [
-          "uap10.0.22621"
-        ],
-        "assetTargetFallback": true,
-        "warn": true
+        }
       }
     },
     "runtimes": {

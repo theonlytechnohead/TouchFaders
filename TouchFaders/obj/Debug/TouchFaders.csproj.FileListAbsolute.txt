@@ -136,7 +136,6 @@ D:\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.pdb
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.exe.config
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.exe
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.pdb
-C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Melanchall.DryWetMidi.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Rug.Osc.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\System.Buffers.dll
