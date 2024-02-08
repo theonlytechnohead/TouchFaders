@@ -47,9 +47,11 @@ namespace TouchFaders {
         }
         public Data data;
 
+        // OSC
         List<oscDevice> devices = new List<oscDevice>();
         ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
 
+        // MIDI
         OutputDevice Console_in;
         InputDevice Console_out;
         Timer queueTimer;
@@ -57,11 +59,16 @@ namespace TouchFaders {
         Timer meteringTimer;
         public Queue<NormalSysExEvent> midiQueue = new Queue<NormalSysExEvent>();
 
+        // RCP
+        AudioConsole audioConsole = new AudioConsole();
+
+        // selected channel
         public Data.SelectedChannel selectedChannel;
         List<Data.SelectedChannel> selectedChannelCache = new List<Data.SelectedChannel>();
         Stack<int> selectedChannelIndexToGet = new Stack<int>();
         Timer selectedChannelTimer;
 
+        // windows
         public InfoWindow infoWindow;
         public AudioMixerWindow audioMixerWindow;
 
@@ -1102,7 +1109,7 @@ namespace TouchFaders {
 
         #region Console I/O API
         void TryStart () {
-            AudioConsole.Connect(addressTextBox.Text);
+            audioConsole.Connect(addressTextBox.Text);
         }
         #endregion
 

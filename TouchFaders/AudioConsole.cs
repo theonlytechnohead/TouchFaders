@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TouchFaders {
-    class AudioConsole {
+    class AudioConsole : IConsole {
 
         public static State state;
         public enum State {
@@ -25,7 +25,7 @@ namespace TouchFaders {
         /// Uses native SCP commands over a TCP connection for modern consoles
         /// </summary>
         /// <param name="host">String containing any valid interpretation of an IP address to parse</param>
-        public static void Connect (string host) {
+        public void Connect (string host) {
             if (state != State.DISCONNECTED) return;
             state = State.STARTING;
 
@@ -33,7 +33,7 @@ namespace TouchFaders {
             if (!IPAddress.TryParse(host, out address)) {
                 return;
             }
-            IPEndPoint console = new IPEndPoint(address, TCP_Functions.RCP_PORT);
+            IPEndPoint console = new IPEndPoint(address, 49280);
             client = new TcpClient();
             client.Connect(console);
             outputStream = client.GetStream();
@@ -55,19 +55,19 @@ namespace TouchFaders {
             });
         }
 
-        public static void Sync () {
+        public void Sync () {
             if (state != State.RUNNING) return;
             state = State.SYNCING;
             // TODO: perform sync
             state = State.RUNNING;
         }
 
-        public static void Send (string message) {
+        public void Send (string message) {
             byte[] buffer = Encoding.UTF8.GetBytes(message);
             outputStream.Write(buffer, 0, buffer.Length);
         }
 
-        public static void Disconnect () {
+        public void Disconnect () {
             if (state != State.RUNNING) return;
             state = State.STOPPING;
             outputStream.Close();
@@ -75,7 +75,7 @@ namespace TouchFaders {
             state = State.DISCONNECTED;
         }
 
-        static void process (string message) {
+        void process (string message) {
             string[] messages = message.Split('\n');
             foreach (var m in messages) {
                 if (m.Length == 0) continue;
