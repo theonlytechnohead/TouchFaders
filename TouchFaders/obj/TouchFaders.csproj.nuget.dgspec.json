@@ -36,7 +36,7 @@
           "dependencies": {
             "Microsoft.Bcl.AsyncInterfaces": {
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.Windows.SDK.Contracts": {
               "target": "Package",
@@ -48,7 +48,7 @@
             },
             "System.Text.Json": {
               "target": "Package",
-              "version": "[6.0.5, )"
+              "version": "[8.0.1, )"
             }
           }
         }
