@@ -1,6 +1,8 @@
 ﻿namespace TouchFaders {
     interface IConsole {
-        bool Connect ();
-        bool Disconnect ();
+        void Connect (string address);
+        void Sync ();
+        void Send (string message);
+        void Disconnect ();
     }
 }
