@@ -417,7 +417,7 @@ namespace TouchFaders {
         #endregion
 
         #region MIDI management
-        public async Task InitializeMIDI () {
+        public void InitializeMIDI () {
             Console_in.EventSent += Console_in_EventSent;
             Console_out.EventReceived += Console_out_EventReceived;
             try {
@@ -430,14 +430,10 @@ namespace TouchFaders {
                 Dispatcher.Invoke(() => {
                     Title = "TouchFaders | connected";
                 });
-                queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
-                await GetAllFaderValues();
-                await GetChannelFaders();
-                await GetAllChannelsLinkGroup();
-                await RequestChannelsPatch();
+                //queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
                 selectedChannelIndexToGet.Push(0);
-                meteringTimer = new Timer(GetMixesMetering, null, 100, 2000); // must be requested "at least every 10 seconds" according to OM
-                selectedChannelTimer = new Timer(GetSelectedChannelInfo, null, 1000, 500);
+                //meteringTimer = new Timer(null, null, 100, 2000); // must be requested "at least every 10 seconds" according to OM
+                //selectedChannelTimer = new Timer(null, null, 1000, 500);
                 SendAllAudioSessions();
                 //await GetChannelNames();
             }
@@ -464,104 +460,6 @@ namespace TouchFaders {
                 }
             }
         }
-
-        async Task GetAllFaderValues () {
-            await GetFaderValuesForMix(0x05);
-            await GetFaderValuesForMix(0x08);
-            await GetFaderValuesForMix(0x0B);
-            await GetFaderValuesForMix(0x0E);
-            await GetFaderValuesForMix(0x11);
-            await GetFaderValuesForMix(0x14);
-            await GetFaderValuesForMix(0x17);
-            await GetFaderValuesForMix(0x1A);
-            await GetFaderValuesForMix(0x1D);
-            await GetFaderValuesForMix(0x20);
-            await GetFaderValuesForMix(0x23);
-            await GetFaderValuesForMix(0x26);
-            await GetFaderValuesForMix(0x29);
-            await GetFaderValuesForMix(0x2C);
-            await GetFaderValuesForMix(0x2F);
-            await GetFaderValuesForMix(0x32);
-        }
-
-        async Task GetFaderValuesForMix (byte mix) {
-
-        }
-
-        void GetSelectedChannelInfo (object state) {
-            bool canContinue = false;
-            try {
-                Dispatcher.Invoke(() => canContinue = syncProgressBar.Value >= syncProgressBar.Maximum);
-            } catch (TaskCanceledException) { }
-            if (!canContinue) return;
-            if (selectedChannelIndexToGet.Count == 0) {
-                return;
-            } else {
-                int channel = selectedChannelIndexToGet.Pop();
-                Task.Run(async () => {
-                    await GetChannelName(channel);
-                    await GetChannelIcon(channel);
-                    await GetChannelColour(channel);
-                });
-                selectedChannelIndexToGet.Clear();
-            }
-        }
-
-        async Task GetChannelFaders () {
-
-        }
-
-        async Task GetChannelNames () {
-            for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
-                await GetChannelName(channel);
-            }
-        }
-
-        async Task GetChannelName (int channel) {
-
-        }
-
-        async Task GetChannelIcon (int channel) {
-
-        }
-
-        async Task GetChannelColour (int channel) {
-
-        }
-
-        async Task RequestChannelsPatch () {
-            for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
-                await RequestChannelPatch(channel);
-            }
-        }
-
-        async Task RequestChannelPatch (int channel) {
-
-        }
-
-        async Task GetAllChannelsLinkGroup () {
-            for (int channel = 0; channel < config.NUM_CHANNELS; channel++) {
-                await GetChannelLinkGroup(channel);
-            }
-        }
-
-        async Task GetChannelLinkGroup (int channel) {
-
-        }
-
-        async void GetMixesMetering (object state) {
-            bool get = true;
-            Dispatcher.Invoke(() => {
-                get = syncProgressBar.Value >= syncProgressBar.Maximum;
-            });
-            if (!get) return;
-
-        }
-
-        async Task StopMetering () {
-
-        }
-
         #endregion
 
         #region SysExMIDIHelpers
@@ -896,8 +794,6 @@ namespace TouchFaders {
         }
 
         public void SendChannelLinkGroup (int channel, char linkGroup) {
-            byte device_byte = 0x10;
-
             ushort channel_int = Convert.ToUInt16(channel);
             byte channelLSB = (byte)(channel_int & 0x7Fu);
             ushort shiftedChannel = (ushort)(channel_int >> 7);
@@ -918,8 +814,6 @@ namespace TouchFaders {
         }
 
         public void SendAudioSession (int index, float volume, bool mute, bool sendIt = false) {
-            byte device_byte = 0x10;
-
             int channel = config.MIXER.channelCount - index - 1;
             ushort channel_int = Convert.ToUInt16(channel);
             byte channelLSB = (byte)(channel_int & 0x7Fu);
@@ -933,13 +827,6 @@ namespace TouchFaders {
             byte valueMSB = (byte)(shiftedValue & 0x7Fu);
 
             SysExCommand kInputFader = config.MIXER.commands[SysExCommand.CommandType.kInputFader];
-
-            byte on;
-            if (mute) {
-                on = 0x00;
-            } else {
-                on = 0x01;
-            }
         }
 
         private void SendOSCValue (int mix, int channel, int value, oscDevice sender) {
@@ -1000,7 +887,6 @@ namespace TouchFaders {
         void stopConnectionButton_Click (object sender, RoutedEventArgs e) {
             (meteringTimer as IDisposable)?.Dispose();
             if (stopConnectionButton.IsEnabled) {
-                _ = StopMetering();
                 Thread.Sleep(1000);
             }
             (queueTimer as IDisposable)?.Dispose();
@@ -1026,11 +912,8 @@ namespace TouchFaders {
                 }));
                 bool enabled = stopConnectionButton.IsEnabled;
                 CalculateSysExCommands();
-                Task.Run(async () => {
+                Task.Run(() => {
                     if (enabled) {
-                        await GetAllFaderValues();
-                        await GetChannelFaders();
-                        await GetAllChannelsLinkGroup();
                         selectedChannelIndexToGet.Push(0);
                         //await GetChannelNames();
                     }
