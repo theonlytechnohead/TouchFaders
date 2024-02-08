@@ -205,9 +205,6 @@ namespace TouchFaders {
                 selectedChannelCache.Add(new Data.SelectedChannel() { name = $"ch {i + 1}", channelIndex = i });
             }
 
-            // MIDI
-            Dispatcher.Invoke(() => displayMIDIDevices());
-
             // Networking
             advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
             Task.Run(() => UDPListener());
@@ -370,22 +367,6 @@ namespace TouchFaders {
             await Task.WhenAll(tasks);
         }
 
-        void displayMIDIDevices () {
-            Dispatcher.Invoke(() => { inputMIDIComboBox.IsEnabled = false; });
-            inputMIDIComboBox.Items.Clear();
-            foreach (InputDevice inputDevice in InputDevice.GetAll()) {
-                inputMIDIComboBox.Items.Add(inputDevice.Name);
-                Dispatcher.Invoke(() => { inputMIDIComboBox.IsEnabled = true; });
-            }
-            Dispatcher.Invoke(() => { outputMIDIComboBox.IsEnabled = false; });
-            outputMIDIComboBox.Items.Clear();
-            foreach (OutputDevice outputDevice in OutputDevice.GetAll()) {
-                outputMIDIComboBox.Items.Add(outputDevice.Name);
-                Dispatcher.Invoke(() => { outputMIDIComboBox.IsEnabled = true; });
-            }
-            Dispatcher.Invoke(() => { startConnectionButton.IsEnabled = true; });
-        }
-
         int SendMixMeteringBroadcast (byte[] data) {
             IPEndPoint targetEndPoint = new IPEndPoint(IPAddress.Broadcast, 8879);
             BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
@@ -435,27 +416,16 @@ namespace TouchFaders {
 
         #region MIDI management
         public async Task InitializeMIDI () {
-            try {
-                Dispatcher.Invoke(() => { Console_in = OutputDevice.GetByName(inputMIDIComboBox.SelectedItem.ToString()); });
-                Dispatcher.Invoke(() => { Console_out = InputDevice.GetByName(outputMIDIComboBox.SelectedItem.ToString()); });
-            } catch (ArgumentException ex) {
-                MessageBox.Show($"Can't initialize {inputMIDIComboBox.SelectedItem} and {outputMIDIComboBox.SelectedItem} MIDI ports!\n{ex.Message}");
-                Console.WriteLine(ex.Message);
-                return;
-            }
             Console_in.EventSent += Console_in_EventSent;
             Console_out.EventReceived += Console_out_EventReceived;
             try {
                 Console_out.StartEventsListening();
             } catch (MidiDeviceException ex) {
-                Console.WriteLine($"Couldn't start listening to {outputMIDIComboBox.SelectedItem}");
                 Console.WriteLine(ex.Message);
                 return;
             }
             if (Console_out.IsListeningForEvents) {
                 Dispatcher.Invoke(() => {
-                    inputMIDIComboBox.IsEnabled = false;
-                    outputMIDIComboBox.IsEnabled = false;
                     Title = "TouchFaders | connected";
                 });
                 queueTimer = new Timer(sendQueueItem, null, 0, 8); // theoretical minimum of 7.2 (when sending 18-byte SysEx)
@@ -1139,26 +1109,6 @@ namespace TouchFaders {
         #region UIEvents
         void startConnectionButton_Click (object sender, RoutedEventArgs e) {
             TryStart();
-            return;
-            if (inputMIDIComboBox.SelectedItem != null && outputMIDIComboBox.SelectedItem != null) {
-                CalculateSysExCommands();
-                Dispatcher.Invoke(() => {
-                    startConnectionButton.IsEnabled = false;
-                    configWindowButton.IsEnabled = false;
-                    syncProgressBar.IsIndeterminate = false;
-                    syncProgressBar.Value = 0;
-                });
-                Task.Run(async () => {
-                    await InitializeMIDI();
-                    Dispatcher.Invoke(() => {
-                        refreshConnectionButton.IsEnabled = true;
-                        stopConnectionButton.IsEnabled = true;
-                        syncProgressBar.IsIndeterminate = true;
-                    });
-                });
-            } else {
-                MessageBox.Show("Please select a MIDI input and output first!");
-            }
         }
 
         void CalculateSysExCommands () {
@@ -1188,13 +1138,6 @@ namespace TouchFaders {
             });
             (Console_in as IDisposable)?.Dispose();
             (Console_out as IDisposable)?.Dispose();
-            displayMIDIDevices();
-        }
-
-        void displayMIDIDevices_Click (object sender, RoutedEventArgs e) {
-            if (startConnectionButton.IsEnabled) {
-                displayMIDIDevices();
-            }
         }
 
         void refreshConnectionButton_Click (object sender, RoutedEventArgs e) {
@@ -1302,10 +1245,6 @@ namespace TouchFaders {
                 return;
             }
             switch (e.Key) {
-                case System.Windows.Input.Key.D:
-                    e.Handled = true;
-                    displayMIDIDevices();
-                    break;
                 case System.Windows.Input.Key.R:
                     e.Handled = true;
                     if (refreshConnectionButton.IsEnabled)
