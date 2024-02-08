@@ -45,15 +45,15 @@ namespace TouchFaders {
         public Data data;
 
         // OSC
-        List<oscDevice> devices = new List<oscDevice>();
-        ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
+        readonly List<oscDevice> devices = new List<oscDevice>();
+        readonly ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
         Timer advertisingTimer;
 
         // Metering
         Timer meteringTimer;
 
         // RCP
-        AudioConsole audioConsole = new AudioConsole();
+        readonly AudioConsole audioConsole = new AudioConsole();
 
         // selected channel
         public Data.SelectedChannel selectedChannel;
