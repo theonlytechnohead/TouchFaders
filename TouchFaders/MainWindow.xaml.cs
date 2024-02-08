@@ -81,7 +81,6 @@ namespace TouchFaders {
             config = (AppConfiguration.Config)Parser.Load(AppConfiguration.Config.defaultValues());
             Title = "TouchFaders | disconnected";
 
-            //Task.Run(() => { DataLoaded(AppConfiguration.LoadData()); });
             Task.Run(() => { DataLoaded((Data)Parser.Load(new Data())); });
 
             UISettings settings = new UISettings();

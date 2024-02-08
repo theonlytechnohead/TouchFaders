@@ -1,10 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-
-namespace TouchFaders {
+﻿namespace TouchFaders {
     public class AppConfiguration {
 
         public const string CONFIG_DIR = "config";
@@ -23,60 +17,6 @@ namespace TouchFaders {
                     NUM_MIXES = 16,
                     NUM_CHANNELS = 32
                 };
-            }
-        }
-
-        public static Config LoadConfig () {
-            Config config;
-            _ = Directory.CreateDirectory(CONFIG_DIR);
-            if (File.Exists($"{CONFIG_DIR}/{CONFIG_FILE}.json")) {
-                string configFile = File.ReadAllText($"{CONFIG_DIR}/{CONFIG_FILE}.json");
-                config = JsonSerializer.Deserialize<Config>(configFile);
-                if (config.NUM_MIXES == 0) {
-                    config.NUM_MIXES = Config.defaultValues().NUM_MIXES;
-                }
-                if (config.NUM_CHANNELS == 0) {
-                    config.NUM_CHANNELS = Config.defaultValues().NUM_CHANNELS;
-                }
-                if (config.MIXER == null) {
-                    config.MIXER = Config.defaultValues().MIXER;
-                }
-            } else {
-                config = Config.defaultValues();
-                _ = SaveConfig(config);
-            }
-            return config;
-        }
-
-        public static async Task SaveConfig (Config config) {
-            if (config == null) return;
-            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
-            _ = Directory.CreateDirectory(CONFIG_DIR);
-            using FileStream fs = File.Create($"{CONFIG_DIR}/{CONFIG_FILE}.json");
-            await JsonSerializer.SerializeAsync(fs, config, jsonSerializerOptions);
-        }
-
-        public static Data LoadData () {
-            Data data;
-            try {
-                string dataFile = File.ReadAllText($"{CONFIG_DIR}/{DATA_FILE}.json");
-                data = JsonSerializer.Deserialize<Data>(dataFile);
-            } catch (FileNotFoundException) {
-                data = new Data();
-                _ = SaveData(data);
-            } catch (Exception ex) {
-                Dispatcher.CurrentDispatcher.Invoke(() => System.Windows.MessageBox.Show(ex.StackTrace, ex.Message));
-                data = new Data();
-            }
-            return data;
-        }
-
-        public static async Task SaveData (Data data) {
-            JsonSerializerOptions serializerOptions = new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
-            _ = Directory.CreateDirectory(CONFIG_DIR);
-            if (data != null) {
-                using FileStream fs = File.Create($"{CONFIG_DIR}/{DATA_FILE}.json");
-                await JsonSerializer.SerializeAsync(fs, data, serializerOptions);
             }
         }
     }
