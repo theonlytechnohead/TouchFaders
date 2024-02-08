@@ -75,34 +75,26 @@ namespace TouchFaders.Configuration {
             using StreamWriter writer = writeFile(path);
             if (writer == null) { return; }
             foreach (var item in data.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
-                //Console.Write(item.Name);
                 await writer.WriteAsync($"{item.Name}: ");
                 if (item.PropertyType == typeof(string)) {
-                    //Console.WriteLine(" string");
                     await writer.WriteLineAsync($"\"{item.GetValue(data)}\"");
                 } else if (item.PropertyType == typeof(int)) {
-                    //Console.WriteLine(" int");
                     await writer.WriteLineAsync(item.GetValue(data).ToString());
                 } else if (item.PropertyType == typeof(bool)) {
-                    //Console.WriteLine(" bool");
                     await writer.WriteLineAsync(item.GetValue(data).ToString());
                 } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
-                    //Console.WriteLine(" list");
                     await writer.WriteLineAsync($"List<{(item.GetValue(data) as IEnumerable).GetType().GetGenericArguments()[0].Name}>");
                     // iterate and store recursive
                     int i = 0;
                     foreach (var listItem in item.GetValue(data) as IEnumerable) {
-                        _ = Store(listItem, Path.Combine(path, listItem.GetType().Name + i));
+                        await Store(listItem, Path.Combine(path, listItem.GetType().Name + i));
                         i++;
                     }
                 } else if (item.PropertyType.IsClass) {
-                    //Console.WriteLine(" class");
                     await writer.WriteLineAsync(item.GetValue(data).ToString());
                     // store recursive
-                    _ = Store(item.GetValue(data), Path.Combine(path, item.Name));
+                    await Store(item.GetValue(data), Path.Combine(path, item.Name));
                 } else {
-                    //Console.Write(" other ");
-                    //Console.WriteLine(item.PropertyType.IsEnum);
                     writer.WriteLine(item.GetValue(data));
                 }
             }
@@ -117,26 +109,21 @@ namespace TouchFaders.Configuration {
                     string name = line[0];
                     string value = line[1].TrimStart();
                     if (item.Name != name || !item.CanWrite) {
-                        //Console.WriteLine($"{name}:{value} skip ({item.Name}, {!item.CanWrite})");
                         continue;
                     }
                     if (item.PropertyType == typeof(string)) {
-                        //Console.WriteLine($"{name}:{value} string");
                         string property = value.Trim('"');
                         item.SetValue(data, property);
                     } else if (item.PropertyType == typeof(int)) {
-                        //Console.WriteLine($"{name}:{value} int");
                         int property = int.Parse(value);
                         item.SetValue(data, property);
                     } else if (item.PropertyType == typeof(bool)) {
-                        //Console.WriteLine($"{name}:{value} bool");
                         bool property = bool.Parse(value);
                         item.SetValue(data, property);
                     } else if (item.PropertyType.IsEnum) {
-                        //Console.WriteLine($"{name}:{value} enum");
-                        item.SetValue(data, Enum.Parse(item.PropertyType, value));
+                        var property = Enum.Parse(item.PropertyType, value);
+                        item.SetValue(data, property);
                     } else if (typeof(IList).IsAssignableFrom(item.PropertyType)) {
-                        //Console.WriteLine($"{name}:{value} list");
                         // iterate and load recursive
                         // https://stackoverflow.com/questions/46495831/how-can-i-cast-listobject-to-listfoo-when-foo-is-a-type-variable-and-i-dont
                         // this is cool and perhaps useful to know, but not actually necessary in this case
@@ -153,7 +140,6 @@ namespace TouchFaders.Configuration {
                             }
                         }
                     } else if (item.PropertyType.IsClass) {
-                        //Console.WriteLine(" class");
                         // load recursive
                         object subObject = Load(item.GetValue(data), Path.Combine(path, item.Name));
                         item.SetValue(data, subObject);

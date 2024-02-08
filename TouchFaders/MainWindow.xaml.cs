@@ -72,6 +72,7 @@ namespace TouchFaders {
 
             instance = this;
             config = (AppConfiguration.Config)Parser.Load(AppConfiguration.Config.defaultValues());
+            Console.WriteLine("Loaded config");
             Title = "TouchFaders | disconnected";
 
             Task.Run(() => { DataLoaded((Data)Parser.Load(new Data())); });
@@ -122,7 +123,10 @@ namespace TouchFaders {
             stopConnectionButton_Click(null, null);
             advertisingTimer?.Dispose();
             await Parser.Store(config);
+            Console.WriteLine("Stored config");
             await Parser.Store(data);
+            Console.WriteLine("Stored data");
+            Console.WriteLine("Closing now!");
             base.OnClosed(e);
         }
         #endregion
@@ -186,6 +190,7 @@ namespace TouchFaders {
 
         #region File & network I/O (and setup)
         void DataLoaded (Data data) {
+            Console.WriteLine("Loaded data");
             Dispatcher.Invoke(() => {
                 this.data = data;
                 configWindowButton.IsEnabled = true;
