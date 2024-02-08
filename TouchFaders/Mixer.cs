@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace TouchFaders {
 
@@ -67,12 +66,10 @@ namespace TouchFaders {
 
     public class Mixer {
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Type {
             QL, CL
         }
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum Model {
             _1, _3, _5
         }
