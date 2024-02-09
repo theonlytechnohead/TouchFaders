@@ -212,4 +212,4 @@ C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.Co
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.CopyComplete
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.exe
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.pdb
-C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\StarDust.RugOsc.netstandard.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Rug.Osc.dll

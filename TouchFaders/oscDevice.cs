@@ -43,16 +43,16 @@ namespace TouchFaders {
 
             AttachPatterns();
 
-            if (input.State == OscSocketState.Connected)
+            if (input.State == OscSocketState.Connected && output.State == OscSocketState.Connected) {
+                Console.WriteLine($"{deviceName} is connected over OSC");
                 listenThread.Start();
+            }
         }
 
         public void Dispose () {
-            Console.WriteLine($"Disposing of {deviceName}");
             disposed = true;
             listenThread?.Join();
             output?.Close();
-            Console.WriteLine($"Successfully disposed of {deviceName}");
         }
 
         void ListenLoop () {
@@ -63,26 +63,33 @@ namespace TouchFaders {
                         if (received) {
                             switch (osc.ShouldInvoke(packet)) {
                                 case OscPacketInvokeAction.Invoke:
+                                    Console.WriteLine(packet);
                                     osc.Invoke(packet);
                                     break;
                                 case OscPacketInvokeAction.DontInvoke:
-                                    Console.WriteLine($"Couldn't handle OSC: {packet}");
+                                    //Console.WriteLine($"Couldn't handle OSC: {packet}");
                                     break;
                                 case OscPacketInvokeAction.HasError:
-                                    Console.WriteLine($"OSC packet has error: {packet.Error} {packet}");
+                                    //Console.WriteLine($"OSC packet has error: {packet.Error} {packet}");
                                     break;
                                 case OscPacketInvokeAction.Pospone:
-                                    Console.WriteLine($"OSC packet was postponed: {packet}");
+                                    //Console.WriteLine($"OSC packet was postponed: {packet}");
                                     break;
                             }
                         }
                     }
                 }
-                while (input.State != OscSocketState.Closed && !disposed);
+                while (!disposed);
             } catch (Exception ex) {
-                Console.WriteLine("Exception in listen loop (to follow):");
+                Console.WriteLine("Exception in OSC listen loop:");
                 Console.WriteLine(ex.Message);
             }
+            // Exception thrown: 'System.NullReferenceException' in Rug.Osc.dll
+            // OR
+            // Exception thrown: 'System.ObjectDisposedException' in System.dll
+            // This is just a part of the library that happens, it's a bug (I think)
+            // Ignore it, it works anyway
+            input.Close();
         }
 
         void AttachPatterns () {
@@ -91,7 +98,6 @@ namespace TouchFaders {
             }));
             osc.Attach($"/{DISCONNECT}", new OscMessageEvent((OscMessage message) => {
                 // nothing to do
-                Console.WriteLine("DISCONNECTING!");
             }));
             osc.Attach($"/{MIX}[0-9]", new OscMessageEvent((OscMessage message) => {
                 string mix = message.Address.Split('/')[1];

@@ -264,7 +264,7 @@ namespace TouchFaders {
             while (true) {
                 byte[] buffer = listener.Receive(ref from);
                 string name = Encoding.ASCII.GetString(buffer);
-
+                Dispatcher.Invoke(() => Console.WriteLine($"{name} has diconnected"));
                 oscDevice deviceToRemove = null;
                 foreach (oscDevice device in devices) {
                     if (device.deviceName == name) {
@@ -275,7 +275,6 @@ namespace TouchFaders {
                 }
                 if (deviceToRemove != null) {
                     devices.Remove(deviceToRemove);
-                    Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
                 }
                 foreach (Device device in uiDevices) {
                     if (device.Name == name) {
