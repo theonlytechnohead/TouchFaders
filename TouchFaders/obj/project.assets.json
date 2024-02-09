@@ -137,13 +137,13 @@
           "build/Microsoft.Windows.SDK.Contracts.targets": {}
         }
       },
-      "Rug.Osc/1.2.5": {
+      "StarDust.RugOsc.netstandard/2019.3.2.6": {
         "type": "package",
         "compile": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         },
         "runtime": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         }
       },
       "System.Runtime/4.3.0": {
@@ -386,13 +386,13 @@
           "build/Microsoft.Windows.SDK.Contracts.targets": {}
         }
       },
-      "Rug.Osc/1.2.5": {
+      "StarDust.RugOsc.netstandard/2019.3.2.6": {
         "type": "package",
         "compile": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         },
         "runtime": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         }
       },
       "System.Runtime/4.3.0": {
@@ -635,13 +635,13 @@
           "build/Microsoft.Windows.SDK.Contracts.targets": {}
         }
       },
-      "Rug.Osc/1.2.5": {
+      "StarDust.RugOsc.netstandard/2019.3.2.6": {
         "type": "package",
         "compile": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         },
         "runtime": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         }
       },
       "System.Runtime/4.3.0": {
@@ -884,13 +884,13 @@
           "build/Microsoft.Windows.SDK.Contracts.targets": {}
         }
       },
-      "Rug.Osc/1.2.5": {
+      "StarDust.RugOsc.netstandard/2019.3.2.6": {
         "type": "package",
         "compile": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         },
         "runtime": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         }
       },
       "System.Runtime/4.3.0": {
@@ -1133,13 +1133,13 @@
           "build/Microsoft.Windows.SDK.Contracts.targets": {}
         }
       },
-      "Rug.Osc/1.2.5": {
+      "StarDust.RugOsc.netstandard/2019.3.2.6": {
         "type": "package",
         "compile": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         },
         "runtime": {
-          "lib/Rug.Osc.dll": {}
+          "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll": {}
         }
       },
       "System.Runtime/4.3.0": {
@@ -1481,17 +1481,17 @@
         "ref/netstandard2.0/en/Windows.Web.Http.Diagnostics.HttpDiagnosticsContract.xml"
       ]
     },
-    "Rug.Osc/1.2.5": {
-      "sha512": "nbujIPTk+QO90qv+U9E5reGFEBDpu8c4I65dkVxR4/xBL+WXUzUjvfBm5mEmtRRqFeoqfK7VLje+FEdz/FmoTg==",
+    "StarDust.RugOsc.netstandard/2019.3.2.6": {
+      "sha512": "XQ5xMTxkXJ3FhnwX7zydawLDTujoyhABC3qG/HA9TnxKWAOzrt7a5SLIm2esrLeTpit7lAnXnx+AXGPf8E46mA==",
       "type": "package",
-      "path": "rug.osc/1.2.5",
+      "path": "stardust.rugosc.netstandard/2019.3.2.6",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/Rug.Osc.XML",
-        "lib/Rug.Osc.dll",
-        "rug.osc.1.2.5.nupkg.sha512",
-        "rug.osc.nuspec"
+        "LICENSE.md/LICENSE",
+        "lib/netstandard2.0/StarDust.RugOsc.netstandard.dll",
+        "stardust.rugosc.netstandard.2019.3.2.6.nupkg.sha512",
+        "stardust.rugosc.netstandard.nuspec"
       ]
     },
     "System.Runtime/4.3.0": {
@@ -1952,7 +1952,7 @@
       "CoreAudio >= 1.37.0",
       "Microsoft.Bcl.AsyncInterfaces >= 8.0.0",
       "Microsoft.Windows.SDK.Contracts >= 10.0.22621.2428",
-      "Rug.Osc >= 1.2.5"
+      "StarDust.RugOsc.netstandard >= 2019.3.2.6"
     ]
   },
   "packageFolders": {
@@ -2000,9 +2000,9 @@
             "target": "Package",
             "version": "[10.0.22621.2428, )"
           },
-          "Rug.Osc": {
+          "StarDust.RugOsc.netstandard": {
             "target": "Package",
-            "version": "[1.2.5, )"
+            "version": "[2019.3.2.6, )"
           }
         }
       }

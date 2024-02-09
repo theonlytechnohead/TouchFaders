@@ -255,8 +255,8 @@
     <PackageReference Include="Microsoft.Windows.SDK.Contracts">
       <Version>10.0.22621.2428</Version>
     </PackageReference>
-    <PackageReference Include="Rug.Osc">
-      <Version>1.2.5</Version>
+    <PackageReference Include="StarDust.RugOsc.netstandard">
+      <Version>2019.3.2.6</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading;
 
 namespace TouchFaders {
-    public class oscDevice {
+    public class oscDevice : IDisposable {
 
         public const string CONNECT = "connect";
         public const string DISCONNECT = "disconnect";
@@ -28,6 +28,8 @@ namespace TouchFaders {
 
         Thread listenThread;
 
+        private bool disposed = false;
+
         public oscDevice (string name, IPAddress address, int sendPort, int receivePort) {
             deviceName = name;
 
@@ -41,18 +43,21 @@ namespace TouchFaders {
 
             AttachPatterns();
 
-            listenThread.Start();
+            if (input.State == OscSocketState.Connected)
+                listenThread.Start();
         }
 
-        public void Close () {
-            input.Dispose();
-            output.Dispose();
-            listenThread.Join();
+        public void Dispose () {
+            Console.WriteLine($"Disposing of {deviceName}");
+            disposed = true;
+            listenThread?.Join();
+            output?.Close();
+            Console.WriteLine($"Successfully disposed of {deviceName}");
         }
 
         void ListenLoop () {
             try {
-                while (input.State != OscSocketState.Closed) {
+                do {
                     if (input.State == OscSocketState.Connected) {
                         bool received = input.TryReceive(out OscPacket packet);
                         if (received) {
@@ -61,23 +66,22 @@ namespace TouchFaders {
                                     osc.Invoke(packet);
                                     break;
                                 case OscPacketInvokeAction.DontInvoke:
-                                    //Console.WriteLine($"Couldn't handle OSC: {packet}");
+                                    Console.WriteLine($"Couldn't handle OSC: {packet}");
                                     break;
                                 case OscPacketInvokeAction.HasError:
-                                    //Console.WriteLine($"OSC packet has error: {packet.Error} {packet}");
+                                    Console.WriteLine($"OSC packet has error: {packet.Error} {packet}");
                                     break;
                                 case OscPacketInvokeAction.Pospone:
-                                    //Console.WriteLine($"OSC packet was postponed: {packet}");
+                                    Console.WriteLine($"OSC packet was postponed: {packet}");
                                     break;
                             }
                         }
                     }
                 }
+                while (input.State != OscSocketState.Closed && !disposed);
             } catch (Exception ex) {
-                if (input.State == OscSocketState.Connected) {
-                    Console.WriteLine("Exception in listen loop (to follow):");
-                    Console.WriteLine(ex.Message);
-                }
+                Console.WriteLine("Exception in listen loop (to follow):");
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -87,6 +91,7 @@ namespace TouchFaders {
             }));
             osc.Attach($"/{DISCONNECT}", new OscMessageEvent((OscMessage message) => {
                 // nothing to do
+                Console.WriteLine("DISCONNECTING!");
             }));
             osc.Attach($"/{MIX}[0-9]", new OscMessageEvent((OscMessage message) => {
                 string mix = message.Address.Split('/')[1];
@@ -211,6 +216,7 @@ namespace TouchFaders {
         }
 
         public void SendDisconnect () {
+            if (output == null) return;
             OscMessage message = new OscMessage($"/{DISCONNECT}");
             output.Send(message);
         }

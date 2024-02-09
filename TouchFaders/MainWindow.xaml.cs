@@ -45,8 +45,8 @@ namespace TouchFaders {
         public Data data;
 
         // OSC
-        readonly List<oscDevice> devices = new List<oscDevice>();
-        readonly ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
+        List<oscDevice> devices = new List<oscDevice>();
+        ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
         Timer advertisingTimer;
 
         // Metering
@@ -109,7 +109,7 @@ namespace TouchFaders {
 
             foreach (oscDevice device in devices) {
                 device.SendDisconnect();
-                device.Close();
+                device.Dispose();
             }
 
             if (infoWindow != null) {
@@ -255,30 +255,27 @@ namespace TouchFaders {
         }
 
         private void UDPListener () {
-            IPAddress anAddress = IPAddress.Any;
+            IPAddress anyAddress = IPAddress.Any;
             UdpClient listener = new UdpClient();
-            IPEndPoint endPoint = new IPEndPoint(anAddress, 8878);
+            IPEndPoint endPoint = new IPEndPoint(anyAddress, 8878);
             listener.Client.Bind(endPoint);
 
-            var from = new IPEndPoint(0, 0);
+            var from = endPoint;
             while (true) {
                 byte[] buffer = listener.Receive(ref from);
-                //Console.WriteLine(BitConverter.ToString(buffer));
                 string name = Encoding.ASCII.GetString(buffer);
 
                 oscDevice deviceToRemove = null;
                 foreach (oscDevice device in devices) {
                     if (device.deviceName == name) {
                         deviceToRemove = device;
-                        device.Close();
+                        device.Dispose();
                         break;
                     }
                 }
                 if (deviceToRemove != null) {
                     devices.Remove(deviceToRemove);
-                    try {
-                        Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
-                    } catch (Exception) { }
+                    Dispatcher.Invoke(() => Console.WriteLine($"{name} just diconnected"));
                 }
                 foreach (Device device in uiDevices) {
                     if (device.Name == name) {

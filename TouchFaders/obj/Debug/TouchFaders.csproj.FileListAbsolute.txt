@@ -137,7 +137,6 @@ C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.exe.con
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.exe
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.pdb
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
-C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Rug.Osc.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\System.Threading.Tasks.Extensions.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\CoreAudio.dll
@@ -213,3 +212,4 @@ C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.Co
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.CopyComplete
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.exe
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.pdb
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\StarDust.RugOsc.netstandard.dll
