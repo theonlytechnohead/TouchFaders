@@ -165,7 +165,6 @@ C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.g.resou
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.Properties.Resources.resources
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.GenerateResource.cache
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.CoreCompileInputs.cache
-C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.CopyComplete
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.exe
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.pdb
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\TouchFaders.exe.config
@@ -213,3 +212,4 @@ C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.Co
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.exe
 C:\Users\Craig\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.pdb
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Rug.Osc.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFad.A8384997.Up2Date

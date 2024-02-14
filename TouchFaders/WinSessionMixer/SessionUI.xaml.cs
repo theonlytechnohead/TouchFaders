@@ -14,9 +14,9 @@ namespace TouchFaders {
     /// </summary>
     public partial class SessionUI : UserControl {
         public AudioSessionControl2 session;
-        private ConcurrentQueue<float> volPeakHistory = new ConcurrentQueue<float>();
-        private int historySize = 8;
-        private bool allowUpdateUI = true;
+        private readonly ConcurrentQueue<float> volPeakHistory = new ConcurrentQueue<float>();
+        private readonly int historySize = 8;
+        private readonly bool allowUpdateUI = true;
         private bool isClosing = false;
 
         private Task getPeaksTask;
@@ -36,12 +36,12 @@ namespace TouchFaders {
         ~SessionUI () {
             isClosing = true;
             Task.Run(() => {
-                while (!getPeaksTask.IsCompleted) { }
-                getPeaksTask.Dispose();
+                while (setMeterTask != null) { }
+                setMeterTask?.Dispose();
             });
             Task.Run(() => {
-                while (!setMeterTask.IsCompleted) { }
-                setMeterTask.Dispose();
+                while (getPeaksTask != null) { }
+                getPeaksTask?.Dispose();
             });
         }
 
@@ -78,30 +78,38 @@ namespace TouchFaders {
                 float lastValue = -1;
 
                 getPeaksTask = Task.Run(() => {
-                    while (!isClosing) {
-                        volPeakHistory.Enqueue(session.AudioMeterInformation.MasterPeakValue);
-                        if (volPeakHistory.Count > historySize) volPeakHistory.TryDequeue(out float _);
+                    try {
+                        while (!isClosing) {
+                            volPeakHistory.Enqueue(session.AudioMeterInformation.MasterPeakValue);
+                            if (volPeakHistory.Count > historySize) volPeakHistory.TryDequeue(out float _);
 
-                        Thread.Sleep(5);
+                            Thread.Sleep(5);
+                        }
+                    } catch (TaskCanceledException) {
+                        // Eh, who cares?
                     }
                 });
 
                 setMeterTask = Task.Run(() => {
-                    while (!isClosing) {
-                        newValue = volPeakHistory.Average();
+                    try {
+                        while (!isClosing) {
+                            newValue = volPeakHistory.Average();
 
-                        if (newValue != lastValue) {
-                            try {
-                                Dispatcher.Invoke(() => {
-                                    sessionProgressBar.Value = newValue;
-                                    sessionProgressBarGrey.Value = newValue;
-                                    lastValue = newValue;
-                                });
-                            } catch (TaskCanceledException) {
-                                // Eh, who cares?
+                            if (newValue != lastValue) {
+                                try {
+                                    Dispatcher.Invoke(() => {
+                                        sessionProgressBar.Value = newValue;
+                                        sessionProgressBarGrey.Value = newValue;
+                                        lastValue = newValue;
+                                    });
+                                } catch (TaskCanceledException) {
+                                    // Eh, who cares?
+                                }
                             }
+                            Thread.Sleep(16);
                         }
-                        Thread.Sleep(16);
+                    } catch (TaskCanceledException) {
+                        // Eh, who cares?
                     }
                 });
             };
@@ -136,23 +144,27 @@ namespace TouchFaders {
 
         private void UpdateMuted () {
             if (sessionCheckBox.IsChecked.Value) {
-                SolidColorBrush backgroundBrush = new SolidColorBrush();
-                backgroundBrush.Color = System.Windows.Media.Color.FromArgb(100, 240, 240, 240);
+                SolidColorBrush backgroundBrush = new SolidColorBrush {
+                    Color = Color.FromArgb(100, 240, 240, 240)
+                };
                 Background = backgroundBrush;
-                SolidColorBrush borderBrush = new SolidColorBrush();
-                borderBrush.Color = System.Windows.Media.Color.FromArgb(100, 200, 200, 200);
+                SolidColorBrush borderBrush = new SolidColorBrush {
+                    Color = Color.FromArgb(100, 200, 200, 200)
+                };
                 BorderBrush = borderBrush;
                 sessionProgressBar.Foreground = new SolidColorBrush() { Color = Color.FromRgb(176, 176, 176) };
                 Color greyColour = ((SolidColorBrush)sessionProgressBarGrey.Foreground).Color;
                 sessionProgressBarGrey.Foreground = new SolidColorBrush() { Color = Color.FromArgb(0, greyColour.R, greyColour.G, greyColour.B) };
             } else {
-                SolidColorBrush backgroundBrush = new SolidColorBrush();
-                Color bgColour = System.Windows.Media.Color.FromArgb(100, 255, 255, 255);
+                Color bgColour = Color.FromArgb(100, 255, 255, 255);
                 bgColour = Color.Multiply(bgColour, ((SolidColorBrush)MainWindow.instance.Background).Color.R);
-                backgroundBrush.Color = bgColour;
+                SolidColorBrush backgroundBrush = new SolidColorBrush {
+                    Color = bgColour
+                };
                 Background = backgroundBrush;
-                SolidColorBrush borderBrush = new SolidColorBrush();
-                borderBrush.Color = bgColour;
+                SolidColorBrush borderBrush = new SolidColorBrush {
+                    Color = bgColour
+                };
                 BorderBrush = borderBrush;
                 sessionProgressBar.Foreground = new SolidColorBrush() { Color = Color.FromRgb(6, 176, 37) };
                 Color greyColour = ((SolidColorBrush)sessionProgressBarGrey.Foreground).Color;

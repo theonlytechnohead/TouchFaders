@@ -207,8 +207,8 @@ namespace TouchFaders {
 
             // Networking
             advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
-            Task.Run(() => UDPListener());
             Task.Run(() => TCPListener());
+            Task.Run(() => UDPListener());
 
             // Supplementary windows...
             Dispatcher.Invoke(() => {
@@ -223,35 +223,17 @@ namespace TouchFaders {
         }
 
         private void UDPAdvertiser (object state) {
-            IPAddress localIP;
-            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0)) {
-                socket.Connect("8.8.8.8", 65530);
-                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                localIP = endPoint.Address;
-            }
-
             string name = Dns.GetHostName();
-
             Dispatcher.Invoke(() => {
                 MenuItem ipMenu = (MenuItem)menuBar.Items[menuBar.Items.Count - 1];
-                ipMenu.Header = $"{name} ({localIP})";
+                ipMenu.Header = name;
             });
 
-
-            byte[] directedBroadcast = localIP.GetAddressBytes();
-            directedBroadcast[3] = 0xFF;
-
-            IPEndPoint targetEndPoint = new IPEndPoint(new IPAddress(directedBroadcast), 8877);
-            BroadcastUDPClient sendUdpClient = new BroadcastUDPClient();
-            byte[] ipArray = localIP.GetAddressBytes();
+            IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, 8877);
+            BroadcastUDPClient broadcastUDPClient = new BroadcastUDPClient();
             byte[] nameArray = Encoding.UTF8.GetBytes(name);
-            byte[] data = new byte[ipArray.Length + nameArray.Length];
 
-            ipArray.CopyTo(data, 0);
-            nameArray.CopyTo(data, ipArray.Length - 1);
-
-            //Console.WriteLine($"Sent advertisement from {targetEndPoint.Address}: {BitConverter.ToString(data)}");
-            sendUdpClient.Send(data, data.Length, targetEndPoint);
+            broadcastUDPClient.Send(nameArray, nameArray.Length, broadcastEndpoint);
         }
 
         private void UDPListener () {
@@ -286,9 +268,10 @@ namespace TouchFaders {
         }
 
         private void TCPListener () {
-            IPAddress anAddress = IPAddress.Any;
-            TcpListener listener = new TcpListener(anAddress, 8878);
+            IPAddress allAddresses = IPAddress.Any;
+            TcpListener listener = new TcpListener(allAddresses, 8878);
             listener.Start();
+
 
             while (true) {
                 TcpClient client = listener.AcceptTcpClient();
@@ -308,14 +291,14 @@ namespace TouchFaders {
 
                 AddOSCDevice(ipAddress, Encoding.ASCII.GetString(buffer, 0, bytesRead), ports);
 
-
                 byte oscSend = Convert.ToByte(ports); // offset from 9000 in client app
                 byte oscReceive = Convert.ToByte(ports); // offset from 8000 in client app
 
-                List<byte> sendArray = new List<byte>();
-                sendArray.Add(oscSend);
-                sendArray.Add(oscReceive);
-                sendArray.Add(Convert.ToByte(config.NUM_CHANNELS));
+                List<byte> sendArray = new List<byte> {
+                    oscSend,
+                    oscReceive,
+                    Convert.ToByte(config.NUM_CHANNELS)
+                };
                 foreach (var channel in data.channels) {
                     sendArray.Add(Convert.ToByte(channel.bgColourId));
                 }
