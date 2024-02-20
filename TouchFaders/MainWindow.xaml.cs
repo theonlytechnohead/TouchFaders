@@ -206,9 +206,10 @@ namespace TouchFaders {
             }
 
             // Networking
-            advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
+            //advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
             Task.Run(() => TCPListener());
             Task.Run(() => UDPListener());
+            Task.Run(() => UDPAdvertiser(null));
 
             // Supplementary windows...
             Dispatcher.Invoke(() => {
@@ -229,11 +230,16 @@ namespace TouchFaders {
                 ipMenu.Header = name;
             });
 
+            // Win11 issue: https://superuser.com/questions/1758749/udp-broadcast-not-working-for-one-pc-in-the-lan
+            // it's too annoying to fix
+            // hence, probably time to...
+            // TODO: switch to zeroconf
             IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, 8877);
             BroadcastUDPClient broadcastUDPClient = new BroadcastUDPClient();
             byte[] nameArray = Encoding.UTF8.GetBytes(name);
 
             broadcastUDPClient.Send(nameArray, nameArray.Length, broadcastEndpoint);
+            broadcastUDPClient.Dispose();
         }
 
         private void UDPListener () {
@@ -498,6 +504,10 @@ namespace TouchFaders {
         void TryStart () {
             audioConsole.Connect(addressTextBox.Text);
         }
+
+        void TryStop() {
+            audioConsole.Disconnect();
+        }
         #endregion
 
         #region UIEvents
@@ -528,6 +538,7 @@ namespace TouchFaders {
                 syncProgressBar.Value = 0;
                 configWindowButton.IsEnabled = true;
             });
+            TryStop();
         }
 
         void refreshConnectionButton_Click (object sender, RoutedEventArgs e) {

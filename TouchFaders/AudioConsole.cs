@@ -35,14 +35,26 @@ namespace TouchFaders {
             client.Connect(console);
             outputStream = client.GetStream();
 
-            byte[] buffer = Encoding.UTF8.GetBytes("devinfo productname\n");
+            byte[] buffer = Encoding.UTF8.GetBytes("devstatus runmode\n");
             outputStream.Write(buffer, 0, buffer.Length);
 
-            buffer = Encoding.UTF8.GetBytes("scpmode sstype \"text\"\n");
+            buffer = Encoding.UTF8.GetBytes("devinfo productname\n");
+            outputStream.Write(buffer, 0, buffer.Length);
+
+            buffer = Encoding.UTF8.GetBytes("devinfo deviceid\n"); // equivalent to UNIT ID
+            outputStream.Write(buffer, 0, buffer.Length);
+
+            buffer = Encoding.UTF8.GetBytes("devinfo devicename\n");
+            outputStream.Write(buffer, 0, buffer.Length);
+
+            buffer = Encoding.UTF8.GetBytes("scpmode encoding utf8\n");
+            outputStream.Write(buffer, 0, buffer.Length);
+
+            buffer = Encoding.UTF8.GetBytes("scpmode keepalive 2000\n");
             outputStream.Write(buffer, 0, buffer.Length);
 
             Task.Run(() => {
-                while (true) {
+                while (state != State.DISCONNECTED || state != State.STOPPING) {
                     byte[] buffer = new byte[client.ReceiveBufferSize];
                     int bytes = outputStream.Read(buffer, 0, buffer.Length);
 
@@ -76,9 +88,7 @@ namespace TouchFaders {
             string[] messages = message.Split('\n');
             foreach (var m in messages) {
                 if (m.Length == 0) continue;
-                if (m.Contains("OK devinfo productname")) {
-                    System.Console.WriteLine($"Found a thing! {m}");
-                }
+                System.Console.WriteLine(m);
             }
         }
 
