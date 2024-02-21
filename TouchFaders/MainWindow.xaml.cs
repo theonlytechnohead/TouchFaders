@@ -1,3 +1,4 @@
+using Makaretu.Dns;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,6 +44,10 @@ namespace TouchFaders {
             }
         }
         public Data data;
+
+        // DNS-SD / mDNS / zeroconf
+        ServiceDiscovery discovery;
+        ServiceProfile profile;
 
         // OSC
         List<oscDevice> devices = new List<oscDevice>();
@@ -121,6 +126,8 @@ namespace TouchFaders {
                 audioMixerWindow.Close();
             }
             stopConnectionButton_Click(null, null);
+            discovery.Unadvertise();
+            discovery?.Dispose();
             advertisingTimer?.Dispose();
             await Parser.Store(config);
             Console.WriteLine("Stored config");
@@ -210,6 +217,7 @@ namespace TouchFaders {
             Task.Run(() => TCPListener());
             Task.Run(() => UDPListener());
             Task.Run(() => UDPAdvertiser(null));
+            DNSAdvertiser();
 
             // Supplementary windows...
             Dispatcher.Invoke(() => {
@@ -221,6 +229,12 @@ namespace TouchFaders {
                 infoWindow.KeyDown += MainWindow_KeyDown;
                 audioMixerWindow.KeyDown += MainWindow_KeyDown;
             });
+        }
+
+        private void DNSAdvertiser () {
+            profile = new ServiceProfile(Dns.GetHostName(), "_touchfaders._tcp", 8878);
+            discovery = new ServiceDiscovery();
+            discovery.Advertise(profile);
         }
 
         private void UDPAdvertiser (object state) {
@@ -505,7 +519,7 @@ namespace TouchFaders {
             audioConsole.Connect(addressTextBox.Text);
         }
 
-        void TryStop() {
+        void TryStop () {
             audioConsole.Disconnect();
         }
         #endregion

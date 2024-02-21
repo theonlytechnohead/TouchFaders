@@ -205,3 +205,13 @@ C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.csproj.
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFad.A8384997.Up2Date
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.exe
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\obj\Debug\TouchFaders.pdb
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.pdb
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.Core.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.Core.pdb
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\System.Net.IPNetwork.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.pdb
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.Multicast.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\SimpleBase.dll
+C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\SimpleBase.pdb
