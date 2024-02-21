@@ -285,13 +285,13 @@ namespace TouchFaders {
 
                 int bytesRead = networkStream.Read(buffer, 0, client.ReceiveBufferSize);
 
-                string dataReceived = BitConverter.ToString(buffer, 0, bytesRead);
+                //string dataReceived = BitConverter.ToString(buffer, 0, bytesRead);
                 //Console.WriteLine($"Data received: {dataReceived}");
-                Console.WriteLine($"Device {Encoding.ASCII.GetString(buffer, 0, bytesRead)} connected from {ipAddress}");
+                Console.WriteLine($"Device {Encoding.UTF8.GetString(buffer, 0, bytesRead)} connected from {ipAddress}");
 
                 int ports = devices.Count + 1;
 
-                AddOSCDevice(ipAddress, Encoding.ASCII.GetString(buffer, 0, bytesRead), ports);
+                AddOSCDevice(ipAddress, Encoding.UTF8.GetString(buffer, 0, bytesRead), ports);
 
                 byte oscSend = Convert.ToByte(ports); // offset from 9000 in client app
                 byte oscReceive = Convert.ToByte(ports); // offset from 8000 in client app
