@@ -257,14 +257,11 @@ namespace TouchFaders {
         }
 
         private void UDPListener () {
-            IPAddress anyAddress = IPAddress.Any;
-            UdpClient listener = new UdpClient();
-            IPEndPoint endPoint = new IPEndPoint(anyAddress, 8878);
-            listener.Client.Bind(endPoint);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.IPv6Any, 8878);
+            UdpClient listener = new UdpClient(endPoint);
 
-            var from = endPoint;
             while (true) {
-                byte[] buffer = listener.Receive(ref from);
+                byte[] buffer = listener.Receive(ref endPoint);
                 string name = Encoding.ASCII.GetString(buffer);
                 Dispatcher.Invoke(() => Console.WriteLine($"{name} has diconnected"));
                 oscDevice deviceToRemove = null;
