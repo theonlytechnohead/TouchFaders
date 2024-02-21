@@ -288,8 +288,7 @@ namespace TouchFaders {
         }
 
         private void TCPListener () {
-            IPAddress allAddresses = IPAddress.Any;
-            TcpListener listener = new TcpListener(allAddresses, 8878);
+            TcpListener listener = TcpListener.Create(8878);
             listener.Start();
 
 
