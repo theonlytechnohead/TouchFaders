@@ -52,7 +52,6 @@ namespace TouchFaders {
         // OSC
         List<oscDevice> devices = new List<oscDevice>();
         ObservableCollection<Device> uiDevices = new ObservableCollection<Device>();
-        Timer advertisingTimer;
 
         // Metering
         Timer meteringTimer;
@@ -128,7 +127,6 @@ namespace TouchFaders {
             stopConnectionButton_Click(null, null);
             discovery.Unadvertise();
             discovery?.Dispose();
-            advertisingTimer?.Dispose();
             await Parser.Store(config);
             Console.WriteLine("Stored config");
             await Parser.Store(data);
@@ -213,10 +211,9 @@ namespace TouchFaders {
             }
 
             // Networking
-            //advertisingTimer = new Timer(UDPAdvertiser, null, 0, 2000);
             Task.Run(() => TCPListener());
             Task.Run(() => UDPListener());
-            Task.Run(() => UDPAdvertiser(null));
+            Task.Run(() => GetHostname());
             DNSAdvertiser();
 
             // Supplementary windows...
@@ -237,23 +234,12 @@ namespace TouchFaders {
             discovery.Advertise(profile);
         }
 
-        private void UDPAdvertiser (object state) {
+        private void GetHostname () {
             string name = Dns.GetHostName();
             Dispatcher.Invoke(() => {
                 MenuItem ipMenu = (MenuItem)menuBar.Items[menuBar.Items.Count - 1];
                 ipMenu.Header = name;
             });
-
-            // Win11 issue: https://superuser.com/questions/1758749/udp-broadcast-not-working-for-one-pc-in-the-lan
-            // it's too annoying to fix
-            // hence, probably time to...
-            // TODO: switch to zeroconf
-            IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, 8877);
-            BroadcastUDPClient broadcastUDPClient = new BroadcastUDPClient();
-            byte[] nameArray = Encoding.UTF8.GetBytes(name);
-
-            broadcastUDPClient.Send(nameArray, nameArray.Length, broadcastEndpoint);
-            broadcastUDPClient.Dispose();
         }
 
         private void UDPListener () {
