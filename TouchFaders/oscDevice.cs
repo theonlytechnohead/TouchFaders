@@ -35,7 +35,7 @@ namespace TouchFaders {
 
             osc = new OscAddressManager();
 
-            input = new OscReceiver(receivePort);
+            input = new OscReceiver(IPAddress.IPv6Any, receivePort);
             input.Connect();
             listenThread = new Thread(new ThreadStart(ListenLoop));
             output = new OscSender(address, sendPort);
