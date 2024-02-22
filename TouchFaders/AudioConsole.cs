@@ -69,7 +69,7 @@ namespace TouchFaders {
                     int bytes = outputStream.Read(buffer, 0, buffer.Length);
 
                     string message = Encoding.UTF8.GetString(buffer, 0, bytes);
-                    process(message);
+                    ProcessMessages(message);
                 }
             });
         }
@@ -94,27 +94,32 @@ namespace TouchFaders {
             state = State.DISCONNECTED;
         }
 
-        void process (string messages) {
+        void ProcessMessages (string messages) {
             foreach (var message in messages.Split('\n')) {
                 if (message.Length == 0) continue;
-                switch (message.Split(' ')[0]) {
-                    case "OK":
-                        Console.WriteLine(message);
-                        if (message.Contains("MIXER:Current/InCh/Fader/Level")) {
-                            Console.WriteLine("We found it!");
-                            Console.WriteLine(message.Split(' ').Last());
-                        }
-                        break;
-                    case "OKm":
-                        break;
-                    case "NOTIFY":
-                        break;
-                    case "ERROR":
-                        break;
-                    default:
-                        Console.WriteLine(message);
-                        break;
-                }
+                ProcessMessage(message);
+            }
+        }
+
+        private void ProcessMessage (string message) {
+            RCPMessage parsedMessage = RCPParser.Parse(message);
+            switch (message.Split(' ')[0]) {
+                case "OK":
+                    Console.WriteLine(message);
+                    if (message.Contains("MIXER:Current/InCh/Fader/Level")) {
+                        Console.WriteLine("We found it!");
+                        Console.WriteLine(message.Split(' ').Last());
+                    }
+                    break;
+                case "OKm":
+                    break;
+                case "NOTIFY":
+                    break;
+                case "ERROR":
+                    break;
+                default:
+                    Console.WriteLine(message);
+                    break;
             }
         }
 
