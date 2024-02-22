@@ -215,3 +215,13 @@ C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.pdb
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.Multicast.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\SimpleBase.dll
 C:\Users\desktop\Documents\TouchFaders\TouchFaders\bin\Debug\SimpleBase.pdb
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.dll
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.pdb
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.Core.dll
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Common.Logging.Core.pdb
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\System.Net.IPNetwork.dll
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.dll
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.pdb
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\Makaretu.Dns.Multicast.dll
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\SimpleBase.dll
+C:\Users\Craig\Documents\TouchFaders\TouchFaders\bin\Debug\SimpleBase.pdb

@@ -15,10 +15,7 @@ namespace TouchFaders {
 
 
         static TcpClient client;
-        static NetworkStream outputStream;
-        static TcpListener listener;
-        static NetworkStream inputStream;
-        static TcpClient consoleClient;
+        static NetworkStream stream;
 
         /// <summary>
         /// Uses native SCP commands over a TCP connection for modern consoles
@@ -43,7 +40,7 @@ namespace TouchFaders {
             };
             try {
                 client.Connect(console);
-                outputStream = client.GetStream();
+                stream = client.GetStream();
             } catch (Exception) {
                 startFailed("Couldn't connect to " + address);
                 return;
@@ -52,10 +49,12 @@ namespace TouchFaders {
             state = State.STARTING;
 
             byte[] buffer = Encoding.UTF8.GetBytes("devstatus runmode\n");
-            outputStream.Write(buffer, 0, buffer.Length);
+            stream.Write(buffer, 0, buffer.Length);
+            state = State.RUNNING;
+            started();
 
             Send("devinfo productname");
-            Send("devinfo deviceid"); // equivalent to UNIT ID
+            Send("devinfo deviceid");   // equivalent to UNIT ID
             Send("devinfo devicename");
             Send("scpmode encoding utf8");
             Send("scpmode keepalive 2000");
@@ -64,13 +63,20 @@ namespace TouchFaders {
             Send("get MIXER:Current/InCh/Fader/Level 0 0");
 
             Task.Run(() => {
-                while (state != State.DISCONNECTED || state != State.STOPPING) {
-                    byte[] buffer = new byte[client.ReceiveBufferSize];
-                    int bytes = outputStream.Read(buffer, 0, buffer.Length);
-
-                    string message = Encoding.UTF8.GetString(buffer, 0, bytes);
-                    ProcessMessages(message);
+                while (state != State.STOPPING) {
+                    if (stream.DataAvailable) {
+                        byte[] buffer = new byte[client.ReceiveBufferSize];
+                        int bytes = stream.Read(buffer, 0, buffer.Length);
+                        string message = Encoding.UTF8.GetString(buffer, 0, bytes);
+                        ProcessMessages(message);
+                    }
                 }
+                Console.WriteLine("Closing connection");
+                stream.Close();
+                client.Close();
+                stream?.Dispose();
+                client?.Dispose();
+                state = State.DISCONNECTED;
             });
         }
 
@@ -83,15 +89,12 @@ namespace TouchFaders {
 
         public void Send (string message) {
             byte[] buffer = Encoding.UTF8.GetBytes(message + "\n");
-            outputStream.Write(buffer, 0, buffer.Length);
+            stream.Write(buffer, 0, buffer.Length);
         }
 
         public void Disconnect () {
             if (state != State.RUNNING) return;
             state = State.STOPPING;
-            outputStream.Close();
-            client.Close();
-            state = State.DISCONNECTED;
         }
 
         void ProcessMessages (string messages) {
@@ -102,20 +105,18 @@ namespace TouchFaders {
         }
 
         private void ProcessMessage (string message) {
-            RCPMessage parsedMessage = RCPParser.Parse(message);
+            //RCPMessage parsedMessage = RCPParser.Parse(message);
             switch (message.Split(' ')[0]) {
                 case "OK":
                     Console.WriteLine(message);
-                    if (message.Contains("MIXER:Current/InCh/Fader/Level")) {
-                        Console.WriteLine("We found it!");
-                        Console.WriteLine(message.Split(' ').Last());
-                    }
                     break;
                 case "OKm":
+                    Console.WriteLine(message);
                     break;
                 case "NOTIFY":
                     break;
                 case "ERROR":
+                    Console.WriteLine(message);
                     break;
                 default:
                     Console.WriteLine(message);

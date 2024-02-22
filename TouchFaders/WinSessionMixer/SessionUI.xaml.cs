@@ -48,16 +48,19 @@ namespace TouchFaders {
         public void SetSession (AudioSessionControl2 session) {
             this.session = session;
             session.OnStateChanged += SessionStateChanged;
-            Process p = Process.GetProcessById((int)session.ProcessID);
+            Process p = null;
+            try {
+                p = Process.GetProcessById((int)session.ProcessID);
+            } catch { }
 
             if (!Dispatcher.CheckAccess()) {
                 Dispatcher.Invoke(() => {
                     sessionLabel.Content = session.IsSystemSoundsSession ? "System" : session.DisplayName;
-                    if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p.ProcessName;
+                    if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p != null ? p.ProcessName : "";
                 });
             } else {
                 sessionLabel.Content = session.IsSystemSoundsSession ? "System" : session.DisplayName;
-                if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p.ProcessName;
+                if (sessionLabel.Content.ToString() == "") sessionLabel.Content = p != null ? p.ProcessName : "";
             }
 
             sessionTextBox.Text = ParseLabel(sessionLabel.Content.ToString());

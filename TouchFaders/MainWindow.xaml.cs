@@ -572,6 +572,7 @@ namespace TouchFaders {
 
         void testMIDIButton_Click (object sender, RoutedEventArgs e) {
             if (stopConnectionButton.IsEnabled) {
+                audioConsole.Send("set MIXER:Current/InCh/Fader/Level 0 0 0");
                 if (data.channels[0].sends[0].level != 0) {
                     SendFaderValue(1, 1, 0, null);
                 } else {
