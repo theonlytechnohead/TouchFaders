@@ -497,8 +497,21 @@ namespace TouchFaders {
         #endregion
 
         #region Console I/O API
-        void TryStart () {
-            audioConsole.Connect(addressTextBox.Text);
+        void TryStart (Action started, Action<string> startFailed) {
+            audioConsole.Connect(addressTextBox.Text, started, startFailed);
+        }
+
+        void Started () {
+            Dispatcher.Invoke(() => {
+                stopConnectionButton.IsEnabled = true;
+            });
+        }
+
+        void StartFailed (string message) {
+            Dispatcher.Invoke(() => {
+                startConnectionButton.IsEnabled = true;
+                MessageBox.Show(message);
+            });
         }
 
         void TryStop () {
@@ -508,7 +521,8 @@ namespace TouchFaders {
 
         #region UIEvents
         void startConnectionButton_Click (object sender, RoutedEventArgs e) {
-            TryStart();
+            startConnectionButton.IsEnabled = false;
+            TryStart(Started, StartFailed);
         }
 
         void CalculateSysExCommands () {
@@ -522,19 +536,16 @@ namespace TouchFaders {
 
         void stopConnectionButton_Click (object sender, RoutedEventArgs e) {
             (meteringTimer as IDisposable)?.Dispose();
-            if (stopConnectionButton.IsEnabled) {
-                Thread.Sleep(1000);
-            }
+            TryStop();
             Dispatcher.Invoke(() => {
                 Title = "TouchFaders | disconnected";
-                refreshConnectionButton.IsEnabled = false;
+                //refreshConnectionButton.IsEnabled = false;
                 startConnectionButton.IsEnabled = true;
                 stopConnectionButton.IsEnabled = false;
-                syncProgressBar.IsIndeterminate = false;
-                syncProgressBar.Value = 0;
-                configWindowButton.IsEnabled = true;
+                //syncProgressBar.IsIndeterminate = false;
+                //syncProgressBar.Value = 0;
+                //configWindowButton.IsEnabled = true;
             });
-            TryStop();
         }
 
         void refreshConnectionButton_Click (object sender, RoutedEventArgs e) {

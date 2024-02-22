@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,36 +24,44 @@ namespace TouchFaders {
         /// Uses native SCP commands over a TCP connection for modern consoles
         /// </summary>
         /// <param name="host">String containing any valid interpretation of an IP address to parse</param>
-        public void Connect (string host) {
-            if (state != State.DISCONNECTED) return;
-            state = State.STARTING;
+        public void Connect (string host, Action started, Action<string> startFailed) {
+            if (state != State.DISCONNECTED) {
+                startFailed("Can't start right now, state is " + state);
+                return;
+            }
+
+            Console.WriteLine("Connecting to " + host);
 
             IPAddress address;
             if (!IPAddress.TryParse(host, out address)) {
+                startFailed("Address is invalid!");
                 return;
             }
             IPEndPoint console = new IPEndPoint(address, 49280);
-            client = new TcpClient();
-            client.Connect(console);
-            outputStream = client.GetStream();
+            client = new TcpClient {
+                SendTimeout = 100
+            };
+            try {
+                client.Connect(console);
+                outputStream = client.GetStream();
+            } catch (Exception) {
+                startFailed("Couldn't connect to " + address);
+                return;
+            }
+
+            state = State.STARTING;
 
             byte[] buffer = Encoding.UTF8.GetBytes("devstatus runmode\n");
             outputStream.Write(buffer, 0, buffer.Length);
 
-            buffer = Encoding.UTF8.GetBytes("devinfo productname\n");
-            outputStream.Write(buffer, 0, buffer.Length);
+            Send("devinfo productname");
+            Send("devinfo deviceid"); // equivalent to UNIT ID
+            Send("devinfo devicename");
+            Send("scpmode encoding utf8");
+            Send("scpmode keepalive 2000");
 
-            buffer = Encoding.UTF8.GetBytes("devinfo deviceid\n"); // equivalent to UNIT ID
-            outputStream.Write(buffer, 0, buffer.Length);
-
-            buffer = Encoding.UTF8.GetBytes("devinfo devicename\n");
-            outputStream.Write(buffer, 0, buffer.Length);
-
-            buffer = Encoding.UTF8.GetBytes("scpmode encoding utf8\n");
-            outputStream.Write(buffer, 0, buffer.Length);
-
-            buffer = Encoding.UTF8.GetBytes("scpmode keepalive 2000\n");
-            outputStream.Write(buffer, 0, buffer.Length);
+            // test
+            Send("get MIXER:Current/InCh/Fader/Level 0 0");
 
             Task.Run(() => {
                 while (state != State.DISCONNECTED || state != State.STOPPING) {
@@ -72,7 +82,7 @@ namespace TouchFaders {
         }
 
         public void Send (string message) {
-            byte[] buffer = Encoding.UTF8.GetBytes(message);
+            byte[] buffer = Encoding.UTF8.GetBytes(message + "\n");
             outputStream.Write(buffer, 0, buffer.Length);
         }
 
@@ -84,11 +94,27 @@ namespace TouchFaders {
             state = State.DISCONNECTED;
         }
 
-        void process (string message) {
-            string[] messages = message.Split('\n');
-            foreach (var m in messages) {
-                if (m.Length == 0) continue;
-                System.Console.WriteLine(m);
+        void process (string messages) {
+            foreach (var message in messages.Split('\n')) {
+                if (message.Length == 0) continue;
+                switch (message.Split(' ')[0]) {
+                    case "OK":
+                        Console.WriteLine(message);
+                        if (message.Contains("MIXER:Current/InCh/Fader/Level")) {
+                            Console.WriteLine("We found it!");
+                            Console.WriteLine(message.Split(' ').Last());
+                        }
+                        break;
+                    case "OKm":
+                        break;
+                    case "NOTIFY":
+                        break;
+                    case "ERROR":
+                        break;
+                    default:
+                        Console.WriteLine(message);
+                        break;
+                }
             }
         }
 

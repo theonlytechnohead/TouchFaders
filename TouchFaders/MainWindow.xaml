@@ -202,7 +202,7 @@
                         
                         <Button x:Name="startConnectionButton" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center" Click="startConnectionButton_Click" Padding="5,1" Width="76" Margin="0" Grid.Row="2"/>
                         <Button x:Name="refreshConnectionButton" Content="Refresh" HorizontalAlignment="Center" VerticalAlignment="Center" Click="refreshConnectionButton_Click" Padding="1" Width="76" IsEnabled="False" Grid.Row="2" Grid.Column="1"/>
-                        <Button x:Name="stopConnectionButton" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopConnectionButton_Click" Padding="1" Width="76" Grid.Row="2" Grid.Column="2"/>
+                        <Button x:Name="stopConnectionButton" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Center" Click="stopConnectionButton_Click" Padding="1" Width="76" Grid.Row="2" Grid.Column="2" IsEnabled="False"/>
 
                         <ProgressBar x:Name="syncProgressBar" Height="6" SmallChange="1" Maximum="1" Grid.ColumnSpan="3" Grid.Row="1" Margin="5,0,5,0"/>
 
