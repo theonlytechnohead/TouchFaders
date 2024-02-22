@@ -99,6 +99,7 @@
     <Compile Include="Configuration\Parser.cs" />
     <Compile Include="IConsole.cs" />
     <Compile Include="Mixer.cs" />
+    <Compile Include="RCPParser.cs" />
     <Compile Include="WinSessionMixer\SessionUI.xaml.cs">
       <DependentUpon>SessionUI.xaml</DependentUpon>
     </Compile>
