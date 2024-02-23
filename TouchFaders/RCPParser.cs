@@ -108,7 +108,6 @@ namespace TouchFaders {
         // get: X, Y
         // set: X, Y, value, textValue
 
-
         public static string ToString (object instance) {
             Type currentType = instance.GetType();
             string result = string.Empty;
@@ -128,19 +127,83 @@ namespace TouchFaders {
 
         public class Console {
             public class MIXER {
-
+                public class Current {
+                    public class InCh {
+                        public class Fader {
+                            public class Level {
+                                // 72 1 -32768 1000 -32768 "dB" integer any rw 100
+                                public int channel;
+                                public int? level = null;
+                                public Level (int channel) {
+                                    this.channel = channel;
+                                }
+                                public Level (int channel, int level) : this(channel) {
+                                    this.level = level;
+                                }
+                                public override string ToString () {
+                                    return channel + " 0" + (level != null ? " " + level : string.Empty);
+                                }
+                            }
+                            public class On {
+                                // 72 1 0 1 1 "" integer any rw 1
+                                public int channel;
+                                public int? on = null;
+                                public On (int channel) {
+                                    this.channel = channel;
+                                }
+                                public On (int channel, int on) : this(channel) {
+                                    this.on = on;
+                                }
+                                public override string ToString () {
+                                    return channel + " 0" + (on != null ? " " + on : string.Empty);
+                                }
+                            }
+                        }
+                        public class ToMix {
+                            public class Level {
+                                // 72 24 -32768 1000 -32768 "dB" integer any rw 100
+                                public int channel;
+                                public int mix;
+                                public int? level = null;
+                                public Level (int channel, int mix) {
+                                    this.channel = channel;
+                                    this.mix = mix;
+                                }
+                                public Level (int channel, int mix, int level) : this(channel, mix) {
+                                    this.level = level;
+                                }
+                                public override string ToString () {
+                                    return channel + " " + mix + (level != null ? " " + level : string.Empty);
+                                }
+                            }
+                            public class On {
+                                // 72 24 0 1 1 "" integer any rw 1
+                                public int channel;
+                                public int mix;
+                                public int? on = null;
+                                public On (int channel, int mix) {
+                                    this.channel = channel;
+                                    this.mix = mix;
+                                }
+                                public On (int channel, int mix, int on) : this(channel, mix) {
+                                    this.on = on;
+                                }
+                                public override string ToString () {
+                                    return channel + " " + mix + (on != null ? " " + on : string.Empty);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             public class CL {
-
+                // TODO
             }
 
             public class QL {
-
                 public class Current {
-
                     public class CustomFaderBank {
-
                         public class SourceCh {
                             // 4 32 0 11 "NO ASSIGN" "" string any rw 1
                         }
@@ -158,7 +221,6 @@ namespace TouchFaders {
                         }
                         public class Select {
                             // 1 1 0 1 0 "" integer any rw 1
-                            // TODO: what does it do?
                             public enum Selects {
                                 BankA,
                                 BankB
@@ -183,14 +245,12 @@ namespace TouchFaders {
                             }
                             public class Recall {
                                 // 1 3 0 8 0 "" integer any rw 1
-                                // TODO: 3 banks, each with 8 options
                                 public FaderBanks? faderBank = null;
                                 public Banks? bank = null;
                                 public Recall (FaderBanks faderBank) {
                                     this.faderBank = faderBank;
                                 }
-                                public Recall (FaderBanks faderBank, Banks bank) {
-                                    this.faderBank = faderBank;
+                                public Recall (FaderBanks faderBank, Banks bank) : this(faderBank) {
                                     this.bank = bank;
                                 }
                                 public override string ToString () {
@@ -199,7 +259,6 @@ namespace TouchFaders {
                             }
                             public class Toggle {
                                 // 1 1 0 8 0 "" integer any rw 1
-                                // TODO: what does it do?
                             }
                         }
                     }

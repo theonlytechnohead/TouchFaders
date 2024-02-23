@@ -81,11 +81,14 @@ namespace TouchFaders {
 
             Task.Run(() => { DataLoaded((Data)Parser.Load(new Data())); });
 
-            var test = new RCPAddress.Console.QL.Current.FaderBank.Bank.Recall(
-                RCPAddress.Console.QL.Current.FaderBank.FaderBanks.Dont,
-                RCPAddress.Console.QL.Current.FaderBank.Bank.Banks.B2
-                );
-            Console.WriteLine(RCPAddress.ToString(test));
+            var channelLevel = new RCPAddress.Console.MIXER.Current.InCh.Fader.Level(0);
+            Console.WriteLine(RCPAddress.ToString(channelLevel));
+            var channelOn = new RCPAddress.Console.MIXER.Current.InCh.Fader.On(0);
+            Console.WriteLine(RCPAddress.ToString(channelOn));
+            var channelToMix = new RCPAddress.Console.MIXER.Current.InCh.ToMix.Level(0, 0);
+            Console.WriteLine(RCPAddress.ToString(channelToMix));
+            var channelSendOn = new RCPAddress.Console.MIXER.Current.InCh.ToMix.On(0, 0);
+            Console.WriteLine(RCPAddress.ToString(channelSendOn));
 
             UISettings settings = new UISettings();
             Windows.UI.Color foreground = settings.GetColorValue(UIColorType.Foreground);
