@@ -81,6 +81,12 @@ namespace TouchFaders {
 
             Task.Run(() => { DataLoaded((Data)Parser.Load(new Data())); });
 
+            var test = new RCPAddress.Console.QL.Current.FaderBank.Bank.Recall(
+                RCPAddress.Console.QL.Current.FaderBank.FaderBanks.Dont,
+                RCPAddress.Console.QL.Current.FaderBank.Bank.Banks.B2
+                );
+            Console.WriteLine(RCPAddress.ToString(test));
+
             UISettings settings = new UISettings();
             Windows.UI.Color foreground = settings.GetColorValue(UIColorType.Foreground);
             Windows.UI.Color background = settings.GetColorValue(UIColorType.Background);

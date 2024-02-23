@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -105,7 +104,7 @@ namespace TouchFaders {
         }
 
         private void ProcessMessage (string message) {
-            //RCPMessage parsedMessage = RCPParser.Parse(message);
+            RCPMessage parsedMessage = RCPParser.Parse(message);
             switch (message.Split(' ')[0]) {
                 case "OK":
                     Console.WriteLine(message);
