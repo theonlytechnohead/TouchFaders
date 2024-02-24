@@ -104,7 +104,7 @@ namespace TouchFaders {
         }
 
         private void ProcessMessage (string message) {
-            RCPMessage parsedMessage = RCPParser.Parse(message);
+            RCP.Message parsedMessage = RCP.Parse(message);
             switch (message.Split(' ')[0]) {
                 case "OK":
                     Console.WriteLine(message);

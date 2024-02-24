@@ -4,21 +4,23 @@ using System.Linq;
 
 namespace TouchFaders {
 
-    public class RCPMessage {
-        public enum MessageType {
-            Unknown,
-            OK,
-            OKm,
-            NOTIFY,
-            ERROR
-        }
-        public MessageType type;
+    public class RCP {
 
-        public string Address;
-        public RCPAddress rcpAddress;
+        public class Message {
+            public enum MessageType {
+                Unknown,
+                OK,
+                OKm,
+                NOTIFY,
+                ERROR
+            }
+            public MessageType type;
 
-        public ErrorType errorType;
-        public readonly Dictionary<ErrorType, string> errorMessages = new Dictionary<ErrorType, string>() {
+            public string Address;
+            public Address rcpAddress;
+
+            public ErrorType errorType;
+            public readonly Dictionary<ErrorType, string> errorMessages = new Dictionary<ErrorType, string>() {
             { ErrorType.None, "" },
             { ErrorType.Unknown, "Unknown error" },
             { ErrorType.UnknownCommand, "Ignored because it was an unknown command" },
@@ -34,76 +36,74 @@ namespace TouchFaders {
             { ErrorType.InternalError, "An internal error may have occurred" }
         };
 
-        public enum ErrorType {
-            None,
-            Unknown,
-            UnknownCommand,
-            WrongFormat,
-            InvalidArgument,
-            UnknownAddress,
-            UnkownEventID,
-            TooLongCommand,
-            AccessDenied,
-            Busy,
-            ReadOnly,
-            NoPermission,
-            InternalError
+            public enum ErrorType {
+                None,
+                Unknown,
+                UnknownCommand,
+                WrongFormat,
+                InvalidArgument,
+                UnknownAddress,
+                UnkownEventID,
+                TooLongCommand,
+                AccessDenied,
+                Busy,
+                ReadOnly,
+                NoPermission,
+                InternalError
+            }
         }
-    }
 
-    internal class RCPParser {
-
-        public static RCPMessage Parse (string message) {
-            RCPMessage output = new RCPMessage {
+        public static Message Parse (string message) {
+            Message output = new Message {
                 type = ParseType(message.Split(' ').First())
             };
             output.Address = message.Split(' ')[1];
             switch (output.type) {
-                case RCPMessage.MessageType.Unknown:
+                case Message.MessageType.Unknown:
                     break;
-                case RCPMessage.MessageType.OK:
+                case Message.MessageType.OK:
                     break;
-                case RCPMessage.MessageType.OKm:
+                case Message.MessageType.OKm:
                     break;
-                case RCPMessage.MessageType.NOTIFY:
+                case Message.MessageType.NOTIFY:
                     break;
-                case RCPMessage.MessageType.ERROR:
+                case Message.MessageType.ERROR:
                     output.errorType = ParseError(message.Split(' ').Last());
                     break;
             }
             return output;
         }
 
-        private static RCPMessage.MessageType ParseType (string header) {
+        private static Message.MessageType ParseType (string header) {
             return header switch {
-                "OK" => RCPMessage.MessageType.OK,
-                "OKm" => RCPMessage.MessageType.OKm,
-                "NOTIFY" => RCPMessage.MessageType.NOTIFY,
-                "ERROR" => RCPMessage.MessageType.ERROR,
-                _ => RCPMessage.MessageType.Unknown,
+                "OK" => Message.MessageType.OK,
+                "OKm" => Message.MessageType.OKm,
+                "NOTIFY" => Message.MessageType.NOTIFY,
+                "ERROR" => Message.MessageType.ERROR,
+                _ => Message.MessageType.Unknown,
             };
         }
 
-        private static RCPMessage.ErrorType ParseError (string errorCode) {
+        private static Message.ErrorType ParseError (string errorCode) {
             return errorCode switch {
-                "UnknownCommand" => RCPMessage.ErrorType.UnknownCommand,
-                "WrongFormat" => RCPMessage.ErrorType.WrongFormat,
-                "InvalidArgument" => RCPMessage.ErrorType.InvalidArgument,
-                "UnknownAddress" => RCPMessage.ErrorType.UnknownAddress,
-                "UnkownEventID" => RCPMessage.ErrorType.UnkownEventID,
-                "TooLongCommand" => RCPMessage.ErrorType.TooLongCommand,
-                "AccessDenied" => RCPMessage.ErrorType.AccessDenied,
-                "Busy" => RCPMessage.ErrorType.Busy,
-                "ReadOnly" => RCPMessage.ErrorType.ReadOnly,
-                "NoPermission" => RCPMessage.ErrorType.NoPermission,
-                "InternalError" => RCPMessage.ErrorType.InternalError,
-                _ => RCPMessage.ErrorType.Unknown,
+                "UnknownCommand" => Message.ErrorType.UnknownCommand,
+                "WrongFormat" => Message.ErrorType.WrongFormat,
+                "InvalidArgument" => Message.ErrorType.InvalidArgument,
+                "UnknownAddress" => Message.ErrorType.UnknownAddress,
+                "UnkownEventID" => Message.ErrorType.UnkownEventID,
+                "TooLongCommand" => Message.ErrorType.TooLongCommand,
+                "AccessDenied" => Message.ErrorType.AccessDenied,
+                "Busy" => Message.ErrorType.Busy,
+                "ReadOnly" => Message.ErrorType.ReadOnly,
+                "NoPermission" => Message.ErrorType.NoPermission,
+                "InternalError" => Message.ErrorType.InternalError,
+                _ => Message.ErrorType.Unknown,
             };
         }
 
     }
 
-    public class RCPAddress {
+    public class Address {
         // parameters: X, Y, min, max, default, unit, type, UI?, r/w, scale
         // get: X, Y
         // set: X, Y, value, textValue
