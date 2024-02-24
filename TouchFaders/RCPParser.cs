@@ -108,6 +108,40 @@ namespace TouchFaders {
         // get: X, Y
         // set: X, Y, value, textValue
 
+        public static object Parse (string address, string parameters) {
+            Type currentType = typeof(Console);
+            var components = address.Split(':');
+
+            while (address != string.Empty) {
+                bool found = false;
+                string current = components[0];
+                if (2 <= components.Length) {
+                    address = components[1];
+                } else {
+                    address = "";
+                }
+                foreach (var type in currentType.GetNestedTypes()) {
+                    if (type.Name == current) {
+                        currentType = type;
+                        found = true;
+                        components = address.Split(new[] { '/' }, 2);
+                    }
+                }
+                if (!found) {
+                    currentType = null;
+                    break;
+                }
+            }
+
+            if (currentType != null) {
+                var parseMethod = currentType.GetMethod("Parse", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                var instance = parseMethod.Invoke(null, new[] { parameters });
+                return instance;
+            } else {
+                return new object();
+            }
+        }
+
         public static string ToString (object instance) {
             Type currentType = instance.GetType();
             string result = string.Empty;
@@ -139,6 +173,9 @@ namespace TouchFaders {
                                 }
                                 public Level (int channel, int level) : this(channel) {
                                     this.level = level;
+                                }
+                                public static Level Parse (string parameters) {
+                                    return new Level(0);
                                 }
                                 public override string ToString () {
                                     return channel + " 0" + (level != null ? " " + level : string.Empty);
