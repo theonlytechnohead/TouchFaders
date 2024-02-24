@@ -56,10 +56,7 @@ namespace TouchFaders {
             Send("devinfo deviceid");   // equivalent to UNIT ID
             Send("devinfo devicename");
             Send("scpmode encoding utf8");
-            Send("scpmode keepalive 2000");
-
-            // test
-            Send("get MIXER:Current/InCh/Fader/Level 0 0");
+            //Send("scpmode keepalive 2000");
 
             Task.Run(() => {
                 while (state != State.STOPPING) {
@@ -67,7 +64,9 @@ namespace TouchFaders {
                         byte[] buffer = new byte[client.ReceiveBufferSize];
                         int bytes = stream.Read(buffer, 0, buffer.Length);
                         string message = Encoding.UTF8.GetString(buffer, 0, bytes);
-                        ProcessMessages(message);
+                        Task.Run(() => {
+                            ProcessMessages(message);
+                        });
                     }
                 }
                 Console.WriteLine("Closing connection");
@@ -113,6 +112,8 @@ namespace TouchFaders {
                     Console.WriteLine(message);
                     break;
                 case "NOTIFY":
+                    if (!message.Contains("MIXER:Current/InCh/Label/Color"))
+                        Console.WriteLine(message);
                     break;
                 case "ERROR":
                     Console.WriteLine(message);

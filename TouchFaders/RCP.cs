@@ -259,9 +259,8 @@ namespace TouchFaders {
                     }
                     public class FaderBank {
                         public enum FaderBanks {
-                            I,
-                            Dont,
-                            Know
+                            idk,
+                            what
                         }
                         public class Select {
                             // 1 1 0 1 0 "" integer any rw 1
@@ -289,6 +288,7 @@ namespace TouchFaders {
                             }
                             public class Recall {
                                 // 1 3 0 8 0 "" integer any rw 1
+                                // idk how this works, it seems wrong / not working?
                                 public FaderBanks? faderBank = null;
                                 public Banks? bank = null;
                                 public Recall (FaderBanks faderBank) {
