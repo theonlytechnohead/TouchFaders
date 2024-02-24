@@ -175,7 +175,14 @@ namespace TouchFaders {
                                     this.level = level;
                                 }
                                 public static Level Parse (string parameters) {
-                                    return new Level(0);
+                                    var components = parameters.Split(' ');
+                                    var channel = int.Parse(components[0]);
+                                    var y = int.Parse(components[1]);
+                                    if (components.Length == 2) {
+                                        return new Level(channel, y);
+                                    }
+                                    var level = int.Parse(components[2]);
+                                    return new Level(channel, level);
                                 }
                                 public override string ToString () {
                                     return channel + " 0" + (level != null ? " " + level : string.Empty);
